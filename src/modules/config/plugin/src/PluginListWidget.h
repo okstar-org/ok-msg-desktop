@@ -15,7 +15,7 @@
 
 #include <QListWidget>
 
-namespace ok::plugin {
+namespace module::config {
 class PluginListWidget : public QListWidget {
     Q_OBJECT
 public:

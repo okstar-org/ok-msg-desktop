@@ -21,11 +21,11 @@
 #include "src/widget/form/settings/StorageSettingsForm.h"
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
-
-#include "modules/config/settings/src/GeneralForm.h"
 #include "src/widget/widget.h"
 
 #include <QLabel>
+#include <QStyle>
+#include <QTabBar>
 #include <QTabWidget>
 #include <QWindow>
 

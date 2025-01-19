@@ -27,7 +27,7 @@ namespace lib::network {
 class NetworkHttp;
 }
 
-namespace ok::plugin {
+namespace module::config {
 
 /**
  * 插件信息
@@ -51,7 +51,7 @@ public:
 
 private:
     Ui::PluginInfoForm* ui;
-    PluginManager* pluginManager;
+    ok::plugin::PluginManager* pluginManager;
     quint64 id;
     QString downUrl;
     lib::backend::PluginInfo mPluginInfo;

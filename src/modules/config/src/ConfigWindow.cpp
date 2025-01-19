@@ -32,15 +32,23 @@ namespace module::config {
 ConfigWindow::ConfigWindow(QWidget* parent) : UI::window::OPage(parent), ui(new Ui::ConfigWindow) {
     ui->setupUi(this);
 
-    auto sw = new UI::SettingsWidget(this);
-    connect(sw->general(), &UI::GeneralForm::onLanguageChanged,
-            [](QString locale) { settings::Translator::translate(OK_Config_MODULE, locale); });
     ui->tabWidget->setObjectName("mainTab");
-#if OK_PLUGIN
-    ui->tabWidget->addTab(new ok::plugin::PluginManagerForm(this), tr("Plugin form"));
-#endif
+
+    // 设置
+    auto sw = new GeneralForm(this);
+    connect(sw, &GeneralForm::onLanguageChanged, [](const QString& locale) {
+        settings::Translator::translate(OK_Config_MODULE, locale);
+    });
     ui->tabWidget->addTab(sw, tr("Settings form"));
+
+#if OK_PLUGIN
+    // 插件管理
+    ui->tabWidget->addTab(new PluginManagerForm(this), tr("Plugin form"));
+#endif
+
+    // 关于
     ui->tabWidget->addTab(new AboutForm(this), tr("About form"));
+
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
     reloadTheme();
 
@@ -62,8 +70,9 @@ void ConfigWindow::reloadTheme() {
 
 void ConfigWindow::retranslateUi() {
     ui->retranslateUi(this);
-    ui->tabWidget->setTabText(0, tr("Plugin form"));
-    ui->tabWidget->setTabText(1, tr("Settings form"));
+
+    ui->tabWidget->setTabText(0, tr("Settings form"));
+    ui->tabWidget->setTabText(1, tr("Plugin form"));
     ui->tabWidget->setTabText(2, tr("About form"));
 
     for (int i = 0; i < ui->tabWidget->count(); i++) {

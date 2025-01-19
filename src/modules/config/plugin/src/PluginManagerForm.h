@@ -26,7 +26,7 @@ namespace Ui {
 class PluginManagerForm;
 }  // namespace Ui
 
-namespace ok::plugin {
+namespace module::config {
 
 class PluginManagerForm : public UI::GenericForm {
     Q_OBJECT

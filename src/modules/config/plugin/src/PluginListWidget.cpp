@@ -11,7 +11,7 @@
  */
 
 #include "PluginListWidget.h"
-namespace ok::plugin {
+namespace module::config {
 
 PluginListWidget::PluginListWidget(QWidget* parent) {
     setViewportMargins(8, 8, 8, 8);

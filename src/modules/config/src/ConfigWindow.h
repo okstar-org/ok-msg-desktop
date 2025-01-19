@@ -36,8 +36,8 @@ namespace module::config {
 class ConfigWindow : public UI::window::OPage {
     Q_OBJECT
 public:
-    ConfigWindow(QWidget* parent = nullptr);
-    ~ConfigWindow();
+    explicit ConfigWindow(QWidget* parent = nullptr);
+    ~ConfigWindow() override;
     void reloadTheme();
 
 protected:

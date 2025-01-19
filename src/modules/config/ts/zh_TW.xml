@@ -14,7 +14,7 @@
 <!DOCTYPE TS>
 <TS language="zh_TW" version="2.1">
     <context>
-        <name>AboutSettings</name>
+        <name>module::config::AboutSettings</name>
         <message>
             <source>Version</source>
             <translation>版本</translation>
@@ -45,14 +45,14 @@
         </message>
     </context>
     <context>
-        <name>ConfigWindow</name>
+        <name>module::config::ConfigWindow</name>
         <message>
             <source>MainWindow</source>
             <translation>主視窗</translation>
         </message>
     </context>
     <context>
-        <name>ConnectForm</name>
+        <name>module::config::ConnectForm</name>
         <message>
             <source>Form</source>
             <translation>形式</translation>
@@ -77,7 +77,7 @@
         </message>
     </context>
     <context>
-        <name>GeneralForm</name>
+        <name>module::config::GeneralForm</name>
         <message>
             <source>Language:</source>
             <translation>語言：</translation>
@@ -128,7 +128,7 @@
         </message>
     </context>
     <context>
-        <name>PluginInfoForm</name>
+        <name>module::config::PluginInfoForm</name>
         <message>
             <source>Form</source>
             <translation>形式</translation>
@@ -151,21 +151,21 @@
         </message>
     </context>
     <context>
-        <name>PluginItemForm</name>
+        <name>module::config::PluginItemForm</name>
         <message>
             <source>Form</source>
             <translation>形式</translation>
         </message>
     </context>
     <context>
-        <name>PluginManagerForm</name>
+        <name>module::config::PluginManagerForm</name>
         <message>
             <source>Form</source>
             <translation>形式</translation>
         </message>
     </context>
     <context>
-        <name>UI::AboutForm</name>
+        <name>module::config::AboutForm</name>
         <message>
             <source>You are using the app versiion %1.</source>
             <translation>您使用的是 OkMsg 版本 %1。</translation>
@@ -184,7 +184,7 @@
         </message>
     </context>
     <context>
-        <name>UI::ConfigWindow</name>
+        <name>module::config::ConfigWindow</name>
         <message>
             <source>Plugin form</source>
             <translation>外掛程式形式</translation>
@@ -199,28 +199,28 @@
         </message>
     </context>
     <context>
-        <name>UI::ConnectForm</name>
+        <name>module::config::ConnectForm</name>
         <message>
             <source>Connection</source>
             <translation>連接</translation>
         </message>
     </context>
     <context>
-        <name>UI::GeneralForm</name>
+        <name>module::config::GeneralForm</name>
         <message>
             <source>General</source>
             <translation>常規</translation>
         </message>
     </context>
     <context>
-        <name>UI::SettingsWidget</name>
+        <name>module::config::SettingsWidget</name>
         <message>
             <source>Settings</source>
             <translation>設置</translation>
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginInfoForm</name>
+        <name>module::config::PluginInfoForm</name>
         <message>
             <source>Install</source>
             <translation>安裝</translation>
@@ -239,7 +239,7 @@
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginManagerForm</name>
+        <name>module::config::PluginManagerForm</name>
         <message>
             <source>Plugin manager</source>
             <translation>外掛程式管理器</translation>

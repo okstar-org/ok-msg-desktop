@@ -21,17 +21,15 @@
 #include "lib/storage/settings/translator.h"
 #include "src/base/RecursiveSignalBlocker.h"
 
-namespace UI {
+namespace module::config {
 /**
  * @class GeneralForm
  *
  * This form contains all settings that are not suited to other forms
  */
-GeneralForm::GeneralForm(SettingsWidget* myParent)
-        : GenericForm(QPixmap(":/img/settings/general.png")), bodyUI(new Ui::GeneralForm) {
-    parent = myParent;
-
-    bodyUI->setupUi(this);
+GeneralForm::GeneralForm(QWidget* parent)
+        : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent), ui(new Ui::GeneralForm) {
+    ui->setupUi(this);
 
     // block all child signals during initialization
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
@@ -45,11 +43,11 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     retranslateUi();
 
 #ifndef UPDATE_CHECK_ENABLED
-    bodyUI->checkUpdates->setVisible(false);
+    ui->checkUpdates->setVisible(false);
 #endif
 
 #ifndef SPELL_CHECKING
-    bodyUI->cbSpellChecking->setVisible(false);
+    ui->cbSpellChecking->setVisible(false);
 #endif
     // 获取复选框状态
     //  bodyUI->checkUpdates->setChecked(s.getCheckUpdates());
@@ -70,16 +68,16 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
         else
             langName = QLocale(locale).nativeLanguageName();
 
-        bodyUI->transComboBox->insertItem(i, langName);
+        ui->transComboBox->insertItem(i, langName);
     }
     // 当前语言下拉框状态
-    bodyUI->transComboBox->setCurrentIndex(
+    ui->transComboBox->setCurrentIndex(
             okSettings.getLocales().indexOf(okSettings.getTranslation()));
 
     // autorun
-    bodyUI->cbAutorun->setChecked(okSettings.getAutorun());
+    ui->cbAutorun->setChecked(okSettings.getAutorun());
     // 系统图标
-    bodyUI->showSystemTray->setChecked(okSettings.getShowSystemTray());
+    ui->showSystemTray->setChecked(okSettings.getShowSystemTray());
 
     // 主题
     //    bodyUI->styleBrowser->addItem(tr("None"));
@@ -92,8 +90,8 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     //    bodyUI->styleBrowser->setCurrentText(style);
 
     for (const QString& color : lib::settings::Style::getThemeColorNames())
-        bodyUI->themeColorCBox->addItem(color);
-    bodyUI->themeColorCBox->setCurrentIndex((int)s.getThemeColor());
+        ui->themeColorCBox->addItem(color);
+    ui->themeColorCBox->setCurrentIndex((int)s.getThemeColor());
 
     QLocale ql;
     QStringList timeFormats;
@@ -102,7 +100,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
                 << "hh:mm:ss AP"
                 << "hh:mm:ss";
     timeFormats.removeDuplicates();
-    bodyUI->timestamp->addItems(timeFormats);
+    ui->timestamp->addItems(timeFormats);
 
     QRegularExpression re(QString("^[^\\n]{0,%0}$").arg(MAX_FORMAT_LENGTH));
     QRegularExpressionValidator* validator = new QRegularExpressionValidator(re, this);
@@ -111,8 +109,8 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     if (!re.match(timeFormat).hasMatch()) timeFormat = timeFormats[0];
 
-    bodyUI->timestamp->setCurrentText(timeFormat);
-    bodyUI->timestamp->setValidator(validator);
+    ui->timestamp->setCurrentText(timeFormat);
+    ui->timestamp->setValidator(validator);
     on_timestamp_editTextChanged(timeFormat);
 
     QStringList dateFormats;
@@ -125,19 +123,19 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
                 << "dddd d-MM";
 
     dateFormats.removeDuplicates();
-    bodyUI->dateFormats->addItems(dateFormats);
+    ui->dateFormats->addItems(dateFormats);
 
     QString dateFormat = s.getDateFormat();
     if (!re.match(dateFormat).hasMatch()) dateFormat = dateFormats[0];
 
-    bodyUI->dateFormats->setCurrentText(dateFormat);
-    bodyUI->dateFormats->setValidator(validator);
+    ui->dateFormats->setCurrentText(dateFormat);
+    ui->dateFormats->setValidator(validator);
     on_dateFormats_editTextChanged(dateFormat);
 }
 
 GeneralForm::~GeneralForm() {
     settings::Translator::unregister(this);
-    delete bodyUI;
+    delete ui;
 }
 
 void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
@@ -152,7 +150,7 @@ void GeneralForm::on_transComboBox_currentIndexChanged(int index) {
 
 void GeneralForm::on_cbAutorun_stateChanged() {
     auto& s = lib::settings::OkSettings::getInstance();
-    s.setAutorun(bodyUI->cbAutorun->isChecked());
+    s.setAutorun(ui->cbAutorun->isChecked());
     s.saveGlobal();
 }
 
@@ -162,25 +160,25 @@ void GeneralForm::on_cbSpellChecking_stateChanged() {
 
 void GeneralForm::on_showSystemTray_stateChanged() {
     auto& s = lib::settings::OkSettings::getInstance();
-    s.setShowSystemTray(bodyUI->showSystemTray->isChecked());
+    s.setShowSystemTray(ui->showSystemTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_startInTray_stateChanged() {
     auto& s = lib::settings::OkSettings::getInstance();
-    s.setAutostartInTray(bodyUI->startInTray->isChecked());
+    s.setAutostartInTray(ui->startInTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_closeToTray_stateChanged() {
     auto& s = lib::settings::OkSettings::getInstance();
-    s.setCloseToTray(bodyUI->closeToTray->isChecked());
+    s.setCloseToTray(ui->closeToTray->isChecked());
     s.saveGlobal();
 }
 
 void GeneralForm::on_minimizeToTray_stateChanged() {
     auto& s = lib::settings::OkSettings::getInstance();
-    s.setMinimizeToTray(bodyUI->minimizeToTray->isChecked());
+    s.setMinimizeToTray(ui->minimizeToTray->isChecked());
     s.saveGlobal();
 }
 
@@ -190,7 +188,7 @@ void GeneralForm::on_checkUpdates_stateChanged() {
 
 void GeneralForm::on_timestamp_editTextChanged(const QString& format) {
     QString timeExample = QTime::currentTime().toString(format);
-    bodyUI->timeExample->setText(timeExample);
+    ui->timeExample->setText(timeExample);
 
     //        Nexus::getProfile()->getSettings()->setTimestampFormat(format);
     //    QString locale = Nexus::getProfile()->getSettings()->getTranslation();
@@ -199,7 +197,7 @@ void GeneralForm::on_timestamp_editTextChanged(const QString& format) {
 
 void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
     QString dateExample = QDate::currentDate().toString(format);
-    bodyUI->dateExample->setText(dateExample);
+    ui->dateExample->setText(dateExample);
 
     //    Nexus::getProfile()->getSettings()->setDateFormat(format);
     //    QString locale = Nexus::getProfile()->getSettings()->getTranslation();
@@ -207,8 +205,8 @@ void GeneralForm::on_dateFormats_editTextChanged(const QString& format) {
 }
 
 void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
-    int index = bodyUI->themeColorCBox->currentIndex();
-    auto color = bodyUI->themeColorCBox->currentText();
+    int index = ui->themeColorCBox->currentIndex();
+    auto color = ui->themeColorCBox->currentText();
     lib::settings::OkSettings().setThemeColor(static_cast<lib::settings::MainTheme>(index));
     emit ok::Application::Instance() -> bus()->themeColorChanged(index, color);
 }
@@ -217,7 +215,7 @@ void GeneralForm::on_themeColorCBox_currentIndexChanged(int) {
  * @brief Retranslate all elements in the form.
  */
 void GeneralForm::retranslateUi() {
-    bodyUI->retranslateUi(this);
+    ui->retranslateUi(this);
 }
 
 }  // namespace UI

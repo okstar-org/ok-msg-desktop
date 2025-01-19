@@ -15,10 +15,10 @@
 
 #include "lib/ui/widget/GenericForm.h"
 
-namespace UI {
+namespace module::config {
 
-ConnectForm::ConnectForm(SettingsWidget* parent)
-        : GenericForm(QPixmap(":/img/settings/general.png")), ui(new Ui::ConnectForm) {
+ConnectForm::ConnectForm(QWidget* parent)
+        : GenericForm(QPixmap(":/img/settings/general.png"), parent), ui(new Ui::ConnectForm) {
     ui->setupUi(this);
     auto pt = ui->proxyType;
     pt->addItem("HTTP");

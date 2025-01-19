@@ -14,7 +14,7 @@
 <!DOCTYPE TS>
 <TS language="ko" version="2.1">
     <context>
-        <name>AboutSettings</name>
+        <name>module::config::AboutSettings</name>
         <message>
             <source>Version</source>
             <translation>버전</translation>
@@ -45,14 +45,14 @@
         </message>
     </context>
     <context>
-        <name>ConfigWindow</name>
+        <name>module::config::ConfigWindow</name>
         <message>
             <source>MainWindow</source>
             <translation>메인윈도우</translation>
         </message>
     </context>
     <context>
-        <name>ConnectForm</name>
+        <name>module::config::ConnectForm</name>
         <message>
             <source>Form</source>
             <translation>형</translation>
@@ -77,7 +77,7 @@
         </message>
     </context>
     <context>
-        <name>GeneralForm</name>
+        <name>module::config::GeneralForm</name>
         <message>
             <source>Language:</source>
             <translation>언어:</translation>
@@ -128,7 +128,7 @@
         </message>
     </context>
     <context>
-        <name>PluginInfoForm</name>
+        <name>module::config::PluginInfoForm</name>
         <message>
             <source>Form</source>
             <translation>형</translation>
@@ -151,21 +151,21 @@
         </message>
     </context>
     <context>
-        <name>PluginItemForm</name>
+        <name>module::config::PluginItemForm</name>
         <message>
             <source>Form</source>
             <translation>형</translation>
         </message>
     </context>
     <context>
-        <name>PluginManagerForm</name>
+        <name>module::config::PluginManagerForm</name>
         <message>
             <source>Form</source>
             <translation>형</translation>
         </message>
     </context>
     <context>
-        <name>UI::AboutForm</name>
+        <name>module::config::AboutForm</name>
         <message>
             <source>You are using the app versiion %1.</source>
             <translation>OkMsg 버전 %1을(를) 사용하고 있습니다.</translation>
@@ -184,7 +184,7 @@
         </message>
     </context>
     <context>
-        <name>UI::ConfigWindow</name>
+        <name>module::config::ConfigWindow</name>
         <message>
             <source>Plugin form</source>
             <translation>플러그인 양식</translation>
@@ -199,28 +199,28 @@
         </message>
     </context>
     <context>
-        <name>UI::ConnectForm</name>
+        <name>module::config::ConnectForm</name>
         <message>
             <source>Connection</source>
             <translation>연결</translation>
         </message>
     </context>
     <context>
-        <name>UI::GeneralForm</name>
+        <name>module::config::GeneralForm</name>
         <message>
             <source>General</source>
             <translation>일반</translation>
         </message>
     </context>
     <context>
-        <name>UI::SettingsWidget</name>
+        <name>module::config::SettingsWidget</name>
         <message>
             <source>Settings</source>
             <translation>설정</translation>
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginInfoForm</name>
+        <name>module::config::PluginInfoForm</name>
         <message>
             <source>Install</source>
             <translation>설치하다</translation>
@@ -239,7 +239,7 @@
         </message>
     </context>
     <context>
-        <name>ok::plugin::PluginManagerForm</name>
+        <name>module::config::PluginManagerForm</name>
         <message>
             <source>Plugin manager</source>
             <translation>플러그인 관리자</translation>

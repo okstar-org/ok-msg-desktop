@@ -17,7 +17,7 @@
 #include "lib/network/NetworkHttp.h"
 #include "ui_PluginItemForm.h"
 
-namespace ok::plugin {
+namespace module::config {
 
 PluginItemForm::PluginItemForm(int row_, lib::backend::PluginInfo& pluginInfo, QWidget* parent)
         : QWidget(parent), ui(new Ui::PluginItemForm), info(pluginInfo), row(row_) {

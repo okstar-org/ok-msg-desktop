@@ -23,7 +23,7 @@ namespace Ui {
 class PluginItemForm;
 }
 
-namespace ok::plugin {
+namespace module::config {
 
 class PluginItemForm : public QWidget {
     Q_OBJECT

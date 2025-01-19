@@ -24,7 +24,7 @@
 #include "lib/ui/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
 
-namespace ok::plugin {
+namespace module::config {
 
 PluginManagerForm::PluginManagerForm(QWidget* parent)
         : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent)

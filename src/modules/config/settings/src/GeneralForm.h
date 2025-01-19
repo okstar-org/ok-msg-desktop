@@ -10,25 +10,30 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef GENERALFORM_H
-#define GENERALFORM_H
+#ifndef CONFIG_GENERALFORM_H
+#define CONFIG_GENERALFORM_H
 
 #include "lib/ui/widget/GenericForm.h"
 #include "ui_GeneralForm.h"
 
-namespace UI {
+namespace module::config {
+
 class SettingsWidget;
-class GeneralForm : public GenericForm {
+
+class GeneralForm : public UI::GenericForm {
     Q_OBJECT
 public:
-    explicit GeneralForm(SettingsWidget* parent = nullptr);
-    ~GeneralForm();
-    virtual QString getFormName() final override { return tr("General"); }
+    explicit GeneralForm(QWidget* parent = nullptr);
+    ~GeneralForm() override;
+
+    virtual QString getFormName() final override {
+        return tr("General");
+    }
 
     void retranslateUi() override;
 signals:
     void updateIcons();
-    void onLanguageChanged(QString locale);
+    void onLanguageChanged(const QString& locale);
 
 private slots:
     void on_transComboBox_currentIndexChanged(int index);
@@ -44,8 +49,7 @@ private slots:
     void on_themeColorCBox_currentIndexChanged(int);
 
 private:
-    Ui::GeneralForm* bodyUI;
-    SettingsWidget* parent;
+    Ui::GeneralForm* ui;
     const int MAX_FORMAT_LENGTH = 128;
 };
 }  // namespace UI

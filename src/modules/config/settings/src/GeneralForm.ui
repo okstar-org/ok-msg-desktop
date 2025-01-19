@@ -13,7 +13,7 @@
 
 <ui version="4.0">
  <class>GeneralForm</class>
- <widget class="QWidget" name="GeneralForm">
+ <widget class="QWidget" name="module::config::GeneralForm">
   <property name="geometry">
    <rect>
     <x>0</x>

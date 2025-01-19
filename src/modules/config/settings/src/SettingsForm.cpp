@@ -22,7 +22,7 @@
 #include "SettingsForm.h"
 #include "lib/storage/settings/translator.h"
 
-namespace UI {
+namespace module::config {
 SettingsWidget::SettingsWidget(QWidget* parent)
         : GenericForm(QPixmap(":/img/settings/general.png"), parent) {
     settingsWidgets = std::unique_ptr<QTabWidget>(new QTabWidget(this));

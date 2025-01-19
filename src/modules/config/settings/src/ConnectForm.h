@@ -21,14 +21,13 @@ namespace Ui {
 class ConnectForm;
 }
 
-namespace UI {
-class SettingsWidget;
-class ConnectForm : public GenericForm {
-    Q_OBJECT
+namespace module::config {
 
+class ConnectForm : public UI::GenericForm {
+    Q_OBJECT
 public:
-    explicit ConnectForm(SettingsWidget* parent = nullptr);
-    ~ConnectForm();
+    explicit ConnectForm(QWidget* parent = nullptr);
+    ~ConnectForm() override;
 
     virtual QString getFormName() final override { return tr("Connection"); }
     void retranslateUi() override;

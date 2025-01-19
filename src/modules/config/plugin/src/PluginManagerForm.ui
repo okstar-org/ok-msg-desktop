@@ -85,7 +85,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="ok::plugin::PluginListWidget" name="listWidget"/>
+           <widget class="module::config::PluginListWidget" name="listWidget"/>
           </item>
          </layout>
         </widget>

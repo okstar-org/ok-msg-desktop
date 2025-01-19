@@ -19,7 +19,7 @@
 #include "lib/storage/settings/OkSettings.h"
 #include "ui_PluginInfoForm.h"
 
-namespace ok::plugin {
+namespace module::config {
 
 inline QString makePath(const QString& id, const QString& name) {
     return QString("%1/%2_%3").arg(lib::settings::OkSettings::downloadDir().path(), id, name);
@@ -32,7 +32,7 @@ inline QString makePluginPath(const QString& name) {
 PluginInfoForm::PluginInfoForm(lib::backend::PluginInfo& info, QWidget* parent)
         : QWidget(parent)
         , ui(new Ui::PluginInfoForm)
-        , pluginManager(PluginManager::instance())
+        , pluginManager(ok::plugin::PluginManager::instance())
         , id(info.id)
         , mPluginInfo(info)
         , downUrl(info.downUrl)

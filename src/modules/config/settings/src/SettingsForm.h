@@ -21,20 +21,24 @@
 #include "GeneralForm.h"
 #include "lib/ui/widget/GenericForm.h"
 
-namespace UI {
-class SettingsWidget : public GenericForm {
+namespace module::config {
+class SettingsWidget : public UI::GenericForm {
     Q_OBJECT
 public:
     SettingsWidget(QWidget* parent = nullptr);
     ~SettingsWidget();
 
-    virtual QString getFormName() final override { return tr("Settings"); }
+    virtual QString getFormName() final override {
+        return tr("Settings");
+    }
 
     bool isShown() const;
     void setBodyHeadStyle(QString style);
 
     void showAbout();
-    GeneralForm* general() { return static_cast<GeneralForm*>(cfgForms.at(0)); }
+    GeneralForm* general() {
+        return static_cast<GeneralForm*>(cfgForms.at(0));
+    }
     void retranslateUi() override;
 
 public slots:
@@ -47,6 +51,6 @@ private:
     std::unique_ptr<QVBoxLayout> bodyLayout;
     std::unique_ptr<QTabWidget> settingsWidgets;
     std::vector<GenericForm*> cfgForms;
-    int currentIndex;
+    int currentIndex = 0;
 };
-}  // namespace UI
+}  // namespace module::config
