@@ -25,8 +25,10 @@
 
 #include <src/persistence/profile.h>
 
+namespace lib::video {
 class CameraSource;
 class IVideoSettings;
+}  // namespace lib::video
 
 namespace lib::audio {
 class IAudioControl;
@@ -53,8 +55,8 @@ private:
     void getAudioOutDevices();
     void getVideoDevices();
 
-    static int getModeSize(VideoMode mode);
-    void selectBestModes(QVector<VideoMode>& allVideoModes);
+    static int getModeSize(lib::video::VideoMode mode);
+    void selectBestModes(QVector<lib::video::VideoMode>& allVideoModes);
     void fillCameraModesComboBox();
     void fillScreenModesComboBox();
     void fillAudioQualityComboBox();
@@ -87,7 +89,7 @@ protected:
 private:
     void hideEvent(QHideEvent* event) final override;
     void showEvent(QShowEvent* event) final override;
-    void open(const QString& devName, const VideoMode& mode);
+    void open(const QString& devName, const lib::video::VideoMode& mode);
     int getStepsFromValue(qreal val, qreal valMin, qreal valMax);
     qreal getValueFromSteps(int steps, qreal valMin, qreal valMax);
     void trackNewScreenGeometry(QScreen* qScreen);
@@ -96,15 +98,15 @@ private:
     std::unique_ptr<lib::audio::IAudioControl> audio;
 
     lib::audio::IAudioSettings* audioSettings;
-    IVideoSettings* videoSettings;
+    lib::video::IVideoSettings* videoSettings;
 
     bool subscribedToAudioIn;
     std::unique_ptr<lib::audio::IAudioSink> audioSink;
     std::unique_ptr<lib::audio::IAudioSource> audioSrc;
     std::unique_ptr<VideoSurface> camVideoSurface;
-    CameraSource* camera;
+    lib::video::CameraSource* camera;
     QVector<QPair<QString, QString>> videoDeviceList;
-    QVector<VideoMode> videoModes;
+    QVector<lib::video::VideoMode> videoModes;
     uint alSource;
     // arbitrary number of steps to give slider a good "feel"
 

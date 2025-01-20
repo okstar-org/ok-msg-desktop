@@ -17,7 +17,7 @@
 #include <QSignalMapper>
 
 #include "lib/storage/settings/OkSettings.h"
-#include "lib/ui/widget/croppinglabel.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
@@ -34,7 +34,7 @@ GroupInviteWidget::GroupInviteWidget(QWidget* parent, const GroupInvite& invite)
         : QWidget(parent)
         , acceptButton(new QPushButton(this))
         , rejectButton(new QPushButton(this))
-        , inviteMessageLabel(new CroppingLabel(this))
+        , inviteMessageLabel(new lib::ui::CroppingLabel(this))
         , widgetLayout(new QHBoxLayout(this))
         , inviteInfo(invite) {
     connect(acceptButton, &QPushButton::clicked, [this]() { emit accepted(inviteInfo); });

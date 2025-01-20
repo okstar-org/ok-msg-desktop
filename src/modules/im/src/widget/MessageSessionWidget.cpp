@@ -14,10 +14,11 @@
 
 #include "ContactListWidget.h"
 #include "groupwidget.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+
+#include "lib/ui/widget/tools/CroppingLabel.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 
 #include "contentdialogmanager.h"
-#include "lib/ui/widget/croppinglabel.h"
 #include "src/core/core.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/friend.h"

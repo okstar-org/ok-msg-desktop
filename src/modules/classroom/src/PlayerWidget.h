@@ -19,8 +19,8 @@
 
 #include "User.h"
 #include "base/jid.h"
-#include "lib/ui/widget/OVideoWidget.h"
-#include "lib/ui/widget/VideoWidget.h"
+#include "component/OVideoWidget.h"
+#include "component/VideoWidget.h"
 #include "ui.h"
 
 namespace module::classroom {

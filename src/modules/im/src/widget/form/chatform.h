@@ -31,6 +31,10 @@ class QPixmap;
 class QHideEvent;
 class QMoveEvent;
 
+namespace lib::ui {
+class CroppingLabel;
+}
+
 namespace module::im {
 
 class CallConfirmWidget;
@@ -106,7 +110,7 @@ private:
     void showOutgoingCall(bool video);
 
     const FriendId* f;
-    CroppingLabel* statusMessageLabel;
+    lib::ui::CroppingLabel* statusMessageLabel;
     QMenu statusMessageMenu;
 
     QAction* copyStatusAction;

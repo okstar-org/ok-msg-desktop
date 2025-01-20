@@ -17,10 +17,12 @@
 #include "src/model/message.h"
 #include "src/model/status.h"
 
-class CroppingLabel;
-
 class QVBoxLayout;
 class QHBoxLayout;
+
+namespace lib::ui {
+class CroppingLabel;
+}
 
 namespace module::im {
 

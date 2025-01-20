@@ -42,7 +42,7 @@ class Core;
 /**
  * 在线课堂主界面
  */
-class Widget : public UI::window::OPage {
+class Widget : public lib::ui::OPage {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);
@@ -97,8 +97,7 @@ private:
     StartRoomWidget* startRoomWidget;
     JoinRoomWidget* joinRoomWidget;
     QPointer<RoomWindow> view;
-    QTabWidget*
-    tabWidget;
+    QTabWidget* tabWidget;
     /**
      * 当前正在进行中的会议名称
      * - 会议开始，设置会议号

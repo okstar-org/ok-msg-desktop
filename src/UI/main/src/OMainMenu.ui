@@ -82,7 +82,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="CroppingLabel" name="label_avatar">
+       <widget class="lib::ui::CroppingLabel" name="label_avatar">
         <property name="minimumSize">
          <size>
           <width>50</width>
@@ -349,9 +349,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CroppingLabel</class>
+   <class>lib::ui::CroppingLabel</class>
    <extends>QLabel</extends>
-   <header location="global">lib/ui/widget/croppinglabel.h</header>
+   <header location="global">lib/ui/widget/tools/CroppingLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ok::base::StyledIconButton</class>

@@ -13,7 +13,7 @@
 
 #include <QWidget>
 
-namespace UI {
+namespace lib::ui {
 
 /**
  * 代表模块内标签页（一个模块内子标签页）

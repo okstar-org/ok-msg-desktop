@@ -12,10 +12,10 @@
 
 #include "chatformheader.h"
 
+#include "lib/storage/settings/style.h"
 #include "lib/storage/settings/translator.h"
-#include "lib/ui/widget/croppinglabel.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
+#include "lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/widget/tool/callconfirmwidget.h"
 
 #include <QDebug>
@@ -113,12 +113,13 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     QHBoxLayout* headLayout = new QHBoxLayout(this);
     headLayout->setContentsMargins(0, 0, 0, 0);
     // 头像
-    avatar = new MaskablePixmapWidget(this, base::Styles::AVATAR_SIZE, ":/img/avatar_mask.svg");
+    avatar = new lib::ui::MaskablePixmapWidget(this, base::Styles::AVATAR_SIZE,
+                                               ":/img/avatar_mask.svg");
     avatar->setObjectName("avatar");
     headLayout->addWidget(avatar);
 
     // 名称
-    nameLabel = new CroppingLabel(this);
+    nameLabel = new lib::ui::CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setMinimumHeight(
             lib::settings::Style::getFont(lib::settings::Style::Font::Medium).pixelSize());
@@ -126,7 +127,7 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(contactId.username);
 
-    connect(nameLabel, &CroppingLabel::clicked, [&]() {
+    connect(nameLabel, &lib::ui::CroppingLabel::clicked, [&]() {
         auto w = Widget::getInstance();
         w->toShowDetails(contactId);
     });

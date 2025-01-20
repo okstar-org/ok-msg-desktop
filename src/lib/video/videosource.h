@@ -17,8 +17,8 @@
 
 #include <atomic>
 #include <memory>
-
-class VideoFrame;
+#include "videoframe.h"
+namespace lib::video {
 
 class VideoSource : public QObject {
     Q_OBJECT
@@ -60,5 +60,5 @@ private:
     // Used to manage a global ID for all VideoSources
     static AtomicIDType sourceIDs;
 };
-
+}  // namespace lib::video
 #endif  // VIDEOSOURCE_H

@@ -14,14 +14,14 @@
 #include <QBoxLayout>
 #include <QFrame>
 #include <QLabel>
-#include "lib/ui/widget/movablewidget.h"
+#include "corevideosource.h"
+#include "lib/ui/widget/MovableWidget.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
 #include "src/model/friendlist.h"
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/video/corevideosource.h"
 #include "videosurface.h"
 
 namespace module::im {
@@ -38,7 +38,7 @@ NetCamView::NetCamView(FriendId friendPk, QWidget* parent)
     selfVideoSurface->setMouseTracking(true);
     selfVideoSurface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    selfFrame = new MovableWidget(videoSurface);
+    selfFrame = new lib::ui::MovableWidget(videoSurface);
     selfFrame->show();
 
     QHBoxLayout* frameLayout = new QHBoxLayout(selfFrame);
@@ -82,7 +82,7 @@ NetCamView::~NetCamView() {
     for (QMetaObject::Connection conn : connections) disconnect(conn);
 }
 
-void NetCamView::show(VideoSource* source, const QString& title) {
+void NetCamView::show(lib::video::VideoSource* source, const QString& title) {
     setSource(source);
     setTitle(title);
     QWidget::show();
@@ -93,15 +93,12 @@ void NetCamView::show(VideoSource* source, const QString& title) {
 void NetCamView::hide() {
     setSource(nullptr);
     selfVideoSurface->setSource(nullptr);
-
     if (selfFrame) selfFrame->deleteLater();
-
     selfFrame = nullptr;
-
     QWidget::hide();
 }
 
-void NetCamView::setSource(VideoSource* s) {
+void NetCamView::setSource(lib::video::VideoSource* s) {
     videoSurface->setSource(s);
 }
 

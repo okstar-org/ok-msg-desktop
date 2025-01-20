@@ -147,7 +147,7 @@ void MeetingVideoFrame::creatBottomBar() {
 
     // 中间部分
     QHBoxLayout* middleLayout = new QHBoxLayout();
-    audioSettingButton = new PopupMenuComboBox(bottomBar);
+    audioSettingButton = new lib::ui::PopupMenuComboBox(bottomBar);
     // audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     audioSettingButton->setCursor(Qt::PointingHandCursor);
 
@@ -156,7 +156,7 @@ void MeetingVideoFrame::creatBottomBar() {
         syncAudioVideoState();
     });
 
-    videoSettingButton = new PopupMenuComboBox(bottomBar);
+    videoSettingButton = new lib::ui::PopupMenuComboBox(bottomBar);
     // videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     videoSettingButton->setCursor(Qt::PointingHandCursor);
 
@@ -165,12 +165,12 @@ void MeetingVideoFrame::creatBottomBar() {
         syncAudioVideoState();
     });
 
-    sharedDeskButton = new PopupMenuComboBox(bottomBar);
+    sharedDeskButton = new lib::ui::PopupMenuComboBox(bottomBar);
     sharedDeskButton->iconButton()->setIcon(QIcon(":/meet/image/share_screen.svg"));
     sharedDeskButton->iconButton()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    recoardButton = new PopupMenuComboBox(bottomBar);
+    recoardButton = new lib::ui::PopupMenuComboBox(bottomBar);
     recoardButton->iconButton()->setIcon(QIcon(":/meet/image/record.svg"));
-    inviteButton = new PopupMenuComboBox(bottomBar);
+    inviteButton = new lib::ui::PopupMenuComboBox(bottomBar);
     inviteButton->iconButton()->setIcon(QIcon(":/meet/image/invite_user.svg"));
 
     leaveButton = new QToolButton(bottomBar);
@@ -203,7 +203,7 @@ void MeetingVideoFrame::creatBottomBar() {
 }
 
 void MeetingVideoFrame::initConnection() {
-    connect(audioSettingButton, &PopupMenuComboBox::menuRequest, this,
+    connect(audioSettingButton, &lib::ui::PopupMenuComboBox::menuRequest, this,
             &MeetingVideoFrame::showAudioPopMenu);
 }
 

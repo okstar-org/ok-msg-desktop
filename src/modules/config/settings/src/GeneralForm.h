@@ -20,7 +20,7 @@ namespace module::config {
 
 class SettingsWidget;
 
-class GeneralForm : public UI::GenericForm {
+class GeneralForm : public lib::ui::GenericForm {
     Q_OBJECT
 public:
     explicit GeneralForm(QWidget* parent = nullptr);

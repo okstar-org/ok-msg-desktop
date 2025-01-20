@@ -10,10 +10,10 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "maskablepixmapwidget.h"
+#include "MaskablePixmap.h"
 #include <QPainter>
 #include <QStyle>
-
+namespace lib::ui {
 /**
  * @var QPixmap* MaskablePixmapWidget::renderTarget
  * @brief pointer to dynamically call the constructor.
@@ -24,7 +24,9 @@ MaskablePixmapWidget::MaskablePixmapWidget(QWidget* parent, QSize size, QString 
     setSize(size);
 }
 
-MaskablePixmapWidget::~MaskablePixmapWidget() { delete renderTarget; }
+MaskablePixmapWidget::~MaskablePixmapWidget() {
+    delete renderTarget;
+}
 
 void MaskablePixmapWidget::setClickable(bool clickable) {
     this->clickable = clickable;
@@ -48,7 +50,9 @@ void MaskablePixmapWidget::setPixmap(const QPixmap& pmap) {
     update();
 }
 
-QPixmap MaskablePixmapWidget::getPixmap() const { return *renderTarget; }
+QPixmap MaskablePixmapWidget::getPixmap() const {
+    return *renderTarget;
+}
 
 void MaskablePixmapWidget::setSize(QSize size) {
     setFixedSize(size);
@@ -93,3 +97,4 @@ void MaskablePixmapWidget::updatePixmap() {
     renderTarget->setDevicePixelRatio(this->devicePixelRatioF());
     QLabel::setPixmap(*renderTarget);
 }
+}  // namespace lib::ui

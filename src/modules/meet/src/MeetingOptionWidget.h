@@ -18,10 +18,14 @@
 #include "lib/ortc/ok_rtc.h"
 
 class QPushButton;
-class RoundedPixmapLabel;
-class PopupMenuComboBox;
 class QSlider;
 class QHBoxLayout;
+
+class RoundedPixmapLabel;
+
+namespace lib::ui {
+class PopupMenuComboBox;
+}
 
 namespace module::meet {
 
@@ -50,9 +54,9 @@ private:
 private:
     RoundedPixmapLabel* avatarLabel = nullptr;
 
-    PopupMenuComboBox* micSpeakSetting = nullptr;
-    PopupMenuComboBox* cameraSetting = nullptr;
-    PopupMenuComboBox* volumnSetting = nullptr;
+    lib::ui::PopupMenuComboBox* micSpeakSetting = nullptr;
+    lib::ui::PopupMenuComboBox* cameraSetting = nullptr;
+    lib::ui::PopupMenuComboBox* volumnSetting = nullptr;
     QSlider* volumnSlider = nullptr;
 
     QHBoxLayout* buttonLayout = nullptr;

@@ -27,7 +27,7 @@ namespace module::classroom {
 
 class MeetingOptionWidget;
 
-class StartRoomWidget : public UI::OWidget {
+class StartRoomWidget : public lib::ui::OWidget {
     Q_OBJECT
 public:
     explicit StartRoomWidget(QWidget* parent = nullptr);

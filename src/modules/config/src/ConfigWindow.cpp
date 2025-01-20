@@ -29,7 +29,7 @@
 
 namespace module::config {
 
-ConfigWindow::ConfigWindow(QWidget* parent) : UI::window::OPage(parent), ui(new Ui::ConfigWindow) {
+ConfigWindow::ConfigWindow(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui::ConfigWindow) {
     ui->setupUi(this);
 
     ui->tabWidget->setObjectName("mainTab");
@@ -76,7 +76,7 @@ void ConfigWindow::retranslateUi() {
     ui->tabWidget->setTabText(2, tr("About form"));
 
     for (int i = 0; i < ui->tabWidget->count(); i++) {
-        auto gf = static_cast<UI::GenericForm*>(ui->tabWidget->widget(i));
+        auto gf = static_cast<lib::ui::GenericForm*>(ui->tabWidget->widget(i));
         gf->retranslateUi();
     }
 }

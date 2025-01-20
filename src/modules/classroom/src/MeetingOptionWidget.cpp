@@ -35,7 +35,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
     avatarLabel->setContentsSize(QSize(120, 120));
     avatarLabel->setImage(profile->getAvatar());
 
-    micSpeakSetting = new PopupMenuComboBox(this);
+    micSpeakSetting = new lib::ui::PopupMenuComboBox(this);
     // micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     micSpeakSetting->setLabel(tr("Micphone"));
     micSpeakSetting->setCursor(Qt::PointingHandCursor);
@@ -44,7 +44,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
         updateAudioVideoIcon(true, false, false);
     });
 
-    cameraSetting = new PopupMenuComboBox(this);
+    cameraSetting = new lib::ui::PopupMenuComboBox(this);
     // cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
     cameraSetting->setCursor(Qt::PointingHandCursor);
@@ -54,7 +54,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
         updateAudioVideoIcon(false, true, false);
     });
 
-    volumeSetting = new PopupMenuComboBox(this);
+    volumeSetting = new lib::ui::PopupMenuComboBox(this);
     // volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker.svg"));
     volumeSetting->iconButton()->setCursor(Qt::PointingHandCursor);
     connect(volumeSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {

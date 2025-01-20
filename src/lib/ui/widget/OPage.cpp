@@ -14,10 +14,7 @@
 
 #include <QFrame>
 
-namespace UI {
-namespace window {
-
+namespace lib::ui {
 OPage::OPage(QWidget* parent, Qt::WindowFlags f) : QFrame(parent, f) {}
 
-}  // namespace window
-}  // namespace UI
+}  // namespace lib::ui

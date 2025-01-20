@@ -17,7 +17,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QVBoxLayout>
-
+namespace lib::ui {
 /**
  * @file qrwidget.cpp
  * @link https://stackoverflow.com/questions/21400254/how-to-draw-a-qr-code-with-qt-in-native-c-c
@@ -113,3 +113,4 @@ void QRWidget::paintImage() {
 
     qr = nullptr;
 }
+}  // namespace lib::ui

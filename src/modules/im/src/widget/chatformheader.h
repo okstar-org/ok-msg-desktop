@@ -26,8 +26,10 @@ class QPushButton;
 class QToolButton;
 class QLabel;
 
+namespace lib::ui {
 class CroppingLabel;
 class MaskablePixmapWidget;
+}  // namespace lib::ui
 
 namespace module::im {
 
@@ -116,10 +118,10 @@ private:
     ContactId contactId;
     const Contact* contact = nullptr;
 
-    Mode mode;
-    MaskablePixmapWidget* avatar;
     QVBoxLayout* headTextLayout;
-    CroppingLabel* nameLabel;
+    Mode mode;
+    lib::ui::MaskablePixmapWidget* avatar;
+    lib::ui::CroppingLabel* nameLabel;
     QLabel* statusLabel = nullptr;
     QToolButton* statusIcon = nullptr;
 

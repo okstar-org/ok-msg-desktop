@@ -9,10 +9,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-#ifndef UI_H
-#define UI_H
-
-#include <string>
-
-namespace UI {}
+#ifndef LIB_UI_H
+#define LIB_UI_H
+namespace lib::ui {}
 #endif  // UI_H

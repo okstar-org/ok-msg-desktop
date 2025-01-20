@@ -5,21 +5,12 @@ file(GLOB ${PROJECT_NAME}_SOURCES
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			camera/directshow.cpp
-			camera/directshow.h)
-	set(${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_RESOURCES})
+	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES} camera/directshow.cpp camera/directshow.h)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-			camera/v4l2.cpp
-			camera/v4l2.h)
+	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES} camera/v4l2.cpp camera/v4l2.h)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-                        camera/avfoundation.h
-                        camera/avfoundation.mm
-	)
+	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES} camera/avfoundation.h camera/avfoundation.mm)
 endif ()
-
 
 pkg_check_modules(AVDEVICE REQUIRED libavdevice)
 include_directories(${AVDEVICE_INCLUDE_DIRS})

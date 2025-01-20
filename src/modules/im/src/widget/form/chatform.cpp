@@ -16,7 +16,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include "lib/storage/settings/translator.h"
-#include "lib/ui/widget/croppinglabel.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/base/MessageBox.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
@@ -28,7 +28,7 @@
 #include "src/core/corefile.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
@@ -70,7 +70,7 @@ ChatForm::ChatForm(const FriendId* chatFriend,
                    IChatLog& chatLog_,
                    IMessageDispatcher& messageDispatcher)
         : GenericChatForm(chatFriend, chatLog_, messageDispatcher), f(chatFriend) {
-    statusMessageLabel = new CroppingLabel();
+    statusMessageLabel = new lib::ui::CroppingLabel();
     statusMessageLabel->setObjectName("statusLabel");
     statusMessageLabel->setFont(lib::settings::Style::getFont(lib::settings::Style::Font::Medium));
     statusMessageLabel->setMinimumHeight(
@@ -111,7 +111,7 @@ ChatForm::ChatForm(const FriendId* chatFriend,
     //    connect(msgEdit, &ChatTextEdit::enterPressed, this, &ChatForm::callUpdateFriendActivity);
 
     //    connect(msgEdit, &ChatTextEdit::pasteImage, this, &ChatForm::sendImage);
-    connect(statusMessageLabel, &CroppingLabel::customContextMenuRequested, this,
+    connect(statusMessageLabel, &lib::ui::CroppingLabel::customContextMenuRequested, this,
             [&](const QPoint& pos) {
                 if (!statusMessageLabel->text().isEmpty()) {
                     QWidget* sender = static_cast<QWidget*>(this->sender());

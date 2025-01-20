@@ -18,10 +18,10 @@
 #include "contentdialogmanager.h"
 #include "contentlayout.h"
 #include "groupwidget.h"
-#include "lib/ui/widget/croppinglabel.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/aboutfriend.h"
 #include "src/model/chatroom/friendchatroom.h"
 #include "src/model/friend.h"
@@ -62,9 +62,9 @@ FriendWidget::FriendWidget(Friend* f, QWidget* parent)
 
     connect(m_friend, &Friend::avatarChanged, [&](const QPixmap& pixmap) { setAvatar(pixmap); });
     // update alias when edited
-    connect(nameLabel, &CroppingLabel::editFinished, m_friend, &Friend::setAlias);
+    connect(nameLabel, &lib::ui::CroppingLabel::editFinished, m_friend, &Friend::setAlias);
     // update on changes of the displayed name
-    connect(m_friend, &Friend::displayedNameChanged, nameLabel, &CroppingLabel::setText);
+    connect(m_friend, &Friend::displayedNameChanged, nameLabel, &lib::ui::CroppingLabel::setText);
     connect(m_friend, &Friend::displayedNameChanged, this, [this](const QString& newName) {
         Q_UNUSED(newName);
         emit friendWidgetRenamed(this);

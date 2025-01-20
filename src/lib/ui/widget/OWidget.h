@@ -16,7 +16,7 @@
 #include <QPaintEvent>
 #include <QWidget>
 
-namespace UI {
+namespace lib::ui {
 
 class OWidget : public QWidget {
     Q_OBJECT

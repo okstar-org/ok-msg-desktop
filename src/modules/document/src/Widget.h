@@ -17,8 +17,20 @@
 
 #include "lib/ui/widget/OPage.h"
 
+class QTabWidget;
+
 namespace module::doc {
 
-class Widget : public UI::window::OPage {};
+class Widget : public lib::ui::OPage {
+    Q_OBJECT
+public:
+    explicit Widget(QWidget* parent = nullptr);
+    ~Widget() override;
+
+    void reloadTheme() override;
+
+private:
+    QTabWidget* tab;
+};
 
 }  // namespace module::doc

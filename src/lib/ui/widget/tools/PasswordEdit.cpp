@@ -13,6 +13,7 @@
 #include "PasswordEdit.h"
 
 #include <QCoreApplication>
+namespace lib::ui {
 
 PasswordEdit::EventHandler* PasswordEdit::eventHandler{nullptr};
 
@@ -26,7 +27,9 @@ PasswordEdit::PasswordEdit(QWidget* parent) : QLineEdit(parent), action(new QAct
 #endif
 }
 
-PasswordEdit::~PasswordEdit() { unregisterHandler(); }
+PasswordEdit::~PasswordEdit() {
+    unregisterHandler();
+}
 
 void PasswordEdit::registerHandler() {
 #ifdef ENABLE_CAPSLOCK_INDICATOR
@@ -56,7 +59,9 @@ void PasswordEdit::showEvent(QShowEvent*) {
     registerHandler();
 }
 
-void PasswordEdit::hideEvent(QHideEvent*) { unregisterHandler(); }
+void PasswordEdit::hideEvent(QHideEvent*) {
+    unregisterHandler();
+}
 
 #ifdef ENABLE_CAPSLOCK_INDICATOR
 PasswordEdit::EventHandler::EventHandler() {
@@ -86,3 +91,4 @@ bool PasswordEdit::EventHandler::eventFilter(QObject* obj, QEvent* event) {
     return QObject::eventFilter(obj, event);
 }
 #endif  // ENABLE_CAPSLOCK_INDICATOR
+}  // namespace lib::ui

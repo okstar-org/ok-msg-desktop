@@ -58,7 +58,7 @@
 #include "src/core/corefile.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"

@@ -25,6 +25,8 @@ struct AVInputFormat;
 struct AVDeviceInfoList;
 struct AVDictionary;
 
+namespace lib::video {
+
 class CameraDevice {
 public:
     static CameraDevice* open(QString devName, VideoMode mode = VideoMode());
@@ -57,5 +59,5 @@ private:
     static QHash<QString, CameraDevice*> openDevices;
     static QMutex openDeviceLock, iformatLock;
 };
-
+}  // namespace lib::video
 #endif  // CAMERADEVICE_H

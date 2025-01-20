@@ -29,7 +29,7 @@ namespace lib::settings {
 
 enum class MainTheme;
 
-class OkSettings : public QObject, public audio::IAudioSettings, public IVideoSettings{
+class OkSettings : public QObject, public audio::IAudioSettings, public video::IVideoSettings {
     Q_OBJECT
 public:
     explicit OkSettings(QObject* parent = nullptr);

@@ -35,10 +35,11 @@ namespace module::im {
 
 static CoreAV* instance = nullptr;
 
-std::unique_ptr<vpx_image> makeVpxFrame(uint16_t w, uint16_t h, const uint8_t* y, const uint8_t* u,
-                                        const uint8_t* v, int32_t ystride, int32_t ustride,
-                                        int32_t vstride) {
-    auto frame = std::make_unique<vpx_image>();
+std::unique_ptr<lib::video::vpx_image> makeVpxFrame(uint16_t w, uint16_t h, const uint8_t* y,
+                                                    const uint8_t* u, const uint8_t* v,
+                                                    int32_t ystride, int32_t ustride,
+                                                    int32_t vstride) {
+    auto frame = std::make_unique<lib::video::vpx_image>();
     frame->d_h = h;
     frame->d_w = w;
     frame->planes[0] = const_cast<uint8_t*>(y);
@@ -342,7 +343,7 @@ bool CoreAV::sendCallAudio(QString callId, const int16_t* pcm, size_t samples, u
     return true;
 }
 
-void CoreAV::sendCallVideo(QString callId, std::shared_ptr<VideoFrame> vframe) {
+void CoreAV::sendCallVideo(QString callId, std::shared_ptr<lib::video::VideoFrame> vframe) {
     // QWriteLocker locker{&callsLock};
 
     // We might be running in the FFmpeg thread and holding the CameraSource lock
@@ -368,8 +369,7 @@ void CoreAV::sendCallVideo(QString callId, std::shared_ptr<VideoFrame> vframe) {
         call.setNullVideoBitrate(false);
     }
 
-    ToxYUVFrame frame = vframe->toToxYUVFrame();
-
+    auto frame = vframe->toToxYUVFrame();
     if (!frame) {
         return;
     }
@@ -477,7 +477,7 @@ void CoreAV::invalidateGroupCallPeerSource(QString group, FriendId peerPk) {
  * @param friendNum Id of friend in call list.
  * @return Video surface to show
  */
-VideoSource* CoreAV::getVideoSourceFromCall(QString friendNum) const {
+lib::video::VideoSource* CoreAV::getVideoSourceFromCall(QString friendNum) const {
     QReadLocker locker{&callsLock};
 
     auto it = calls.find(friendNum);
@@ -898,9 +898,8 @@ void CoreAV::audioFrameCallback(QString friendNum, const int16_t* pcm, size_t sa
     call.playAudioBuffer(pcm, sampleCount, channels, samplingRate);
 }
 
-void CoreAV::videoFramePush(CoreVideoSource* videoSource,  //
-                            std::unique_ptr<vpx_image>
-                                    frame) {
+void CoreAV::videoFramePush(CoreVideoSource* videoSource,
+                            std::unique_ptr<lib::video::vpx_image> frame) {
     if (!videoSource) {
         return;
     }

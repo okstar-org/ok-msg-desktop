@@ -33,7 +33,7 @@
 namespace module::platform {
 
 AppCenterWidget::AppCenterWidget(AppCenterPage* page, QWidget* parent)
-        : UI::OWidget(parent), platformPage(page) {
+        : OWidget(parent), platformPage(page) {
     setLayout(new QGridLayout);
     layout()->setContentsMargins(0, 0, 0, 0);
 }

@@ -10,11 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "movablewidget.h"
+#include "MovableWidget.h"
 #include <QGraphicsOpacityEffect>
 #include <QMouseEvent>
 #include <cmath>
-
+namespace lib::ui {
 MovableWidget::MovableWidget(QWidget* parent) : QWidget(parent) {
     setMinimumHeight(64);
     setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored));
@@ -235,3 +235,4 @@ void MovableWidget::checkBoundary(QPoint& point) const {
     if (point.y() + height() > boundaryRect.bottom() + 1)
         point.setY(boundaryRect.bottom() - height() + 1);
 }
+}  // namespace lib::ui

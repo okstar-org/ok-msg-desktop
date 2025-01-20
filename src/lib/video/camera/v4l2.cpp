@@ -106,8 +106,8 @@ static QVector<float> getDeviceModeFramerates(int fd, unsigned w, unsigned h,
     return rates;
 }
 
-QVector<VideoMode> v4l2::getDeviceModes(QString devName) {
-    QVector<VideoMode> modes;
+QVector<lib::video::VideoMode> v4l2::getDeviceModes(QString devName) {
+    QVector<lib::video::VideoMode> modes;
 
     int error = 0;
     int fd = deviceOpen(devName, &error);
@@ -125,7 +125,7 @@ QVector<VideoMode> v4l2::getDeviceModes(QString devName) {
         vfse.pixel_format = vfd.pixelformat;
 
         while (!ioctl(fd, VIDIOC_ENUM_FRAMESIZES, &vfse)) {
-            VideoMode mode;
+            lib::video::VideoMode mode;
             mode.pixel_format = vfse.pixel_format;
             switch (vfse.type) {
                 case V4L2_FRMSIZE_TYPE_DISCRETE:

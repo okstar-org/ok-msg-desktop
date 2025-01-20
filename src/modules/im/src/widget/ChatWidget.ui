@@ -176,7 +176,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="CroppingLabel" name="nameLabel">
+                 <widget class="lib::ui::CroppingLabel" name="nameLabel">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -652,7 +652,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="CroppingLabel" name="statusLabel">
+                 <widget class="lib::ui::CroppingLabel" name="statusLabel">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                     <horstretch>1</horstretch>
@@ -865,9 +865,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CroppingLabel</class>
+   <class>lib::ui::CroppingLabel</class>
    <extends>QLabel</extends>
-      <header location="global">lib/ui/widget/croppinglabel.h</header>
+   <header location="global">lib/ui/widget/tools/CroppingLabel.h</header>
   </customwidget>
   <customwidget>
    <class>RoundedMaskContainer</class>

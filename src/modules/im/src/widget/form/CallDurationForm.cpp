@@ -146,7 +146,7 @@ GenericNetCamView* CallDurationForm::createNetcam() {
     NetCamView* view = new NetCamView(fId, this);
     CoreAV* av = CoreAV::getInstance();
 
-    VideoSource* source = av->getVideoSourceFromCall(fId.getId());
+    lib::video::VideoSource* source = av->getVideoSourceFromCall(fId.getId());
     view->show(source, contact->getDisplayedName());
 
     //  connect(view, &GenericNetCamView::videoCallEnd, this,

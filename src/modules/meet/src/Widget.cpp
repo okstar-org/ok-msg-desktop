@@ -40,7 +40,7 @@
 namespace module::meet {
 
 Widget::Widget(QWidget* parent)
-        : UI::window::OPage(parent)
+        : lib::ui::OPage(parent)
         , ui(new Ui::WorkPlatform)
         , view{nullptr}
         , state{MeetingState::NoMeeting} {
@@ -54,8 +54,6 @@ Widget::Widget(QWidget* parent)
     ui->tabWidget->setObjectName("mainTab");
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
 
-    initTranslate();
-
     startMeetWidget = new StartMeetingWidget(this);
     ui->tabWidget->addTab(startMeetWidget, tr("Start Meeting"));
 
@@ -68,6 +66,7 @@ Widget::Widget(QWidget* parent)
     MeetingSettingWidget* setting = new MeetingSettingWidget(this);
     ui->tabWidget->addTab(setting, tr("Setting"));
 
+    initTranslate();
     reloadTheme();
 
     connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting, this, &Widget::createMeeting);

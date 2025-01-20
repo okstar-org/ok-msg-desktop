@@ -72,7 +72,8 @@ Nexus::Nexus(QObject* parent)
 
     qRegisterMetaType<FileDirection>("FileDirection");
     qRegisterMetaType<FileStatus>("FileStatus");
-    qRegisterMetaType<std::shared_ptr<VideoFrame>>("std::shared_ptr<VideoFrame>");
+    qRegisterMetaType<std::shared_ptr<lib::video::VideoFrame>>(
+            "std::shared_ptr<lib::video::VideoFrame>");
     qRegisterMetaType<FriendId>("ToxPk");
     qRegisterMetaType<ToxId>("ToxId");
     qRegisterMetaType<GroupId>("GroupId");
@@ -236,7 +237,7 @@ void Nexus::cleanup() {
 
     profile->quit();
 
-    CameraSource::destroyInstance();
+    lib::video::CameraSource::destroyInstance();
     Settings::destroyInstance();
 
     qDebug() << __func__ << ".";

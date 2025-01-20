@@ -27,7 +27,7 @@
 namespace module::config {
 
 PluginManagerForm::PluginManagerForm(QWidget* parent)
-        : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent)
+        : lib::ui::GenericForm(QPixmap(":/img/settings/general.png"), parent)
         , ui(new Ui::PluginManagerForm) {
     ui->setupUi(this);
 

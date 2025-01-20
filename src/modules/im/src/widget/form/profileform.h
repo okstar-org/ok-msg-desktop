@@ -17,13 +17,16 @@
 #include <QLineEdit>
 #include <QTimer>
 #include <QVBoxLayout>
-#include "src/lib/ui/widget/QRWidget.h"
 
-class MaskablePixmapWidget;
-class CroppingLabel;
 
 namespace Ui {
 class IdentitySettings;
+}
+
+namespace lib::ui {
+class MaskablePixmapWidget;
+class CroppingLabel;
+class QRWidget;
 }
 
 namespace module::im {
@@ -90,8 +93,8 @@ private:
 
 private:
     Ui::IdentitySettings* bodyUI;
-    MaskablePixmapWidget* profilePicture;
-    QRWidget* qr;
+    lib::ui::MaskablePixmapWidget* profilePicture;
+    lib::ui::QRWidget* qr;
     IProfileInfo* profileInfo;
 };
 }  // namespace module::im

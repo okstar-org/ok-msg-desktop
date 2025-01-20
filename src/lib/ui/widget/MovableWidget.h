@@ -14,7 +14,7 @@
 #define MOVABLEWIDGET_H
 
 #include <QWidget>
-
+namespace lib::ui {
 class MovableWidget : public QWidget {
 public:
     explicit MovableWidget(QWidget* parent);
@@ -51,5 +51,5 @@ private:
     QPointF actualPos;
     float ratio;
 };
-
+}  // namespace lib::ui
 #endif  // MOVABLEWIDGET_H

@@ -19,6 +19,8 @@ class QToolButton;
 class QHBoxLayout;
 class QMenu;
 
+namespace lib::ui {
+
 class PopupMenuComboBox : public QFrame {
     Q_OBJECT
 
@@ -46,3 +48,4 @@ private:
     QPointer<QWidget> content;
     QPointer<QMenu> popMenu;
 };
+}  // namespace lib::ui

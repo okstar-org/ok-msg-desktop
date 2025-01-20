@@ -23,7 +23,7 @@ class ConnectForm;
 
 namespace module::config {
 
-class ConnectForm : public UI::GenericForm {
+class ConnectForm : public lib::ui::GenericForm {
     Q_OBJECT
 public:
     explicit ConnectForm(QWidget* parent = nullptr);

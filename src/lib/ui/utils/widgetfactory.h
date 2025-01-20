@@ -16,7 +16,7 @@
 #include <QWidget>
 #include <list>
 
-namespace UI {
+namespace lib::ui {
 
 class WidgetFactory : public QObject {
     Q_OBJECT

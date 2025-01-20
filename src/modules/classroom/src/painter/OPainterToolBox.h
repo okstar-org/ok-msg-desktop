@@ -27,11 +27,11 @@ class OPainterToolBox;
 
 namespace module::classroom {
 
-class OPainterToolBox : public UI::MoveableBar {
+class OPainterToolBox : public lib::ui::MoveableBar {
     Q_OBJECT
 public:
     explicit OPainterToolBox(QWidget* parent = nullptr);
-    ~OPainterToolBox();
+    ~OPainterToolBox() override;
 
 protected:
     //  bool eventFilter(QObject *target, QEvent *event);

@@ -17,6 +17,7 @@
 
 #include <QRect>
 #include <QString>
+namespace lib::video {
 
 class IVideoSettings {
 public:
@@ -43,5 +44,6 @@ public:
     DECLARE_SIGNAL(camVideoResChanged, const QRect& region);
     DECLARE_SIGNAL(camVideoFPSChanged, unsigned short fps);
 };
+}  // namespace lib::video
 
 #endif  // I_VIDEO_SETTINGS_H

@@ -21,9 +21,10 @@
 class QLineEdit;
 
 namespace module::classroom {
+
 class MeetingOptionWidget;
 
-class JoinRoomWidget : public UI::OWidget {
+class JoinRoomWidget : public lib::ui::OWidget {
     Q_OBJECT
 public:
     explicit JoinRoomWidget(QWidget* parent = nullptr);

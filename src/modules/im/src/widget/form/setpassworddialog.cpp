@@ -15,6 +15,7 @@
 
 #include <QApplication>
 #include <QPushButton>
+
 namespace module::im {
 
 const double SetPasswordDialog::reasonablePasswordLength = 8.;

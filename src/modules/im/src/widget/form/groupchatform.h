@@ -18,10 +18,13 @@
 #include "src/model/FriendId.h"
 
 class QTimer;
-class FlowLayout;
 
 namespace Ui {
 class MainWindow;
+}
+
+namespace lib::ui {
+class FlowLayout;
 }
 
 namespace module::im {
@@ -74,7 +77,7 @@ private:
     const GroupId* group;
     QMap<QString, QLabel*> peerLabels;
     QMap<QString, QTimer*> peerAudioTimers;
-    FlowLayout* namesListLayout;
+    lib::ui::FlowLayout* namesListLayout;
     QLabel* nusersLabel;
     TabCompleter* tabber;
     bool inCall;

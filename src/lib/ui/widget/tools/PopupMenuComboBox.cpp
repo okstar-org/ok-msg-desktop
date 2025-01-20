@@ -19,6 +19,7 @@
 #include <QPainter>
 #include <QLabel>
 #include <QMenu>
+namespace lib::ui {
 
 class ToolButtonRemoveSpace : public QToolButton {
 public:
@@ -105,30 +106,31 @@ void PopupMenuComboBox::setWidget(QWidget* widget) {
     content = widget;
 }
 
-QToolButton* PopupMenuComboBox::iconButton() { return _iconButton; }
+QToolButton* PopupMenuComboBox::iconButton() {
+    return _iconButton;
+}
 
 void PopupMenuComboBox::setMenu(QMenu* menu) {
     popMenu = menu;
 }
 
-void PopupMenuComboBox::showMenuOnce(QMenu* menu)
-{
+void PopupMenuComboBox::showMenuOnce(QMenu* menu) {
     QSize size = menu->sizeHint();
     QPoint pos = this->mapToGlobal(QPoint(0, -5));
     pos.ry() -= size.height();
     menu->exec(pos);
 
-    if (!rect().contains(mapFromGlobal(QCursor::pos())))
-    {
+    if (!rect().contains(mapFromGlobal(QCursor::pos()))) {
         menuButton->setAttribute(Qt::WA_UnderMouse, false);
         menuButton->update();
     }
 }
 
 void PopupMenuComboBox::onMenuButtonClicked() {
-    if (popMenu){
+    if (popMenu) {
         showMenuOnce(popMenu.data());
         return;
     }
     emit menuRequest();
 }
+}  // namespace lib::ui

@@ -70,13 +70,9 @@ add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_FORMS}
 )
 
-find_package(Qt5 COMPONENTS Core Widgets WebChannel WebSockets WebEngine WebEngineWidgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
-		PRIVATE ${Qt5WebChannel_LIBRARIES}
-		PRIVATE ${Qt5WebSockets_LIBRARIES}
-		PRIVATE ${Qt5WebEngineWidgets_LIBRARIES}
-		PRIVATE ${Qt5WebEngine_LIBRARIES}
 		PRIVATE ${Qt5Widgets_LIBRARIES}
 		PRIVATE ${Qt5Core_LIBRARIES}
 )

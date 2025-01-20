@@ -129,7 +129,7 @@ ChatWidget::~ChatWidget() {
 }
 
 void ChatWidget::init() {
-    connect(ui->nameLabel, &CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
+    connect(ui->nameLabel, &lib::ui::CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
 
     auto widget = Widget::getInstance();
 
@@ -155,7 +155,7 @@ void ChatWidget::init() {
 void ChatWidget::deinit() {
     settings::Translator::unregister(this);
 
-    disconnect(ui->nameLabel, &CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
+    disconnect(ui->nameLabel, &lib::ui::CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
 
     auto widget = Widget::getInstance();
 

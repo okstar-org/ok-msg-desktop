@@ -42,7 +42,7 @@ class MeetingVideoFrame;
 /**
  * 会议主界面
  */
-class Widget : public UI::window::OPage {
+class Widget : public lib::ui::OPage {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);

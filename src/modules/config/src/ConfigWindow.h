@@ -17,11 +17,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <memory>
-#include <vector>
 
-#include "UI/main/src/OMenuWidget.h"
-#include "base/Page.h"
-#include "base/resources.h"
 #include "lib/ui/widget/OPage.h"
 
 namespace Ui {
@@ -33,12 +29,12 @@ namespace module::config {
 /**
  * 配置窗口
  */
-class ConfigWindow : public UI::window::OPage {
+class ConfigWindow : public lib::ui::OPage {
     Q_OBJECT
 public:
     explicit ConfigWindow(QWidget* parent = nullptr);
     ~ConfigWindow() override;
-    void reloadTheme();
+    void reloadTheme() override;
 
 protected:
     void retranslateUi();

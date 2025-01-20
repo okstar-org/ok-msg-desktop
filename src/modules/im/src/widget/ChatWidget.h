@@ -30,7 +30,6 @@ class ChatWidget;
 
 namespace module::im {
 
-class CircleWidget;
 class GroupInviteForm;
 class AddFriendForm;
 class MessageSessionListWidget;

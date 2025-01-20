@@ -22,7 +22,7 @@
 #include "lib/ui/widget/GenericForm.h"
 
 namespace module::config {
-class SettingsWidget : public UI::GenericForm {
+class SettingsWidget : public lib::ui::GenericForm {
     Q_OBJECT
 public:
     SettingsWidget(QWidget* parent = nullptr);

@@ -21,10 +21,6 @@ extern "C" {
 #include "cameradevice.h"
 #include "lib/storage/settings/OkSettings.h"
 
-
-// no longer needed when avformat version < 59 is no longer supported
-using AvFindInputFormatRet = decltype(av_find_input_format(""));
-
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 #define USING_V4L 1
 #else
@@ -40,6 +36,11 @@ using AvFindInputFormatRet = decltype(av_find_input_format(""));
 #ifdef Q_OS_OSX
 #include "camera/avfoundation.h"
 #endif
+
+namespace lib::video {
+
+// no longer needed when avformat version < 59 is no longer supported
+using AvFindInputFormatRet = decltype(av_find_input_format(""));
 
 /**
  * @class CameraDevice
@@ -394,7 +395,7 @@ QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
  * This is either the device in the settings or the system default.
  */
 QString CameraDevice::getDefaultDeviceName() {
-    auto &s = lib::settings::OkSettings::getInstance();
+    auto& s = lib::settings::OkSettings::getInstance();
 
     QString defaultdev = s.getVideoDev();
     qDebug() << "defaultdev:" << defaultdev;
@@ -536,3 +537,4 @@ bool CameraDevice::getDefaultInputFormat() {
     qWarning() << "No valid input format found";
     return false;
 }
+}  // namespace lib::video

@@ -24,7 +24,7 @@ static QPoint GetCurPos() {
 namespace module::classroom {
 
 OPainterToolBox::OPainterToolBox(QWidget* parent)
-        : UI::MoveableBar(parent)
+        : lib::ui::MoveableBar(parent)
         , ui(new Ui::OPainterToolBox)
         , _delayCaller(std::make_unique<base::DelayedCallTimer>()) {
     ui->setupUi(this);

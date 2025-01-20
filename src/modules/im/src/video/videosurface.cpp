@@ -45,7 +45,7 @@ VideoSurface::VideoSurface(const QPixmap& avatar, QWidget* parent, bool expandin
     recalulateBounds();
 }
 
-VideoSurface::VideoSurface(const QPixmap& avatar, VideoSource* source, QWidget* parent)
+VideoSurface::VideoSurface(const QPixmap& avatar, lib::video::VideoSource* source, QWidget* parent)
         : VideoSurface(avatar, parent) {
     setSource(source);
 }
@@ -65,7 +65,7 @@ bool VideoSurface::isExpanding() const {
  *
  * Unsubscribe from old source and subscribe to new.
  */
-void VideoSurface::setSource(VideoSource* src) {
+void VideoSurface::setSource(lib::video::VideoSource* src) {
     if (source == src) return;
 
     unsubscribe();
@@ -95,8 +95,10 @@ QPixmap VideoSurface::getAvatar() const {
 void VideoSurface::subscribe() {
     if (source && hasSubscribed++ == 0) {
         source->subscribe();
-        connect(source, &VideoSource::frameAvailable, this, &VideoSurface::onNewFrameAvailable);
-        connect(source, &VideoSource::sourceStopped, this, &VideoSurface::onSourceStopped);
+        connect(source, &lib::video::VideoSource::frameAvailable, this,
+                &VideoSurface::onNewFrameAvailable);
+        connect(source, &lib::video::VideoSource::sourceStopped, this,
+                &VideoSurface::onSourceStopped);
     }
 }
 
@@ -114,12 +116,14 @@ void VideoSurface::unsubscribe() {
     emit ratioChanged();
     emit boundaryChanged();
 
-    disconnect(source, &VideoSource::frameAvailable, this, &VideoSurface::onNewFrameAvailable);
-    disconnect(source, &VideoSource::sourceStopped, this, &VideoSurface::onSourceStopped);
+    disconnect(source, &lib::video::VideoSource::frameAvailable, this,
+               &VideoSurface::onNewFrameAvailable);
+    disconnect(source, &lib::video::VideoSource::sourceStopped, this,
+               &VideoSurface::onSourceStopped);
     source->unsubscribe();
 }
 
-void VideoSurface::onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFrame) {
+void VideoSurface::onNewFrameAvailable(const std::shared_ptr<lib::video::VideoFrame>& newFrame) {
     QSize newSize;
 
     lock();

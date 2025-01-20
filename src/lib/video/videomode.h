@@ -15,6 +15,7 @@
 
 #include <QRect>
 #include <cstdint>
+namespace lib::video {
 
 struct VideoMode {
     int width, height;
@@ -33,5 +34,5 @@ struct VideoMode {
     uint32_t norm(const VideoMode& other) const;
     uint32_t tolerance() const;
 };
-
+}  // namespace lib::video
 #endif  // VIDEOMODE_H

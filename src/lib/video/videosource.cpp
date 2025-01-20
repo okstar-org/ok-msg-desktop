@@ -11,14 +11,7 @@
  */
 
 #include "videosource.h"
-
-/**
- * @class VideoSource
- * @brief An abstract source of video frames
- *
- * When it has at least one subscriber the source will emit new video frames.
- * Subscribing is recursive, multiple users can subscribe to the same VideoSource.
- */
-
+namespace lib::video {
 // Initialize sourceIDs to 0
 VideoSource::AtomicIDType VideoSource::sourceIDs{0};
+}  // namespace lib::video

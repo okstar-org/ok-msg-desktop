@@ -160,7 +160,7 @@
            </spacer>
           </item>
           <item row="0" column="0">
-           <widget class="CroppingLabel" name="filenameLabel">
+           <widget class="lib::ui::CroppingLabel" name="filenameLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -308,7 +308,7 @@
            <string notr="true">QPushButton{ border: 2px solid white }</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../res.qrc">
+           <iconset>
             <normaloff>:themes/default/fileTransferInstance/no.svg</normaloff>:themes/default/fileTransferInstance/no.svg</iconset>
           </property>
           <property name="iconSize">
@@ -394,7 +394,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../../res.qrc">
+            <iconset>
              <normaloff>:themes/default/fileTransferInstance/no.svg</normaloff>:themes/default/fileTransferInstance/no.svg</iconset>
            </property>
            <property name="iconSize">
@@ -432,7 +432,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../../res.qrc">
+            <iconset>
              <normaloff>:themes/default/fileTransferInstance/no.svg</normaloff>:themes/default/fileTransferInstance/no.svg</iconset>
            </property>
            <property name="iconSize">
@@ -453,16 +453,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CroppingLabel</class>
+   <class>lib::ui::CroppingLabel</class>
    <extends>QLabel</extends>
-   <header location="global">lib/ui/widget/croppinglabel.h</header>
+   <header location="global">lib/ui/widget/tools/CroppingLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>previewButton</tabstop>
  </tabstops>
- <resources>
-  <include location="../../../res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

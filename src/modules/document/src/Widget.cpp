@@ -15,4 +15,46 @@
 //
 
 #include "Widget.h"
-namespace module::doc {}
+#include <QDebug>
+#include <QTabWidget>
+#include <QVBoxLayout>
+
+#include "lib/storage/settings/style.h"
+#include "lib/ui/web/WebWidget.h"
+
+namespace module::doc {
+
+Widget::Widget(QWidget* parent) : lib::ui::OPage(parent) {
+    setContentsMargins(0, 0, 0, 0);
+    // setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+
+    // 创建布局
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    tab = new QTabWidget(this);
+    tab->setObjectName("mainTab");
+
+    tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    tab->addTab(new lib::ui::WebWidget(QUrl("http://localhost/example/"), this), tr("Office"));
+    tab->addTab(new lib::ui::WebWidget(QUrl("http://localhost:9001/"), this), tr("Etherpad"));
+    layout->addWidget(tab);
+
+    setLayout(layout);
+
+    reloadTheme();
+}
+
+Widget::~Widget() {}
+
+void Widget::reloadTheme() {
+    auto style = lib::settings::Style::getStylesheet("general.css");
+
+    qDebug() << style;
+    setStyleSheet(style);
+}
+
+}  // namespace module::doc

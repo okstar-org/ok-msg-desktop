@@ -35,8 +35,7 @@
 
 namespace module::classroom {
 
-Widget::Widget(QWidget* parent) : UI::window::OPage(parent)
-        , view{nullptr}
+Widget::Widget(QWidget* parent) : lib::ui::OPage(parent), view{nullptr}
         , state{RoomState::None}
 {
     OK_RESOURCE_INIT(Classroom);
@@ -48,7 +47,7 @@ Widget::Widget(QWidget* parent) : UI::window::OPage(parent)
     auto layout = new QGridLayout(this);
 
     tabWidget = new QTabWidget(this);
-    tabWidget->setMinimumWidth(200);
+    tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     tabWidget->setObjectName("mainTab");
     tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
 

@@ -28,7 +28,7 @@ class PluginManagerForm;
 
 namespace module::config {
 
-class PluginManagerForm : public UI::GenericForm {
+class PluginManagerForm : public lib::ui::GenericForm {
     Q_OBJECT
 public:
     explicit PluginManagerForm(QWidget* parent = nullptr);

@@ -10,11 +10,11 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef MASKABLEPIXMAPWIDGET_H
-#define MASKABLEPIXMAPWIDGET_H
+#ifndef MASKABLEPIXMAP_H
+#define MASKABLEPIXMAP_H
 
 #include <QLabel>
-
+namespace lib::ui {
 class MaskablePixmapWidget : public QLabel {
     Q_OBJECT
 public:
@@ -40,5 +40,5 @@ private:
 signals:
     void clicked();
 };
-
-#endif  // MASKABLEPIXMAPWIDGET_H
+}  // namespace lib::ui
+#endif  // MASKABLEPIXMAP_H

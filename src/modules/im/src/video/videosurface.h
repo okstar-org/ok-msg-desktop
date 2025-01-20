@@ -24,11 +24,11 @@ class VideoSurface : public QWidget {
 
 public:
     VideoSurface(const QPixmap& avatar, QWidget* parent = nullptr, bool expanding = false);
-    VideoSurface(const QPixmap& avatar, VideoSource* source, QWidget* parent = nullptr);
+    VideoSurface(const QPixmap& avatar, lib::video::VideoSource* source, QWidget* parent = nullptr);
     ~VideoSurface();
 
     bool isExpanding() const;
-    void setSource(VideoSource* src);
+    void setSource(lib::video::VideoSource* src);
     QRect getBoundingRect() const;
     float getRatio() const;
     void setAvatar(const QPixmap& pixmap);
@@ -47,7 +47,7 @@ protected:
     virtual void showEvent(QShowEvent* event) final override;
 
 private slots:
-    void onNewFrameAvailable(const std::shared_ptr<VideoFrame>& newFrame);
+    void onNewFrameAvailable(const std::shared_ptr<lib::video::VideoFrame>& newFrame);
     void onSourceStopped();
 
 private:
@@ -56,8 +56,8 @@ private:
     void unlock();
 
     QRect boundingRect;
-    VideoSource* source;
-    std::shared_ptr<VideoFrame> lastFrame;
+    lib::video::VideoSource* source;
+    std::shared_ptr<lib::video::VideoFrame> lastFrame;
     std::atomic_bool frameLock;
     uint8_t hasSubscribed;
     QPixmap avatar;

@@ -29,6 +29,10 @@ QDialog
     background: white;
 }
 
+QTabBar::tab { /* 标签 */
+    cursor: pointer; /* 指针样式 */
+}
+
 QTabBar::tab:selected 
 {
     background: #2d3136;

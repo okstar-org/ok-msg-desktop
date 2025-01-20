@@ -25,6 +25,8 @@
 class CameraDevice;
 struct AVCodecContext;
 
+namespace lib::video {
+
 class CameraSource : public VideoSource {
     Q_OBJECT
 
@@ -74,5 +76,5 @@ private:
 
     static CameraSource* instance;
 };
-
+}  // namespace lib::video
 #endif  // CAMERA_H

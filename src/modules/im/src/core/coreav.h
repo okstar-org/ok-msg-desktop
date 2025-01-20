@@ -21,12 +21,15 @@
 
 #include "base/compatiblerecursivemutex.h"
 #include "src/core/toxcall.h"
+
 class QThread;
 class QTimer;
 
+namespace lib::video {
 struct vpx_image;
 class VideoFrame;
 class VideoSource;
+}  // namespace lib::video
 
 namespace lib::audio {
 class IAudioControl;
@@ -35,9 +38,8 @@ class IAudioControl;
 namespace module::im {
 class Friend;
 class Group;
-class CoreVideoSource;
-
 class Core;
+class CoreVideoSource;
 
 class CoreAV : public QObject, public lib::messenger::CallHandler {
     Q_OBJECT
@@ -55,7 +57,7 @@ public:
     bool isCallVideoEnabled(const ContactId* f) const;
     bool sendCallAudio(QString friendId, const int16_t* pcm, size_t samples, uint8_t chans,
                        uint32_t rate) const;
-    void sendCallVideo(QString friendId, std::shared_ptr<VideoFrame> frame);
+    void sendCallVideo(QString friendId, std::shared_ptr<lib::video::VideoFrame> frame);
     bool sendGroupCallAudio(QString groupNum, const int16_t* pcm, size_t samples, uint8_t chans,
                             uint32_t rate) const;
 
@@ -63,7 +65,7 @@ public:
         return selfVideoSource.get();
     }
 
-    VideoSource* getVideoSourceFromCall(QString callNumber) const;
+    lib::video::VideoSource* getVideoSourceFromCall(QString callNumber) const;
     void sendNoVideo();
 
     void joinGroupCall(const Group& group);
@@ -165,7 +167,7 @@ private:
     void audioFrameCallback(QString friendId, const int16_t* pcm, size_t sampleCount,
                             uint8_t channels, uint32_t samplingRate, void* self);
 
-    void videoFramePush(CoreVideoSource* vs, std::unique_ptr<vpx_image> frame);
+    void videoFramePush(CoreVideoSource* vs, std::unique_ptr<lib::video::vpx_image> frame);
 
 private:
     static constexpr uint32_t VIDEO_DEFAULT_BITRATE = 2500;

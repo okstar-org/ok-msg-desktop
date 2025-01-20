@@ -25,6 +25,9 @@
 #include <memory>
 #include <unordered_map>
 
+struct AVFrame;
+
+namespace lib::video {
 
 /**\brief Image Descriptor */
 typedef struct vpx_image {
@@ -41,7 +44,6 @@ typedef struct vpx_image {
     int stride[4];            /**< stride between rows for each plane */
 } vpx_image_t;                /**< alias for struct vpx_image */
 
-struct AVFrame;
 
 struct ToxYUVFrame {
 public:
@@ -161,7 +163,8 @@ private:
     static AtomicIDType frameIDs;
 
     static std::unordered_map<IDType, QMutex> mutexMap;
-    static std::unordered_map<IDType, std::unordered_map<IDType, std::weak_ptr<VideoFrame>>>
+    static std::unordered_map<IDType,
+                              std::unordered_map<IDType, std::weak_ptr<lib::video::VideoFrame>>>
             refsMap;
 
     // Concurrency
@@ -169,6 +172,7 @@ private:
     static QReadWriteLock refsLock;
 };
 
-std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_image_t> vpxframe);
-
+std::unique_ptr<lib::video::VideoFrame> convert(VideoFrame::IDType id,
+                                                std::unique_ptr<lib::video::vpx_image_t> vpxframe);
+}  // namespace lib::video
 #endif  // VIDEOFRAME_H

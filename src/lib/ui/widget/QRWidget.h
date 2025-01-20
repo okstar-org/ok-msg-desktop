@@ -17,9 +17,10 @@
 
 class QLabel;
 
+namespace lib::ui {
+
 class QRWidget : public QWidget {
     Q_OBJECT
-
 public:
     explicit QRWidget(QSize& size, QWidget* parent = nullptr);
     ~QRWidget();
@@ -38,5 +39,6 @@ private:
     QImage* image = nullptr;
     QSize size;
 };
+}  // namespace lib::ui
 
 #endif  // QRWIDGET_H

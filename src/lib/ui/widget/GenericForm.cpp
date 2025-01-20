@@ -17,7 +17,8 @@
 #include <QEvent>
 #include <QSpinBox>
 
-namespace UI {
+namespace lib::ui {
+
 /**
  * @class GenericForm
  *
@@ -26,7 +27,7 @@ namespace UI {
  */
 
 GenericForm::GenericForm(const QPixmap& icon, QWidget* parent) : QWidget(parent), formIcon(icon) {}
-
+GenericForm::~GenericForm() {}
 QPixmap GenericForm::getFormIcon() { return formIcon; }
 
 /**
@@ -69,5 +70,5 @@ bool GenericForm::eventFilter(QObject* o, QEvent* e) {
 
     return QWidget::eventFilter(o, e);
 }
-GenericForm::~GenericForm() {}
+
 }  // namespace UI

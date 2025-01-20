@@ -20,8 +20,10 @@
 #include "src/model/grouplist.h"
 #include "src/model/message.h"
 
+namespace lib::ui {
 class CroppingLabel;
 class MaskablePixmapWidget;
+}  // namespace lib::ui
 
 namespace module::im {
 
@@ -88,14 +90,14 @@ protected:
     virtual void showEvent(QShowEvent* e) override;
 
     bool showContextMenu;
-
-    // 名称
-    CroppingLabel* nameLabel;
-    CroppingLabel* lastMessageLabel;
     // 信号状态
     QLabel* statusPic;
+
+    // 名称
+    lib::ui::CroppingLabel* nameLabel;
+    lib::ui::CroppingLabel* lastMessageLabel;
     // 头像
-    MaskablePixmapWidget* avatar;
+    lib::ui::MaskablePixmapWidget* avatar;
 
     bool compact;
     ChatType chatType;

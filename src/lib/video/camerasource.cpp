@@ -25,8 +25,9 @@ extern "C" {
 #include <functional>
 #include "cameradevice.h"
 #include "camerasource.h"
-#include "videoframe.h"
 #include "lib/storage/settings/OkSettings.h"
+#include "videoframe.h"
+namespace lib::video {
 
 /**
  * @class CameraSource
@@ -139,7 +140,9 @@ void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode
     }
 }
 
-bool CameraSource::isNone() const { return _isNone; }
+bool CameraSource::isNone() const {
+    return _isNone;
+}
 
 CameraSource::~CameraSource() {
     QWriteLocker locker{&streamMutex};
@@ -400,3 +403,4 @@ void CameraSource::stream() {
         streamLoop();
     }
 }
+}  // namespace lib::video

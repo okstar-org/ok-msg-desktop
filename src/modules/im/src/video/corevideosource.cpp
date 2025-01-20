@@ -27,7 +27,7 @@ CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopp
  * @brief Makes a copy of the vpx_image_t and emits it as a new VideoFrame.
  * @param vpxframe Frame to copy.
  */
-void CoreVideoSource::pushFrame(std::unique_ptr<vpx_image_t> vpxframe) {
+void CoreVideoSource::pushFrame(std::unique_ptr<lib::video::vpx_image_t> vpxframe) {
     if (stopped) {
         qWarning() << "Video was already stopped.";
         return;
@@ -72,7 +72,7 @@ void CoreVideoSource::pushFrame(std::unique_ptr<vpx_image_t> vpxframe) {
     //
     //    vframe = std::make_shared<VideoFrame>(id, avframe, true);
     auto vframe = convert(id, std::move(vpxframe));
-    emit frameAvailable(std::shared_ptr<VideoFrame>(vframe.release()));
+    emit frameAvailable(std::shared_ptr<lib::video::VideoFrame>(vframe.release()));
 }
 
 void CoreVideoSource::subscribe() {

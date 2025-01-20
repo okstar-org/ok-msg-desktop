@@ -11,6 +11,7 @@
  */
 
 #include "videomode.h"
+namespace lib::video {
 
 /**
  * @struct VideoMode
@@ -33,7 +34,9 @@ VideoMode::VideoMode(int width, int height, int x, int y, float FPS)
 VideoMode::VideoMode(QRect rect)
         : width(rect.width()), height(rect.height()), x(rect.x()), y(rect.y()) {}
 
-QRect VideoMode::toRect() const { return QRect(x, y, width, height); }
+QRect VideoMode::toRect() const {
+    return QRect(x, y, width, height);
+}
 
 bool VideoMode::operator==(const VideoMode& other) const {
     return width == other.width && height == other.height && x == other.x && y == other.y &&
@@ -54,4 +57,7 @@ uint32_t VideoMode::tolerance() const {
 /**
  * @brief All zeros means a default/unspecified mode
  */
-VideoMode::operator bool() const { return width || height || static_cast<int>(FPS); }
+VideoMode::operator bool() const {
+    return width || height || static_cast<int>(FPS);
+}
+}  // namespace lib::video

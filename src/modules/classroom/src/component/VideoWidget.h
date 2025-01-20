@@ -23,12 +23,11 @@
 #include <QPainter>
 #include <QVBoxLayout>
 #include <QWidget>
-#include "src/lib/ui/widget/OVideoWidget.h"
+#include "OVideoWidget.h"
 #include "src/modules/classroom/src/ui.h"
 
 namespace module::classroom {
 
-//	class VideoBase;
 class PlayerWidget;
 class VideoOverlay;
 
@@ -38,9 +37,9 @@ class VideoWidget : public OVideoWidget  //, public ortc::Renderer
 public:
     enum class PB_MODE { FIXED_SIZE, FIX_SIZE_CENTRED, AUTO_ZOOM, AUTO_SIZE };
 
-    VideoWidget(const VideoWidgetConfig& config, QWidget* parent = nullptr);
+    explicit VideoWidget(const VideoWidgetConfig& config, QWidget* parent = nullptr);
 
-    virtual ~VideoWidget() override;
+    ~VideoWidget() override;
 
     void start();
 

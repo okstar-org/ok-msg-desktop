@@ -20,7 +20,7 @@
 
 namespace module::im {
 
-class CoreVideoSource : public ::VideoSource {
+class CoreVideoSource : public lib::video::VideoSource {
     Q_OBJECT
 public:
     CoreVideoSource();
@@ -30,7 +30,7 @@ public:
     virtual void unsubscribe() override;
 
 private:
-    void pushFrame(std::unique_ptr<vpx_image_t> frame);
+    void pushFrame(std::unique_ptr<lib::video::vpx_image_t> frame);
     void setDeleteOnClose(bool newstate);
 
     void stopSource();

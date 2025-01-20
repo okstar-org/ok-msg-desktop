@@ -18,53 +18,7 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
-/**
- * @struct ToxYUVFrame
- * @brief A simple structure to represent a ToxYUV video frame (corresponds to a frame encoded
- * under format: AV_PIX_FMT_YUV420P [FFmpeg] or VPX_IMG_FMT_I420 [WebM]).
- *
- * This structure exists for convenience and code clarity when ferrying YUV420 frames from one
- * source to another. The buffers pointed to by the struct should not be owned by the struct nor
- * should they be freed from the struct, instead this struct functions only as a simple alias to a
- * more complicated frame container like AVFrame.
- *
- * The creation of this structure was done to replace existing code which mis-used vpx_image
- * structs when passing frame data to toxcore.
- *
- *
- * @class VideoFrame
- * @brief An ownernship and management class for AVFrames.
- *
- * VideoFrame takes ownership of an AVFrame* and allows fast conversions to other formats.
- * Ownership of all video frame buffers is kept by the VideoFrame, even after conversion. All
- * references to the frame data become invalid when the VideoFrame is deleted. We try to avoid
- * pixel format conversions as much as possible, at the cost of some memory.
- *
- * Every function in this class is thread safe apart from concurrent construction and deletion of
- * the object.
- *
- * This class uses the phrase "frame alignment" to specify the property that each frame's width is
- * equal to it's maximum linesize. Note: this is NOT "data alignment" which specifies how allocated
- * buffers are aligned in memory. Though internally the two are related, unless otherwise specified
- * all instances of the term "alignment" exposed from public functions refer to frame alignment.
- *
- * Frame alignment is an important concept because ToxAV does not support frames with linesizes not
- * directly equal to the width.
- *
- *
- * @var VideoFrame::dataAlignment
- * @brief Data alignment parameter used to populate AVFrame buffers.
- *
- * This field is public in effort to standardize the data alignment parameter for all AVFrame
- * allocations.
- *
- * It's currently set to 32-byte alignment for AVX2 support.
- *
- *
- * @class FrameBufferKey
- * @brief A class representing a structure that stores frame properties to be used as the key
- * value for a std::unordered_map.
- */
+namespace lib::video {
 
 // Initialize static fields
 VideoFrame::AtomicIDType VideoFrame::frameIDs{0};
@@ -359,28 +313,36 @@ ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize) {
  *
  * @return an integer representing the ID of this frame.
  */
-VideoFrame::IDType VideoFrame::getFrameID() const { return frameID; }
+VideoFrame::IDType VideoFrame::getFrameID() const {
+    return frameID;
+}
 
 /**
  * @brief Returns the ID for the VideoSource which created this frame.
  *
  * @return an integer representing the ID of the VideoSource which created this frame.
  */
-VideoFrame::IDType VideoFrame::getSourceID() const { return sourceID; }
+VideoFrame::IDType VideoFrame::getSourceID() const {
+    return sourceID;
+}
 
 /**
  * @brief Retrieves a copy of the source VideoFrame's dimensions.
  *
  * @return QRect copy representing the source VideoFrame's dimensions.
  */
-QRect VideoFrame::getSourceDimensions() const { return sourceDimensions; }
+QRect VideoFrame::getSourceDimensions() const {
+    return sourceDimensions;
+}
 
 /**
  * @brief Retrieves a copy of the source VideoFormat's pixel format.
  *
  * @return integer copy representing the source VideoFrame's pixel format.
  */
-int VideoFrame::getSourcePixelFormat() const { return sourcePixelFormat; }
+int VideoFrame::getSourcePixelFormat() const {
+    return sourcePixelFormat;
+}
 
 /**
  * @brief Constructs a new FrameBufferKey with the given attributes.
@@ -737,12 +699,16 @@ template ToxYUVFrame VideoFrame::toGenericObject<ToxYUVFrame>(
  *
  * @return true if the frame is valid, false otherwise.
  */
-bool ToxYUVFrame::isValid() const { return width > 0 && height > 0; }
+bool ToxYUVFrame::isValid() const {
+    return width > 0 && height > 0;
+}
 
 /**
  * @brief Checks if the given ToxYUVFrame is valid or not, delegates to isValid().
  */
-ToxYUVFrame::operator bool() const { return isValid(); }
+ToxYUVFrame::operator bool() const {
+    return isValid();
+}
 
 std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_image_t> vpxframe) {
     auto width = vpxframe->d_w;
@@ -780,3 +746,4 @@ std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_i
 
     return std::make_unique<VideoFrame>(id, avframe, true);
 }
+}  // namespace lib::video

@@ -10,12 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "croppinglabel.h"
+#include "CroppingLabel.h"
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QResizeEvent>
 #include <QTextDocument>
-
+namespace lib::ui {
 CroppingLabel::CroppingLabel(QWidget* parent)
         : QLabel(parent), blockPaintEvents(false), editable(false), elideMode(Qt::ElideRight) {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -57,7 +57,9 @@ void CroppingLabel::setEditable(bool editable) {
         unsetCursor();
 }
 
-void CroppingLabel::setElideMode(Qt::TextElideMode elide) { elideMode = elide; }
+void CroppingLabel::setElideMode(Qt::TextElideMode elide) {
+    elideMode = elide;
+}
 
 void CroppingLabel::setText(const QString& text) {
     origText = text.trimmed();
@@ -76,7 +78,9 @@ void CroppingLabel::resizeEvent(QResizeEvent* ev) {
     QLabel::resizeEvent(ev);
 }
 
-QSize CroppingLabel::sizeHint() const { return QSize(0, QLabel::sizeHint().height()); }
+QSize CroppingLabel::sizeHint() const {
+    return QSize(0, QLabel::sizeHint().height());
+}
 
 QSize CroppingLabel::minimumSizeHint() const {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
@@ -133,7 +137,9 @@ void CroppingLabel::showTextEdit() {
  * @brief Get original full text.
  * @return The un-cropped text.
  */
-QString CroppingLabel::fullText() { return origText; }
+QString CroppingLabel::fullText() {
+    return origText;
+}
 
 void CroppingLabel::minimizeMaximumWidth() {
     // This function chooses the smallest possible maximum width.
@@ -154,3 +160,4 @@ void CroppingLabel::editingFinished() {
 
     emit editRemoved();
 }
+}  // namespace lib::ui

@@ -29,11 +29,12 @@
 #include <QWindow>
 #include "gui.h"
 #include "lib/storage/settings/translator.h"
-#include "lib/ui/widget/croppinglabel.h"
+#include "lib/ui/widget/QRWidget.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/profile/iprofileinfo.h"
 #include "src/persistence/profilelocker.h"
 #include "src/persistence/settings.h"
@@ -42,6 +43,7 @@
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
 #include "ui_profileform.h"
+
 namespace module::im {
 
 static const QMap<IProfileInfo::SetAvatarResult, QString> SET_AVATAR_ERROR = {
@@ -129,7 +131,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     // avatar
 
     QSize size(100, 100);
-    profilePicture = new MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
+    profilePicture = new lib::ui::MaskablePixmapWidget(this, size, ":/img/avatar_mask.svg");
     profilePicture->setPixmap(QPixmap(":/img/contact_dark.svg"));
     profilePicture->setContextMenuPolicy(Qt::CustomContextMenu);
     profilePicture->setClickable(true);
@@ -137,8 +139,9 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     profilePicture->installEventFilter(this);
     profilePicture->setAccessibleName("Profile avatar");
     profilePicture->setAccessibleDescription("Set a profile avatar shown to all contacts");
-    connect(profilePicture, &MaskablePixmapWidget::clicked, this, &ProfileForm::onAvatarClicked);
-    connect(profilePicture, &MaskablePixmapWidget::customContextMenuRequested, this,
+    connect(profilePicture, &lib::ui::MaskablePixmapWidget::clicked, this,
+            &ProfileForm::onAvatarClicked);
+    connect(profilePicture, &lib::ui::MaskablePixmapWidget::customContextMenuRequested, this,
             &ProfileForm::showProfilePictureContextMenu);
 
     connect(Nexus::getProfile(), &Profile::selfAvatarChanged, this,
@@ -152,7 +155,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     bodyUI->qrcodeButton->setIcon(QIcon(lib::settings::Style::getImagePath("window/qrcode.svg")));
     bodyUI->qrcodeButton->setCursor(Qt::PointingHandCursor);
     // bodyUI->qrcodeButton->hide();
-    qr = new QRWidget(size, this);
+    qr = new lib::ui::QRWidget(size, this);
     qr->setVisible(false);
     qr->setWindowFlags(Qt::Popup);
     qr->setQRData(profileInfo->getUsername());

@@ -15,7 +15,7 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-namespace UI {
+namespace lib::ui {
 
 MoveableBar::MoveableBar(QWidget* parent) : QWidget(parent), _moveable(true), m_target(nullptr) {}
 

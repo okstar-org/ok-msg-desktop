@@ -14,15 +14,15 @@
 
 #include <QFrame>
 
-namespace UI {
-namespace window {
+namespace lib::ui {
 
 class OPage : public QFrame {
 public:
     explicit OPage(QWidget* parent = nullptr,
                    Qt::WindowFlags f = Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
-    virtual ~OPage() override {}
+    ~OPage() override {}
+
+    virtual void reloadTheme() = 0;
 };
 
-}  // namespace window
 }  // namespace UI

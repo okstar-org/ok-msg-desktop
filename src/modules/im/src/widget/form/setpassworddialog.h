@@ -26,7 +26,7 @@ class SetPasswordDialog : public QDialog {
 public:
     enum ReturnCode { Rejected = QDialog::Rejected, Accepted = QDialog::Accepted, Tertiary };
     explicit SetPasswordDialog(QString body, QString extraButton, QWidget* parent = nullptr);
-    ~SetPasswordDialog();
+    ~SetPasswordDialog() override;
     QString getPassword();
     static int getPasswordStrength(QString pass);
 

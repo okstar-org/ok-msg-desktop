@@ -22,9 +22,12 @@
 
 class QToolBar;
 class QToolButton;
-class PopupMenuComboBox;
 class QLabel;
 class QElapsedTimer;
+
+namespace lib::ui {
+class PopupMenuComboBox;
+}
 
 namespace module::meet {
 
@@ -106,11 +109,11 @@ private:
     QWidget* bottomBar = nullptr;
     QToolButton* msgButton = nullptr;
 
-    PopupMenuComboBox* audioSettingButton = nullptr;
-    PopupMenuComboBox* videoSettingButton = nullptr;
-    PopupMenuComboBox* sharedDeskButton = nullptr;
-    PopupMenuComboBox* recoardButton = nullptr;
-    PopupMenuComboBox* inviteButton = nullptr;
+    lib::ui::PopupMenuComboBox* audioSettingButton = nullptr;
+    lib::ui::PopupMenuComboBox* videoSettingButton = nullptr;
+    lib::ui::PopupMenuComboBox* sharedDeskButton = nullptr;
+    lib::ui::PopupMenuComboBox* recoardButton = nullptr;
+    lib::ui::PopupMenuComboBox* inviteButton = nullptr;
 
     QToolButton* leaveButton = nullptr;
 

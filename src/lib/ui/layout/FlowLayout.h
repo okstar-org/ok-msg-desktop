@@ -17,7 +17,7 @@
 #include <QSize>
 #include <QStyle>
 #include <QWidget>
-
+namespace lib::ui {
 class FlowLayout : public QLayout {
 public:
     explicit FlowLayout(QWidget* parent, int margin = -1, int hSpacing = -1, int vSpacing = -1);
@@ -45,3 +45,4 @@ private:
     int m_hSpace;
     int m_vSpace;
 };
+}  // namespace lib::ui

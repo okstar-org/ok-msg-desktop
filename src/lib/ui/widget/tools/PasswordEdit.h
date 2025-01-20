@@ -15,7 +15,7 @@
 
 #include <QAction>
 #include <QLineEdit>
-
+namespace lib::ui {
 class PasswordEdit : public QLineEdit {
     Q_OBJECT
 public:
@@ -43,4 +43,5 @@ private:
     QAction* action;
     static EventHandler* eventHandler;
 };
+}  // namespace lib::ui
 #endif  // PASSWORDEDIT_H

@@ -19,10 +19,15 @@
 
 class QFrame;
 class QHBoxLayout;
-struct vpx_image;
-class VideoSource;
 
+namespace lib::video {
+class VideoSource;
+struct vpx_image;
+}  // namespace lib::video
+
+namespace lib::ui {
 class MovableWidget;
+}
 
 namespace module::im {
 
@@ -33,10 +38,10 @@ public:
     NetCamView(FriendId friendPk, QWidget* parent = nullptr);
     ~NetCamView();
 
-    virtual void show(VideoSource* source, const QString& title);
+    virtual void show(lib::video::VideoSource* source, const QString& title);
     virtual void hide();
 
-    void setSource(VideoSource* s);
+    void setSource(lib::video::VideoSource* s);
     void setTitle(const QString& title);
     void toggleVideoPreview();
 
@@ -50,7 +55,7 @@ private:
     void updateFrameSize(QSize size);
 
     VideoSurface* selfVideoSurface;
-    MovableWidget* selfFrame;
+    lib::ui::MovableWidget* selfFrame;
     FriendId friendPk;
     bool e;
     QVector<QMetaObject::Connection> connections;

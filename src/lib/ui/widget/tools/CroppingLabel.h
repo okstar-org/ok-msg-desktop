@@ -17,6 +17,8 @@
 
 class QLineEdit;
 
+namespace lib::ui {
+
 class CroppingLabel : public QLabel {
     Q_OBJECT
 public:
@@ -59,5 +61,5 @@ private:
     bool editable;
     Qt::TextElideMode elideMode;
 };
-
+}  // namespace lib::ui
 #endif  // CROPPINGLABEL_H

@@ -17,10 +17,13 @@
 
 #include <QWidget>
 
-class CroppingLabel;
-
 class QHBoxLayout;
 class QPushButton;
+
+namespace lib::ui {
+class CroppingLabel;
+}
+
 namespace module::im {
 
 class GroupInviteWidget : public QWidget {
@@ -37,7 +40,7 @@ signals:
 private:
     QPushButton* acceptButton;
     QPushButton* rejectButton;
-    CroppingLabel* inviteMessageLabel;
+    lib::ui::CroppingLabel* inviteMessageLabel;
     QHBoxLayout* widgetLayout;
     GroupInvite inviteInfo;
 };

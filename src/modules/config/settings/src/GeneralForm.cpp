@@ -28,7 +28,8 @@ namespace module::config {
  * This form contains all settings that are not suited to other forms
  */
 GeneralForm::GeneralForm(QWidget* parent)
-        : UI::GenericForm(QPixmap(":/img/settings/general.png"), parent), ui(new Ui::GeneralForm) {
+        : lib::ui::GenericForm(QPixmap(":/img/settings/general.png"), parent)
+        , ui(new Ui::GeneralForm) {
     ui->setupUi(this);
 
     // block all child signals during initialization

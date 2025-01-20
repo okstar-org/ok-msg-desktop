@@ -38,7 +38,7 @@ class AppCenterPage;
 /**
  * 应用中心界面
  */
-class AppCenterWidget : public UI::OWidget {
+class AppCenterWidget : public lib::ui::OWidget {
     Q_OBJECT
 
 public:

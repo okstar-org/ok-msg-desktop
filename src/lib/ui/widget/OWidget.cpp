@@ -17,7 +17,7 @@
 #include <QRgb>
 #include <QWidget>
 
-namespace UI {
+namespace lib::ui {
 
 OWidget::OWidget(QWidget* parent) : QWidget(parent) {
     //   QPalette palette = this->palette();

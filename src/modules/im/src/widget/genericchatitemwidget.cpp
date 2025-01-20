@@ -14,10 +14,10 @@
 #include <QIcon>
 #include <QSvgRenderer>
 #include <QVariant>
-#include "lib/ui/widget/croppinglabel.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
@@ -35,12 +35,12 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
         , prevStatus{Status::None}
         , active{false}
         , showContextMenu{true} {
-    nameLabel = new CroppingLabel(this);
+    nameLabel = new lib::ui::CroppingLabel(this);
     nameLabel->setObjectName("nameLabel");
     nameLabel->setTextFormat(Qt::PlainText);
     nameLabel->setText(cid.username);
 
-    lastMessageLabel = new CroppingLabel(this);
+    lastMessageLabel = new lib::ui::CroppingLabel(this);
     lastMessageLabel->setObjectName("lastMessageLabel");
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
@@ -63,7 +63,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
         clearStatusLight();
     }
 
-    avatar = new MaskablePixmapWidget(this, QSize(40, 40), ":/img/avatar_mask.svg");
+    avatar = new lib::ui::MaskablePixmapWidget(this, QSize(40, 40), ":/img/avatar_mask.svg");
     auto profile = Nexus::getProfile();
     auto avt = profile->loadAvatar(contactId);
     if (!avt.isNull()) {

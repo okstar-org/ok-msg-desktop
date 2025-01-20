@@ -36,7 +36,7 @@
 #include "src/chatlog/content/timestamp.h"
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
-#include "src/lib/ui/widget/maskablepixmapwidget.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/grouplist.h"
