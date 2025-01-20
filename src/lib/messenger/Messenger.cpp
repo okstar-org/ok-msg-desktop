@@ -446,4 +446,8 @@ void MessengerMeet::setCtrlState(ortc::CtrlState state) {
     meet->setEnable(state);
 }
 
+void MessengerMeet::start(const IMPeerId& peerId, const ortc::OJingleContentMap& map) {
+    meet->doStartRTC(peerId, map);
+}
+
 }  // namespace lib::messenger

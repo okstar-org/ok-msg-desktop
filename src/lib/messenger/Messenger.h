@@ -465,6 +465,8 @@ public:
                                bool ready,
                                const std::map<std::string, std::string>& props) = 0;
 
+    virtual void onMeetInitiate(const IMPeerId& peerId, const ortc::OJingleContentMap& map) = 0;
+
     virtual void onParticipantJoined(const ok::base::Jid& jid, const Participant& participant) = 0;
 
     virtual void onParticipantLeft(const ok::base::Jid& jid, const std::string& participant) = 0;
@@ -490,10 +492,13 @@ public:
      * @param room
      */
     void create(const std::string& room);
+
     /**
      * 离开会议
      */
     void leave();
+
+    void start(const IMPeerId& peerId, const ortc::OJingleContentMap& map);
 
     /**
      * 获取视频设备列表

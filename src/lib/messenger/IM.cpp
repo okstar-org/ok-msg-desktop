@@ -2272,100 +2272,99 @@ void IM::handleSessionAction(gloox::Jingle::Action action,     //
         }
         case gloox::Jingle::Action::SessionInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionInfo(jingle, peerId);
+                if (h->doSessionInfo(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::SessionTerminate: {
             for (auto h : m_sessionHandlers) {
-                h->doSessionTerminate(session, jingle, peerId);
+                if (h->doSessionTerminate(session, jingle, peerId)) break;
             }
             removeSession(session);
             break;
         }
         case gloox::Jingle::Action::SessionAccept: {
             for (auto h : m_sessionHandlers) {
-                auto yes = h->doSessionAccept(session, jingle, peerId);
-                if (yes) break;
+                if (h->doSessionAccept(session, jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentAccept: {
             for (auto h : m_sessionHandlers) {
-                h->doContentAccept(jingle, peerId);
+                if (h->doContentAccept(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentAdd: {
             // content-add
             for (auto h : m_sessionHandlers) {
-                h->doContentAdd(jingle, peerId);
+                if (h->doContentAdd(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentRemove: {
             for (auto h : m_sessionHandlers) {
-                h->doContentRemove(jingle, peerId);
+                if (h->doContentRemove(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentModify: {
             for (auto h : m_sessionHandlers) {
-                h->doContentModify(jingle, peerId);
+                if (h->doContentModify(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::ContentReject: {
             for (auto h : m_sessionHandlers) {
-                h->doContentReject(jingle, peerId);
+                if (h->doContentReject(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::TransportAccept: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportAccept(jingle, peerId);
+                if (h->doTransportAccept(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::TransportInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportInfo(jingle, peerId);
+                if (h->doTransportInfo(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::TransportReject: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportReject(jingle, peerId);
+                if (h->doTransportReject(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::TransportReplace: {
             for (auto h : m_sessionHandlers) {
-                h->doTransportReplace(jingle, peerId);
+                if (h->doTransportReplace(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::SecurityInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doSecurityInfo(jingle, peerId);
+                if (h->doSecurityInfo(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::DescriptionInfo: {
             for (auto h : m_sessionHandlers) {
-                h->doDescriptionInfo(jingle, peerId);
+                if (h->doDescriptionInfo(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::SourceAdd: {
             for (auto h : m_sessionHandlers) {
-                h->doSourceAdd(jingle, peerId);
+                if (h->doSourceAdd(jingle, peerId)) break;
             }
             break;
         }
         case gloox::Jingle::Action::InvalidAction:
             for (auto h : m_sessionHandlers) {
-                h->doInvalidAction(jingle, peerId);
+                if (h->doInvalidAction(jingle, peerId)) break;
             }
             break;
     }

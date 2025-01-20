@@ -295,10 +295,12 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     }
     cav.sdpType = ortc::JingleSdpType::Offer;
 
-    doStartRTC(peerId, cav);
-
     currentSid = sId;
     currentSession = session;
+
+    for (auto h : handlers) {
+        h->onMeetInitiate(peerId, cav);
+    }
     return true;
 }
 

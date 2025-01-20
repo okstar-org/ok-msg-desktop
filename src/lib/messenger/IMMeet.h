@@ -99,6 +99,8 @@ public:
 
     void setEnable(ortc::CtrlState state);
 
+    void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const;
+
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 
@@ -131,7 +133,7 @@ protected:
     void onSelfNameChanged(const std::string& name) override;
     void onSelfAvatarChanged(const std::string& avatar) override;
     void onSelfStatusChanged(IMStatus status, const std::string& msg) override ;
-      void onSelfVCardChanged(IMVCard& imvCard) override;
+    void onSelfVCardChanged(IMVCard& imvCard) override;
 
     /**
      * IMSessionHandler
@@ -224,7 +226,6 @@ private:
     // public slots:
     void onSelfVCard(const IMVCard& vCard);
     Participant toParticipant(const gloox::Meet::Participant& participant) const;
-    void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const;
 };
 
 }  // namespace lib::messenger

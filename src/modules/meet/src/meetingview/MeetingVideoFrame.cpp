@@ -37,12 +37,15 @@
 
 namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState, QWidget* parent)
-        : QWidget(parent), username(name),
-        duration(0,0,0), // 初始化时间为 00:00:00
-        callDurationTimer(nullptr),
-        timeElapsed(nullptr),
-        ctrlState(ctrlState) {
+MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState,
+                                     QWidget* parent)
+        : QWidget(parent)
+        , username(name)
+        , duration(0, 0, 0)
+        ,  // 初始化时间为 00:00:00
+        callDurationTimer(nullptr)
+        , timeElapsed(nullptr)
+        , ctrlState(ctrlState) {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -305,6 +308,12 @@ void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,
                                       const std::map<std::string, std::string>& props) {
     emit meetCreated(jid.node());
 }
+
+void MeetingVideoFrame::onMeetInitiate(const lib::messenger::IMPeerId& peerId,
+                                       const lib::ortc::OJingleContentMap& map) {
+    // 会议邀请，无需其他操作直接启动RTC
+    meet->start(peerId, map);
+};
 
 void MeetingVideoFrame::onParticipantJoined(const ok::base::Jid& jid,
                                             const lib::messenger::Participant& part) {

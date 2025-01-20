@@ -35,7 +35,9 @@ class MeetingUser;
 class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHandler {
     Q_OBJECT
 public:
-    explicit MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState, QWidget* parent = nullptr);
+    explicit MeetingVideoFrame(const QString& name,
+                               lib::ortc::CtrlState ctrlState,
+                               QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
     void createMeet(const QString& name);
@@ -43,6 +45,30 @@ public:
 
     void startCounter();
     void stopCounter();
+
+protected:
+    /**
+     * MessengerMeetHandler
+     * @param jid
+     * @param ready
+     * @param props
+     */
+    void onMeetCreated(const ok::base::Jid& jid,
+                       bool ready,
+                       const std::map<std::string, std::string>& props) override;
+
+    void onMeetInitiate(const lib::messenger::IMPeerId& peerId,
+                        const lib::ortc::OJingleContentMap& map) override;
+
+    void onParticipantJoined(const ok::base::Jid& jid,
+                             const lib::messenger::Participant& parti) override;
+
+    void onParticipantLeft(const ok::base::Jid& jid, const std::string& participant) override;
+
+    void onParticipantVideoFrame(const std::string& participant,
+                                 const lib::ortc::RendererImage& image) override;
+    void onParticipantMessage(const std::string& participant, const std::string& msg) override;
+    void onEnd() override;
 
 private:
     void creatTopToolBar();
@@ -56,35 +82,12 @@ private:
 
     void changeEvent(QEvent* event) override;
 
-    /**
-     * MessengerMeetHandler
-     * @param jid
-     * @param ready
-     * @param props
-     */
-    void onMeetCreated(const ok::base::Jid& jid,
-                       bool ready,
-                       const std::map<std::string, std::string>& props) override;
-
-    void onParticipantJoined(const ok::base::Jid& jid,
-                             const lib::messenger::Participant& parti) override;
-
-    void onParticipantLeft(const ok::base::Jid& jid, const std::string& participant) override;
-
-    void onParticipantVideoFrame(const std::string& participant,
-                                 const lib::ortc::RendererImage& image) override;
-    void onParticipantMessage(const std::string& participant, const std::string& msg) override;
-    void onEnd() override;
-
-private:
     // for run in UI thread
     void addParticipant(const QString& name, const lib::messenger::Participant& parti);
     void removeParticipant(const QString& name, const QString& participant);
 
-private:
     void syncAudioVideoState();
 
-private:
     // 顶部工具
     QToolBar* topToolBar = nullptr;
     QAction* infoAction = nullptr;
