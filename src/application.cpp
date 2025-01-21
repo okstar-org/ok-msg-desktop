@@ -18,6 +18,7 @@
 #include <QCoreApplication>
 #include <QString>
 
+#include <QHBoxLayout>
 #include <QMenu>
 #include "Bus.h"
 #include "UI/login/src/LoginWidget.h"

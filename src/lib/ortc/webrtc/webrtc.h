@@ -210,7 +210,9 @@ private:
 
     void linkAudioDevice(Conductor* c);
 
-    void linkVideoDevice(Conductor* c, int selected);
+    void initVideoDevice(int selected);
+
+    void linkVideoDevice(Conductor* c);
 
     std::recursive_mutex mutex;
 

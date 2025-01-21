@@ -253,6 +253,7 @@ bool WebRTC::start() {
     peer_connection_factory->SetOptions(options);
 
     initAudioDevice();
+    initVideoDevice(0);
 
     RTC_LOG(LS_INFO) << "WebRTC has be started.";
     return true;
@@ -769,14 +770,13 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
     ensureStart();
 
     conductor = new Conductor(this, peerId, sId, this);
+
     if (!video) {
         linkAudioDevice(conductor);
     } else {
         // audio
         linkAudioDevice(conductor);
-
-        // video default select first。
-        linkVideoDevice(conductor, 0);
+        linkVideoDevice(conductor);
     }
 
     _pcMap[peerId] = conductor;
@@ -790,6 +790,12 @@ Conductor* WebRTC::getConductor(const std::string& peerId) {
     return c;
 }
 
+void WebRTC::initAudioDevice() {
+    RTC_LOG(LS_INFO) << "Create audio source...";
+    audioSource = peer_connection_factory->CreateAudioSource(cricket::AudioOptions());
+    RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
+}
+
 void WebRTC::linkAudioDevice(Conductor* c) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << "AddTrack audio source:" << audioSource.get();
 
@@ -801,7 +807,7 @@ void WebRTC::linkAudioDevice(Conductor* c) {
     c->addLocalAudioTrack(audioSource.get(), streamId, trackId);
 }
 
-void WebRTC::linkVideoDevice(Conductor* c, int selected) {
+void WebRTC::initVideoDevice(int selected) {
     auto devId = getVideoDeviceId(selected);
     if (devId.empty()) {
         RTC_LOG(LS_WARNING) << "Unable to select device: " << selected;
@@ -810,22 +816,21 @@ void WebRTC::linkVideoDevice(Conductor* c, int selected) {
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
 
-    worker_thread->BlockingCall([=, this]() {
-        videoCapture = getVideoCapture(devId); });
-
-    // signaling_thread->BlockingCall([=, this](){
-    auto streamId = resource + "-video-0-0";
-        auto trackId = rtc::CreateRandomString(10);
-
-    videoTrack = getFactory()->CreateVideoTrack(videoCapture->source(), trackId);
-
-    c->addLocalVideoTrack(videoTrack, streamId, trackId);
+    worker_thread->BlockingCall([=, this]() { videoCapture = getVideoCapture(devId); });
 
     if (!videoSink) {
-            videoSink = std::make_shared<VideoSink>(_handlers, "", "");
-        }
+        videoSink = std::make_shared<VideoSink>(_handlers, "", "");
+    }
+
     videoCapture->setOutput(videoSink);
-    // });
+}
+
+void WebRTC::linkVideoDevice(Conductor* c) {
+    RTC_LOG(LS_INFO) << __func__;
+    auto streamId = resource + "-video-0-0";
+    auto trackId = rtc::CreateRandomString(10);
+    videoTrack = getFactory()->CreateVideoTrack(videoCapture->source(), trackId);
+    c->addLocalVideoTrack(videoTrack, streamId, trackId);
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {
@@ -1028,12 +1033,6 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string
 void WebRTC::destroyVideoCapture() {
     RTC_LOG(LS_INFO) << __FUNCTION__;
     videoCapture.reset();
-}
-
-void WebRTC::initAudioDevice() {
-    RTC_LOG(LS_INFO) << "Create audio source...";
-    audioSource = peer_connection_factory->CreateAudioSource(cricket::AudioOptions());
-    RTC_LOG(LS_INFO) << "Audio source is:" << audioSource.get();
 }
 
 void WebRTC::switchVideoDevice(const std::string& deviceId) {

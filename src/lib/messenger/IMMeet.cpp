@@ -86,6 +86,7 @@ IMMeet::IMMeet(IM* im) : IMJingle(im), meetManager(nullptr), meet(nullptr) {
 
     auto rtc = rtcManager->createRtc(ortc::Mode::meet, resource);
     rtc->addRTCHandler(this);
+    rtc->start();
 }
 
 IMMeet::~IMMeet() {
