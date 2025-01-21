@@ -115,8 +115,6 @@ ChatWidget::ChatWidget(QWidget* parent)
     ui->mainSplitter->setStretchFactor(1, 0);
     ui->mainSplitter->setChildrenCollapsible(false);
 
-    //    auto s = Nexus::getProfile()->getSettings();
-
     setupStatus();
     setupSearch();
     init();
@@ -175,7 +173,6 @@ void ChatWidget::connectToCore(Core* core) {
     connect(core, &Core::connecting, this, &ChatWidget::onConnecting);
     connect(core, &Core::connected, this, &ChatWidget::onConnected);
     connect(core, &Core::disconnected, this, &ChatWidget::onDisconnected);
-
     connect(core, &Core::usernameSet, this, &ChatWidget::onNicknameSet);
     connect(core, &Core::statusSet, this, &ChatWidget::onStatusSet);
     connect(core, &Core::statusMessageSet, this, &ChatWidget::onStatusMessageSet);
@@ -213,10 +210,11 @@ void ChatWidget::connectToCoreFile(CoreFile* coreFile) {
 }
 
 void ChatWidget::connectToCoreAv(CoreAV* coreAv) {
+    connect(coreAv, &CoreAV::avCreating, this, &ChatWidget::onAvCreating);
     connect(coreAv, &CoreAV::avInvite, this, &ChatWidget::onAvInvite);
     connect(coreAv, &CoreAV::avStart, this, &ChatWidget::onAvStart);
-    connect(coreAv, &CoreAV::avPeerConnectionState, this, &ChatWidget::onAvPeerConnectionState);
     connect(coreAv, &CoreAV::avEnd, this, &ChatWidget::onAvEnd);
+    connect(coreAv, &CoreAV::avPeerConnectionState, this, &ChatWidget::onAvPeerConnectionState);
 }
 
 void ChatWidget::onMessageSessionReceived(const ContactId& contactId, const QString& sid) {
@@ -635,29 +633,14 @@ void ChatWidget::setStatusBusy() {
     Nexus::getCore()->setStatus(Status::Busy);
 }
 
-void ChatWidget::onAvInvite(ToxPeer peerId, bool video) {
-    qDebug() << __func__ << "friendId" << peerId << video;
+void ChatWidget::onAvInvite(const PeerId& peerId, bool video) {
+    qDebug() << __func__ << "peerId" << peerId << "video:" << video;
     sessionListWidget->setFriendAvInvite(peerId, video);
+}
 
-    //  auto testedFlag = video ?
-    //              Settings::AutoAcceptCall::Video : Settings::AutoAcceptCall::Audio;
-
-    //  // AutoAcceptCall is set for this friend
-    //  if (Nexus::getProfile()->getSettings()
-    //          .getAutoAcceptCall(*f)
-    //          .testFlag(testedFlag)) {
-
-    //    CoreAV *coreav = CoreAV::getInstance();
-    //    QMetaObject::invokeMethod(coreav, "answerCall", Qt::QueuedConnection,
-    //                              Q_ARG(ToxPeer, peerId), Q_ARG(bool, video));
-
-    //    onAvStart(friendId, video);
-    //  } else {
-    //    headWidget->createCallConfirm(peerId, video);
-    //    headWidget->showCallConfirm();
-    //    lastCallIsVideo = video;
-    //    emit incomingNotification(fId);
-    //  }
+void ChatWidget::onAvCreating(const FriendId& friendId, bool video) {
+    qDebug() << __func__ << "friendId" << friendId << "video:" << video;
+    sessionListWidget->setFriendAvCreating(friendId, video);
 }
 
 void ChatWidget::onAvStart(const FriendId& friendId, bool video) {

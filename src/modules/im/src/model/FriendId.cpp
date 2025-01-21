@@ -86,14 +86,14 @@ QByteArray FriendId::getByteArray() const {
 }
 
 QString FriendId::toString() const {
-    return !isValid() ? "" : username + "@" + server;
+    return username + "@" + server;
 }
 
-ToxPeer::ToxPeer(const lib::messenger::IMPeerId& peerId) : FriendId(peerId) {
+PeerId::PeerId(const lib::messenger::IMPeerId& peerId) : FriendId(peerId) {
     resource = qstring(peerId.resource);
 }
 
-ToxPeer::ToxPeer(const QString& rawId) : FriendId(rawId) {
+PeerId::PeerId(const QString& rawId) : FriendId(rawId) {
     auto match = JidMatch(rawId);
     if (!match.hasMatch()) {
         qWarning() << "Unable to parse id:" << rawId;
@@ -102,11 +102,11 @@ ToxPeer::ToxPeer(const QString& rawId) : FriendId(rawId) {
     resource = match.captured(4);
 }
 
-bool ToxPeer::isValid() const {
+bool PeerId::isValid() const {
     return FriendId::isValid() && !resource.isEmpty();
 }
 
-QString ToxPeer::toString() const {
+QString PeerId::toString() const {
     return FriendId::toString() + "/" + resource;
 }
 }  // namespace module::im

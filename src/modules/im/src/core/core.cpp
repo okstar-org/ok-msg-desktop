@@ -71,7 +71,7 @@ Core::Core(QThread* coreThread)
     assert(coreThread);
     assert(toxTimer);
 
-    qRegisterMetaType<ToxPeer>("ToxPeer");
+    qRegisterMetaType<PeerId>("PeerId");
     qRegisterMetaType<FriendMessage>("FriendMessage");
     qRegisterMetaType<FriendId>("FriendId");
     qRegisterMetaType<FriendInfo>("FriendInfo");
@@ -293,7 +293,7 @@ void Core::onFriendMessage(const std::string& friendId_, const lib::messenger::I
     // 接收标志
     sendReceiptReceived(friendId, qstring(message.id));
 
-    auto peerId = ToxPeer(qstring(message.from));
+    auto peerId = PeerId(qstring(message.from));
 
     FriendMessage msg;
     msg.isAction = false;
@@ -971,7 +971,7 @@ QString Core::getGroupPeerName(QString groupId, QString peerId) const {
 /**
  * @brief Get the public key of a peer of a group
  */
-ToxPeer Core::getGroupPeerPk(QString groupId, QString peerId) const {
+PeerId Core::getGroupPeerPk(QString groupId, QString peerId) const {
     QMutexLocker ml{&mutex};
 
     //  uint8_t friendPk[TOX_PUBLIC_KEY_SIZE] = {0x00};
@@ -984,7 +984,7 @@ ToxPeer Core::getGroupPeerPk(QString groupId, QString peerId) const {
     //  }
     //  assert(success);
 
-    auto toxPk = ToxPeer{peerId};
+    auto toxPk = PeerId{peerId};
     return toxPk;
 }
 

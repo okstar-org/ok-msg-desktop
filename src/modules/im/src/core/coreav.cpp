@@ -80,13 +80,12 @@ CoreAV::CoreAV(Core* core)
     connect(coreavThread.get(), &QThread::finished, iterateTimer, &QTimer::stop);
     connect(coreavThread.get(), &QThread::started, this, &CoreAV::process);
     moveToThread(coreavThread.get());
-
     qDebug() << __func__ << "done.";
 }
 
 CoreAV::~CoreAV() {
     qDebug() << __func__;
-    /* Gracefully leave calls and group calls to avoid deadlocks in destructor */
+
     for (const auto& call : calls) {
         cancelCall(call.first);
     }
@@ -109,7 +108,6 @@ CoreAV::~CoreAV() {
  */
 CoreAV::CoreAVPtr CoreAV::makeCoreAV(Core* core) {
     instance = new CoreAV(core);
-
     return CoreAVPtr{instance};
 }
 
@@ -157,7 +155,7 @@ bool CoreAV::isCallVideoEnabled(const ContactId* f) const {
     return isCallStarted(f) && it->second->getVideoEnabled();
 }
 
-bool CoreAV::answerCall(ToxPeer peerId, bool video) {
+bool CoreAV::answerCall(PeerId peerId, bool video) {
     qDebug() << __func__ << "peer:" << peerId << "isVideo?" << video;
     QWriteLocker locker{&callsLock};
 
@@ -224,7 +222,8 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     // Audio backend must be set before making a call
     auto audio = Nexus::getInstance()->audio();
 
-    ToxFriendCallPtr call = ToxFriendCallPtr(new ToxFriendCall(friendNum, video, *this, *audio));
+    ToxFriendCallPtr call = ToxFriendCallPtr(new ToxFriendCall(
+            friendNum, lib::messenger::CallDirection::CallOut, *this, *audio, video));
     assert(call != nullptr);
     call->setCallId(sId);
     // Call object must be owned by this thread or there will be locking problems
@@ -234,10 +233,38 @@ bool CoreAV::startCall(QString friendNum, bool video) {
     return true;
 }
 
+void CoreAV::rejectOrCancelCall(const PeerId& peerId) {
+    qDebug() << __func__ << "peer:" << peerId;
+
+    QWriteLocker locker{&callsLock};
+
+    auto fId = peerId.toFriendId().toString();
+    auto it = calls.find(fId);
+    if (it == calls.end()) {
+        qWarning() << QString("Can't reject call with %1, we're already not in this call!")
+                              .arg(peerId.toString());
+        return;
+    }
+
+    auto& call = it->second;
+    switch (call->getDirection()) {
+        case lib::messenger::CallDirection::CallIn:
+            imCall->callReject(lib::messenger::IMPeerId{stdstring(peerId.toString())},
+                               stdstring(call->getCallId()));
+            break;
+        case lib::messenger::CallDirection::CallOut:
+            auto pid = peerId.toString();
+            auto cid = lib::messenger::IMContactId(stdstring(pid));
+            imCall->callCancel(cid, stdstring(call->getCallId()));
+            break;
+    }
+    calls.erase(it);
+}
+
 bool CoreAV::cancelCall(const QString& friendNum) {
     QWriteLocker locker{&callsLock};
-    //  QMutexLocker coreLocker{&coreLock};
-    qDebug() << QString("Canceling call with %1").arg(friendNum);
+
+    qDebug() << __func__ << (friendNum);
 
     auto it = calls.find(friendNum);
     if (it == calls.end()) {
@@ -249,11 +276,8 @@ bool CoreAV::cancelCall(const QString& friendNum) {
     QString callId = it->second->getCallId();
     auto cId = lib::messenger::IMContactId{friendNum.toStdString()};
     imCall->callCancel(cId, callId.toStdString());
-    qDebug() << QString("Canceling call=>%1").arg(callId);
-    calls.erase(friendNum);
 
-    //  locker.unlock();
-    //  coreLocker.unlock();
+    calls.erase(friendNum);
 
     emit avEnd(FriendId{friendNum});
     return true;
@@ -275,24 +299,6 @@ void CoreAV::onIceConnectionChange(const lib::messenger::IMPeerId& peerId,
                                    const std::string& callId,
                                    lib::ortc::IceConnectionState state) {}
 
-void CoreAV::rejectCall(const ToxPeer& peerId) {
-    qDebug() << __func__ << "peer:" << peerId;
-
-    QWriteLocker locker{&callsLock};
-
-    auto fId = peerId.toFriendId().toString();
-    auto it = calls.find(fId);
-    if (it == calls.end()) {
-        qWarning() << QString("Can't reject call with %1, we're already not in this call!")
-                              .arg(peerId.toString());
-        return;
-    }
-
-    auto& call = it->second;
-    imCall->callReject(lib::messenger::IMPeerId{stdstring(peerId.toString())},
-                       stdstring(call->getCallId()));
-    calls.erase(it);
-}
 
 void CoreAV::timeoutCall(QString friendNum) {
     QWriteLocker locker{&callsLock};
@@ -319,26 +325,6 @@ bool CoreAV::sendCallAudio(QString callId, const int16_t* pcm, size_t samples, u
         !(call.getState() == lib::messenger::CallState::ACCEPTING_A)) {
         return true;
     }
-
-    // TOXAV_ERR_SEND_FRAME_SYNC means toxav failed to lock, retry 5 times in this
-    // case
-    //  TOXAV_ERR_SEND_FRAME err;
-    //  int retries = 0;
-    //  do {
-    //    if (!toxav_audio_send_frame(toxav.get(), callId, pcm, samples, chans,
-    //    rate,
-    //                                &err)) {
-    //      if (err == TOXAV_ERR_SEND_FRAME_SYNC) {
-    //        ++retries;
-    //        QThread::usleep(500);
-    //      } else {
-    //        qDebug() << "toxav_audio_send_frame error: " << err;
-    //      }
-    //    }
-    //  } while (err == TOXAV_ERR_SEND_FRAME_SYNC && retries < 5);
-    //  if (err == TOXAV_ERR_SEND_FRAME_SYNC) {
-    //    qDebug() << "toxav_audio_send_frame error: Lock busy, dropping frame";
-    //  }
 
     return true;
 }
@@ -503,7 +489,8 @@ void CoreAV::joinGroupCall(const Group& group) {
 
     // Audio backend must be set before starting a call
     auto audioCtrl = Nexus::getInstance()->audio();
-    ToxGroupCallPtr groupcall = ToxGroupCallPtr(new ToxGroupCall{group, *this, *audioCtrl});
+    ToxGroupCallPtr groupcall = ToxGroupCallPtr(new ToxGroupCall{
+            group, lib::messenger::CallDirection::CallOut, *this, *audioCtrl, false});
     // Call Objects must be owned by CoreAV or there will be locking problems with
     // Audio
     groupcall->moveToThread(this->thread());
@@ -551,6 +538,14 @@ bool CoreAV::sendGroupCallAudio(QString groupId, const int16_t* pcm, size_t samp
     //    qDebug() << "toxav_group_send_audio error";
     //  return true;
     return false;
+}
+
+ToxCall* CoreAV::getCall(const QString& friendNum) {
+    auto it = calls.find(friendNum);
+    if (it == calls.end()) {
+        return nullptr;
+    }
+    return it->second.get();
 }
 
 void CoreAV::muteCallSpeaker(const ContactId* g, bool mute) {
@@ -666,12 +661,13 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const std::string& c
     //  CoreAV *self = static_cast<CoreAV *>(vSelf);
     QWriteLocker locker{&callsLock};
 
-    auto peer = ToxPeer(peerId);
+    auto peer = PeerId(peerId);
 
     // Audio backend must be set before receiving a call
     auto audioCtrl = Nexus::getInstance()->audio();
     ToxFriendCallPtr call = ToxFriendCallPtr(
-            new ToxFriendCall{qstring(peerId.toString()), video, *this, *audioCtrl});
+            new ToxFriendCall{qstring(peerId.toString()), lib::messenger::CallDirection::CallOut,
+                              *this, *audioCtrl, video});
     call->setCallId(callId.c_str());
     call->moveToThread(thread());
     assert(call != nullptr);
@@ -699,7 +695,15 @@ void CoreAV::onCall(const lib::messenger::IMPeerId& peerId, const std::string& c
     // Must explicitly unlock, because a deadlock can happen via ChatForm/Audio
     //  locker.unlock();
 
-    emit avInvite(ToxPeer(peerId), video);
+    emit avInvite(PeerId(peerId), video);
+}
+
+void CoreAV::onCallCreating(const lib::messenger::IMPeerId& peerId,
+                            const std::string& callId,
+                            bool video) {
+    auto friendNum = qstring(peerId.toFriendId());
+    qDebug() << __func__ << friendNum;
+    emit avCreating(FriendId{friendNum}, video);
 }
 
 void CoreAV::onCallCreated(const lib::messenger::IMPeerId& peerId, const std::string& callId) {}
@@ -707,7 +711,7 @@ void CoreAV::onCallCreated(const lib::messenger::IMPeerId& peerId, const std::st
 void CoreAV::onCallRetract(const lib::messenger::IMPeerId& peerId,
                            lib::messenger::CallState state) {
     auto friendNum = qstring(peerId.toFriendId());
-    qDebug() << __func__ << QString("Canceling call with %1").arg(friendNum);
+    qDebug() << __func__ << (friendNum);
     auto it = calls.find(friendNum);
     if (it == calls.end()) {
         qWarning() << QString("Can't cancel call with %1, we're already not in this call!")
@@ -788,7 +792,7 @@ void CoreAV::onFriendVideoFrame(const std::string& friendId, uint16_t w, uint16_
 
     auto it = calls.find(qstring(friendId));
     if (it == calls.end()) {
-        qWarning() << "Unable to find call!" << friendId.c_str();
+        qWarning() << "Unable to find call for friend:" << friendId.c_str();
         return;
     }
 

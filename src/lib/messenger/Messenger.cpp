@@ -397,6 +397,8 @@ void MessengerMeet::removeHandler(MessengerMeetHandler* hdr) {
 void MessengerMeet::onCall(const IMPeerId& peerId, const std::string& callId, bool audio,
                            bool video) {}
 
+void MessengerMeet::onCallCreating(const IMPeerId& peerId, const std::string& callId, bool video) {}
+
 void MessengerMeet::onCallCreated(const IMPeerId& peerId, const std::string& callId) {}
 
 void MessengerMeet::onCallRetract(const IMPeerId& peerId, CallState state) {}

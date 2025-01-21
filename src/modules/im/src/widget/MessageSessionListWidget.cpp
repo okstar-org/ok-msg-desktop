@@ -503,7 +503,7 @@ void MessageSessionListWidget::toForwardMessage(const ContactId& pk, const MsgId
     w->doForwardMessage(pk, id);
 }
 
-void MessageSessionListWidget::setFriendAvInvite(const ToxPeer& peerId, bool video) {
+void MessageSessionListWidget::setFriendAvInvite(const PeerId& peerId, bool video) {
     auto friendId = peerId.toFriendId();
     auto w = sessionWidgets.value(friendId.toString());
     if (!w) {
@@ -511,6 +511,12 @@ void MessageSessionListWidget::setFriendAvInvite(const ToxPeer& peerId, bool vid
         w = createMessageSession(friendId, "", ChatType::Chat);
     }
     w->setAvInvite(peerId, video);
+}
+
+void MessageSessionListWidget::setFriendAvCreating(const FriendId& friendId, bool video) {
+    auto w = sessionWidgets.value(friendId.toString());
+    assert(w);
+    w->setAvCreating(friendId, video);
 }
 
 void MessageSessionListWidget::setFriendAvStart(const FriendId& friendId, bool video) {

@@ -142,7 +142,9 @@ bool IMCall::callToFriend(const std::string& friendId, const std::string& sId, b
     }
 
     proposeJingleMessage(friendId, sId, video);
-
+    for (auto h : callHandlers) {
+        h->onCallCreating(IMPeerId(friendId), sId, video);
+    }
     return true;
 }
 

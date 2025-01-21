@@ -236,15 +236,31 @@ enum class CallState {
     ACCEPTING_V = 32,
 };
 
+enum class CallDirection { CallIn, CallOut };
+
+enum class CallFSM {
+    None,          // 新建
+    Creating,      // 呼叫进行中
+    Created,       // 对方接收
+    Connected,     // 已连接
+    Disconnected,  // 已断开
+    Destroyed,     // 已销毁
+};
+
 class CallHandler {
 public:
+    // 来电
     virtual void onCall(const IMPeerId& peerId,  //
                         const std::string& callId,  //
                         bool audio, bool video) = 0;
-
+    // 呼叫建立中
+    virtual void onCallCreating(const IMPeerId& peerId,     //
+                                const std::string& callId,  //
+                                bool video) = 0;
+    // 呼叫已建立
     virtual void onCallCreated(const IMPeerId& peerId,  //
                                const std::string& callId) = 0;
-
+    // 呼叫撤回
     virtual void onCallRetract(const IMPeerId& peerId,  //
                                CallState state) = 0;
 
@@ -524,6 +540,10 @@ protected:
     void onCall(const IMPeerId& peerId,  //
                 const std::string& callId,  //
                 bool audio, bool video) override;
+
+    void onCallCreating(const IMPeerId& peerId,     //
+                        const std::string& callId,  //
+                        bool video) override;
 
     void onCallCreated(const IMPeerId& peerId,  //
                        const std::string& callId) override;

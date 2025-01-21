@@ -34,7 +34,6 @@ namespace lib::messenger {
 class IM;
 class IMJingle;
 
-enum class CallDirection { CallIn, CallOut };
 
 enum CallStage {
     StageNone,

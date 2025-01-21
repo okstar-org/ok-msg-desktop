@@ -98,11 +98,15 @@ std::unique_ptr<SendWorker> SendWorker::forGroup(const GroupId& group) {
 void SendWorker::initChatHeader(const ContactId& contactId) {
     headWidget = std::make_unique<ChatFormHeader>(contactId);
 
-    connect(headWidget.get(), &ChatFormHeader::callAccepted, this,
-            [this](const ToxPeer& p) { emit acceptCall(p, lastCallIsVideo); });
+    connect(headWidget.get(), &ChatFormHeader::callAccepted, this, [this](const PeerId& p) {
+        // headWidget->removeCallConfirm();
+        emit acceptCall(p, lastCallIsVideo);
+    });
 
-    connect(headWidget.get(), &ChatFormHeader::callRejected, this,
-            [this](const ToxPeer& p) { emit rejectCall(p); });
+    connect(headWidget.get(), &ChatFormHeader::callRejected, this, [this](const PeerId& p) {
+        // headWidget->removeCallConfirm();
+        emit rejectCall(p);
+    });
 
     connect(headWidget.get(), &ChatFormHeader::callTriggered, this, &SendWorker::onCallTriggered);
 

@@ -23,6 +23,7 @@
 namespace Ui {
 class CallDurationForm;
 }
+
 namespace module::im {
 
 /**
@@ -33,7 +34,8 @@ class CallDurationForm : public QWidget {
 
 public:
     explicit CallDurationForm(QWidget* parent = nullptr);
-    ~CallDurationForm();
+    ~CallDurationForm() override;
+
     void setContact(const Contact* c);
     void reloadTheme();
 

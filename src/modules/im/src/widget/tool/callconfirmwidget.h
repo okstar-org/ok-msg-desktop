@@ -17,22 +17,22 @@
 #include <QPolygon>
 #include <QRect>
 #include <QWidget>
+
 #include "src/model/FriendId.h"
 
 class QPaintEvent;
 class QShowEvent;
+class QLabel;
+class QDialogButtonBox;
+class QVBoxLayout;
+
 namespace module::im {
+
 class CallConfirmWidget final : public QWidget {
     Q_OBJECT
 public:
-    explicit CallConfirmWidget(const ToxPeer& from, bool video, QWidget* parent = nullptr);
-
-signals:
-    void accepted();
-    void rejected();
-
-public slots:
-    void reposition();
+    explicit CallConfirmWidget(const PeerId& from, bool video, QWidget* parent = nullptr);
+    void setCallLabel(const QString& label);
 
 protected:
     void paintEvent(QPaintEvent* event) final;
@@ -41,15 +41,25 @@ protected:
     bool eventFilter(QObject*, QEvent* event) final;
 
 private:
-    ToxPeer from;
+    PeerId from;
     QRect mainRect;
     QPolygon spikePoly;
     QBrush brush;
+    QLabel* callLabel;
+    QDialogButtonBox* buttonBox;
+    QVBoxLayout* layout;
     bool isVideo;
     const int rectW, rectH;
     const int spikeW, spikeH;
     const int roundedFactor;
     const qreal rectRatio;
+
+signals:
+    void accepted();
+    void rejected();
+
+public slots:
+    void reposition();
 };
 }  // namespace module::im
 #endif  // CALLCONFIRMWIDGET_H

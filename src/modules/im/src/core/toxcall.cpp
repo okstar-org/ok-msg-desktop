@@ -10,16 +10,26 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "src/core/toxcall.h"
+#include "toxcall.h"
+
 #include <QTimer>
+
 #include "lib/audio/audio.h"
 #include "src/core/coreav.h"
 #include "src/model/group.h"
 #include "src/video/corevideosource.h"
+
 namespace module::im {
 
-ToxCall::ToxCall(bool VideoEnabled, CoreAV& av, lib::audio::IAudioControl& audio)
-        : av{&av}, audio(audio), ctrlState({true, VideoEnabled, true}) {
+ToxCall::ToxCall(lib::messenger::CallDirection direction,
+                 CoreAV& av,
+                 lib::audio::IAudioControl& audio,
+                 bool videoEnabled)
+        : direction(direction)
+        , av(&av)
+        , audio(audio)
+        , ctrlState({true, videoEnabled, true})
+        , callFsm(lib::messenger::CallFSM::None) {
     audioSource = audio.makeSource();
 }
 
@@ -83,12 +93,13 @@ void ToxCall::setCallId(QString value) {
     callId = value;
 }
 
-ToxFriendCall::ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av,
-                             lib::audio::IAudioControl& audio)
-        : ToxCall(VideoEnabled, av, audio)
-        , sink(audio.makeSink())
+ToxFriendCall::ToxFriendCall(QString peerId,
+                             lib::messenger::CallDirection direction,
+                             CoreAV& av,
+                             lib::audio::IAudioControl& audio,
+                             bool videoEnabled)
+        : ToxCall(direction, av, audio, videoEnabled), sink(audio.makeSink())
         , peerId{peerId}
-
 {
     connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable, this,
             [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
@@ -136,24 +147,17 @@ void ToxFriendCall::onAudioSourceInvalidated() {
     //        this->av->sendCallAudio(this->friendId, pcm, samples, chans, rate);
     //      });
     //  audioSource = std::move(newSrc);
-
     //  connect(audioSource.get(), &IAudioSource::invalidated, this,
     //          &ToxFriendCall::onAudioSourceInvalidated);
 }
 
 void ToxFriendCall::onAudioSinkInvalidated() {
     auto newSink = audio.makeSink();
-
     if (newSink) {
         audioSinkInvalid =
                 newSink->connectTo_invalidated(this, [this]() { this->onAudioSinkInvalidated(); });
     }
-
     sink = std::move(newSink);
-}
-
-lib::messenger::CallState ToxFriendCall::getState() const {
-    return state;
 }
 
 void ToxFriendCall::setState(const lib::messenger::CallState& value) {
@@ -167,10 +171,12 @@ void ToxFriendCall::playAudioBuffer(const int16_t* data, int samples, unsigned c
     }
 }
 
-ToxGroupCall::ToxGroupCall(const Group& group, CoreAV& av, lib::audio::IAudioControl& audio)
-        : ToxCall(false, av, audio)
-        ,  //
-        group{group} {
+ToxGroupCall::ToxGroupCall(const Group& group,
+                           lib::messenger::CallDirection direction,
+                           CoreAV& av,
+                           lib::audio::IAudioControl& audio,
+                           bool videoEnabled)
+        : ToxCall(direction, av, audio, videoEnabled), group{group} {
     // register audio
     connect(audioSource.get(),              //
             &lib::audio::IAudioSource::frameAvailable,  //

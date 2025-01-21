@@ -38,8 +38,11 @@ class ToxCall : public QObject {
 
 protected:
     ToxCall() = delete;
-    ToxCall(bool VideoEnabled, CoreAV& av, lib::audio::IAudioControl& audio);
-    ~ToxCall();
+    explicit ToxCall(lib::messenger::CallDirection direction,
+                     CoreAV& av,
+                     lib::audio::IAudioControl& audio,
+                     bool videoEnabled = false);
+    ~ToxCall() override;
 
 public:
     ToxCall(const ToxCall& other) = delete;
@@ -72,35 +75,55 @@ public:
         return ctrlState;
     }
 
+    [[nodiscard]] inline lib::messenger::CallState getState() const {
+        return state;
+    };
+
+    [[nodiscard]] inline lib::messenger::CallDirection getDirection() const {
+        return direction;
+    };
+
 protected:
-    bool active{false};
-    CoreAV* av{nullptr};
+    bool active = false;
+    CoreAV* av = nullptr;
     // audio
     lib::audio::IAudioControl& audio;
 
     // video
-    CoreVideoSource* videoSource{nullptr};
+    CoreVideoSource* videoSource = nullptr;
     QMetaObject::Connection videoInConn;
 
-    bool nullVideoBitrate{false};
-    std::unique_ptr<lib::audio::IAudioSource> audioSource = nullptr;
+    bool nullVideoBitrate = false;
+
+    std::unique_ptr<lib::audio::IAudioSource> audioSource;
+
+    // 呼叫ID
     QString callId;
 
+    // 控制状态
     lib::ortc::CtrlState ctrlState;
+    // 呼叫方向
+    lib::messenger::CallDirection direction;
+    // 呼叫状态
+    lib::messenger::CallState state;
+    // 呼叫状态机
+    lib::messenger::CallFSM callFsm;
 };
 
 class ToxFriendCall : public ToxCall {
     Q_OBJECT
 public:
     ToxFriendCall() = delete;
-    ToxFriendCall(QString peerId, bool VideoEnabled, CoreAV& av, lib::audio::IAudioControl& audio);
+    ToxFriendCall(QString peerId,
+                  lib::messenger::CallDirection direction,
+                  CoreAV& av,
+                  lib::audio::IAudioControl& audio,
+                  bool videoEnabled);
     ToxFriendCall(ToxFriendCall&& other) = delete;
 
-    ~ToxFriendCall();
+    ~ToxFriendCall() override;
 
     ToxFriendCall& operator=(ToxFriendCall&& other) = delete;
-
-    lib::messenger::CallState getState() const;
 
     void setState(const lib::messenger::CallState& value);
 
@@ -116,7 +139,6 @@ private slots:
 
 private:
     QMetaObject::Connection audioSinkInvalid;
-    lib::messenger::CallState state{lib::messenger::CallState::NONE};
     std::unique_ptr<lib::audio::IAudioSink> sink = nullptr;
     QString peerId;
 };
@@ -125,9 +147,13 @@ class ToxGroupCall : public ToxCall {
     Q_OBJECT
 public:
     ToxGroupCall() = delete;
-    ToxGroupCall(const Group& group, CoreAV& av, lib::audio::IAudioControl& audio);
+    ToxGroupCall(const Group& group,
+                 lib::messenger::CallDirection direction,
+                 CoreAV& av,
+                 lib::audio::IAudioControl& audio,
+                 bool videoEnabled);
     ToxGroupCall(ToxGroupCall&& other) = delete;
-    ~ToxGroupCall();
+    ~ToxGroupCall() override;
 
     ToxGroupCall& operator=(ToxGroupCall&& other) = delete;
     void removePeer(FriendId peerId);

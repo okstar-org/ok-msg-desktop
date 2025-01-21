@@ -85,8 +85,8 @@ private:
     std::unique_ptr<CallDurationForm> callDuration;
 
 signals:
-    void rejectCall(const ToxPeer& peerId);
-    void acceptCall(const ToxPeer& peerId, bool video);
+    void rejectCall(const PeerId& peerId);
+    void acceptCall(const PeerId& peerId, bool video);
     void onCallTriggered();
     void onVideoCallTriggered();
     void endCall();

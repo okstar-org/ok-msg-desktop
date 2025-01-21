@@ -49,7 +49,7 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction,
     QStringList splitMsgs(content);
 
     auto toxId = idHandler.getSelfPeerId();
-    ToxPeer peerId(toxId.toString());
+    PeerId peerId(toxId.toString());
 
     QDateTime timestamp = QDateTime::currentDateTime();
     std::transform(splitMsgs.begin(), splitMsgs.end(), std::back_inserter(ret),

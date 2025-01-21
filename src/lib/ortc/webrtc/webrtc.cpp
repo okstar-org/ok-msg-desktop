@@ -829,8 +829,12 @@ void WebRTC::linkVideoDevice(Conductor* c) {
     RTC_LOG(LS_INFO) << __func__;
     auto streamId = resource + "-video-0-0";
     auto trackId = rtc::CreateRandomString(10);
-    videoTrack = getFactory()->CreateVideoTrack(videoCapture->source(), trackId);
-    c->addLocalVideoTrack(videoTrack, streamId, trackId);
+
+    auto f = getFactory();
+    if (f && videoCapture) {
+        videoTrack = f->CreateVideoTrack(videoCapture->source(), trackId);
+        c->addLocalVideoTrack(videoTrack, streamId, trackId);
+    }
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {

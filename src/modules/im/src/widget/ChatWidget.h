@@ -161,7 +161,8 @@ public slots:
     void dispatchFileWithBool(ToxFile file, bool);
     void dispatchFileSendFailed(QString friendId, const QString& fileName);
 
-    void onAvInvite(ToxPeer peerId, bool video);
+    void onAvInvite(const PeerId& peerId, bool video);
+    void onAvCreating(const FriendId& friendId, bool video);
     void onAvStart(const FriendId& friendId, bool video);
     void onAvPeerConnectionState(const FriendId& friendId, lib::ortc::PeerConnectionState state);
     void onAvEnd(const FriendId& friendId, bool error);

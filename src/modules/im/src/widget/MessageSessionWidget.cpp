@@ -30,6 +30,7 @@
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/aboutfriendform.h"
 #include "src/widget/form/chatform.h"
+#include "src/widget/tool/callconfirmwidget.h"
 #include "src/widget/widget.h"
 
 #include <QApplication>
@@ -46,10 +47,8 @@
 
 #include <cassert>
 
-#include <src/chatlog/chatlog.h>
 #include "form/chatform.h"
-#include "src/lib/session/profile.h"
-#include "src/model/chathistory.h"
+#include "src/chatlog/chatlog.h"
 #include "src/nexus.h"
 #include "src/widget/chatformheader.h"
 
@@ -429,14 +428,11 @@ void MessageSessionWidget::removeFriend() {
     sendWorker->getHeader()->removeContact();
 }
 
-void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
-    qDebug() << __func__ << peerId.toString();
+void MessageSessionWidget::setAvInvite(const PeerId& peerId, bool video) {
+    qDebug() << __func__ << "peerId:" << peerId.toString() << "video:" << video;
 
-    QString friendId0 = peerId.toFriendId().toString();
     auto f = Nexus::getCore()->getFriendList().findFriend(peerId);
-
     QString displayedName = f ? f->getDisplayedName() : peerId.username;
-    qDebug() << "show displayedName:" << displayedName;
 
     // 显示呼叫请求框
     auto header = sendWorker->getHeader();
@@ -445,7 +441,21 @@ void MessageSessionWidget::setAvInvite(const ToxPeer& peerId, bool video) {
 
     // 发送来电声音
     auto nexus = Nexus::getInstance();
-    nexus->incomingNotification(friendId0);
+    nexus->incomingNotification(peerId.toFriendId().toString());
+}
+
+void MessageSessionWidget::setAvCreating(const FriendId& friendId, bool video) {
+    qDebug() << __func__ << "friendId:" << friendId.toString() << "video:" << video;
+    auto peerId = PeerId(friendId.toString());
+
+    auto f = Nexus::getCore()->getFriendList().findFriend(peerId);
+    QString displayedName = f ? f->getDisplayedName() : peerId.username;
+
+    // 显示呼叫请求框
+    auto header = sendWorker->getHeader();
+    auto callConfirm = header->createCallConfirm(peerId, video, displayedName);
+    callConfirm->setCallLabel(tr("Calling..."));
+    header->showCallConfirm();
 }
 
 void MessageSessionWidget::setAvStart(bool video) {
@@ -534,24 +544,27 @@ void MessageSessionWidget::doForwardMessage(const ContactId& cid, const MsgId& m
         return;
     }
 
-    auto msg = msgs.at(0);
-
+    auto& msg = msgs.at(0);
     sendWorker->dispacher()->sendMessage(false, msg.asMessage(), false);
 }
 
-void MessageSessionWidget::doAcceptCall(const ToxPeer& p, bool video) {
+void MessageSessionWidget::doAcceptCall(const PeerId& p, bool video) {
     qDebug() << __func__ << p.toString();
 
     // 关闭声音
     auto w = Nexus::getInstance();
     w->onStopNotification();
 
+    // 关闭确认窗
+    auto header = sendWorker->getHeader();
+    header->removeCallConfirm();
+
     // 发送接收应答
     CoreAV* coreav = CoreAV::getInstance();
     coreav->answerCall(p, video);
 }
 
-void MessageSessionWidget::doRejectCall(const ToxPeer& p) {
+void MessageSessionWidget::doRejectCall(const PeerId& p) {
     qDebug() << __func__ << p.toString();
 
     auto header = sendWorker->getHeader();
@@ -563,7 +576,7 @@ void MessageSessionWidget::doRejectCall(const ToxPeer& p) {
 
     // 发送拒绝应答
     CoreAV* coreav = CoreAV::getInstance();
-    coreav->rejectCall(p);
+    coreav->rejectOrCancelCall(p);
 }
 
 void MessageSessionWidget::doCall() {
@@ -775,7 +788,7 @@ void MessageSessionWidget::setRecvGroupMessage(const GroupMessage& msg) {
         m.displayName = frd->getDisplayedName();
     } else {
         auto g = GroupList::findGroup(GroupId(msg.from));
-        if (g) m.displayName = g->getPeerDisplayName(ToxPeer(msg.from).getResource());
+        if (g) m.displayName = g->getPeerDisplayName(PeerId(msg.from).getResource());
     }
 
     auto md = (GroupMessageDispatcher*)sendWorker->dispacher();

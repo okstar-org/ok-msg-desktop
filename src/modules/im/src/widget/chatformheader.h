@@ -34,7 +34,7 @@ class MaskablePixmapWidget;
 namespace module::im {
 
 class CallConfirmWidget;
-class ToxPeer;
+class PeerId;
 class Contact;
 class Profile;
 
@@ -70,7 +70,7 @@ public:
 
     void showOutgoingCall(bool video);
 
-    void createCallConfirm(const ToxPeer& peer, bool video, QString& displayedName);
+    CallConfirmWidget* createCallConfirm(const PeerId& peer, bool video, QString& displayedName);
     void showCallConfirm();
     void removeCallConfirm();
 
@@ -84,10 +84,10 @@ public:
     void updateMuteMicButton();
     void updateMuteVolButton();
 
-    void showCallConfirm(const ToxPeer& peerId, bool video, const QString& displayedName);
+    void showCallConfirm(const PeerId& peerId, bool video, const QString& displayedName);
 
     void setAvatar(const QPixmap& img);
-    QSize getAvatarSize() const;
+    [[nodiscard]] QSize getAvatarSize() const;
 
     void reloadTheme();
 
@@ -102,8 +102,8 @@ signals:
     void micMuteToggle();
     void volMuteToggle();
 
-    void callAccepted(const ToxPeer& peerId, bool video);
-    void callRejected(const ToxPeer& peerId);
+    void callAccepted(const PeerId& peerId, bool video);
+    void callRejected(const PeerId& peerId);
 
 private slots:
     void retranslateUi();

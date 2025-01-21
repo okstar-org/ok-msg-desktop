@@ -125,7 +125,7 @@ QString Group::getPeerDisplayName(const QString& resource) {
 void Group::addPeer(const GroupOccupant& occ) {
     qDebug() << __func__ << occ.jid << occ.nick;
 
-    peerDisplayNames[ToxPeer(occ.jid).resource] = occ.nick;
+    peerDisplayNames[PeerId(occ.jid).resource] = occ.nick;
 
     // 判断成员是否为自己
     auto core = Core::getInstance();

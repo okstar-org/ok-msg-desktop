@@ -37,7 +37,6 @@
 #include "Bus.h"
 #include "application.h"
 #include "base/Styles.h"
-#include "src/lib/session/profile.h"
 #include "src/nexus.h"
 #include "widget.h"
 
@@ -293,23 +292,21 @@ void ChatFormHeader::showOutgoingCall(bool video) {
     updateButtonsView();
 }
 
-void ChatFormHeader::createCallConfirm(const ToxPeer& peer, bool video, QString& displayedName) {
-    qDebug() << __func__ << "peer:" << peer << "video?" << video;
-
+CallConfirmWidget* ChatFormHeader::createCallConfirm(const PeerId& peer, bool video,
+                                                     QString& displayedName) {
+    qDebug() << __func__ << "peer:" << peer.toString() << "video?" << video;
     callConfirm = std::make_unique<CallConfirmWidget>(peer, video);
     connect(callConfirm.get(), &CallConfirmWidget::accepted, this, [=]() {
-        removeCallConfirm();
         emit callAccepted(peer, video);
     });
     connect(callConfirm.get(), &CallConfirmWidget::rejected, this, [=]() {
-        removeCallConfirm();
         emit callRejected(peer);
     });
+    return callConfirm.get();
 }
 
 void ChatFormHeader::showCallConfirm() {
     callConfirm->show();
-    //   callConfirm->setVisible(true);
 }
 
 void ChatFormHeader::removeCallConfirm() {

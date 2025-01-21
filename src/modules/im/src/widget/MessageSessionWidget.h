@@ -73,7 +73,8 @@ public:
     void setFriend(const Friend* f);
     void removeFriend();
 
-    void setAvInvite(const ToxPeer& peerId, bool video);
+    void setAvInvite(const PeerId& peerId, bool video);
+    void setAvCreating(const FriendId& friendId, bool video);
     void setAvStart(bool video);
     void setAvPeerConnectedState(lib::ortc::PeerConnectionState state);
     void setAvEnd(bool error);
@@ -112,8 +113,8 @@ private slots:
     void changeAutoAccept(bool enable);
     void showDetails();
     void onMessageSent(DispatchedMessageId id, const Message& message);
-    void doAcceptCall(const ToxPeer& p, bool video);
-    void doRejectCall(const ToxPeer& p);
+    void doAcceptCall(const PeerId& p, bool video);
+    void doRejectCall(const PeerId& p);
     void doCall();
     void doVideoCall();
     void endCall();

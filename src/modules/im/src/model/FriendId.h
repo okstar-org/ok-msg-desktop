@@ -51,13 +51,13 @@ inline uint qHash(const FriendId& id) {
     return qHash(id.getByteArray());
 }
 
-class ToxPeer : public FriendId {
+class PeerId : public FriendId {
 public:
-    explicit ToxPeer() = default;
+    explicit PeerId() = default;
 
-    explicit ToxPeer(const lib::messenger::IMPeerId& peerId);
+    explicit PeerId(const lib::messenger::IMPeerId& peerId);
 
-    explicit ToxPeer(const QString& rawId);
+    explicit PeerId(const QString& rawId);
 
     bool isValid() const override;
 

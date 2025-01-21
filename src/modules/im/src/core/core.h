@@ -93,7 +93,7 @@ public:
     GroupId getGroupPersistentId(QString groupId) const override;
     uint32_t getGroupNumberPeers(QString groupId) const override;
     QString getGroupPeerName(QString groupId, QString peerId) const override;
-    ToxPeer getGroupPeerPk(QString groupId, QString peerId) const override;
+    PeerId getGroupPeerPk(QString groupId, QString peerId) const override;
     QStringList getGroupPeerNames(QString groupId) const override;
     bool getGroupAvEnabled(QString groupId) const override;
     FriendId getFriendPublicKey(QString friendNumber) const;

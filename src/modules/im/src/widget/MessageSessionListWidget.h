@@ -91,7 +91,8 @@ public:
     void toForwardMessage(const ContactId& cid, const MsgId& id);
 
     // av
-    void setFriendAvInvite(const ToxPeer& peer, bool video);
+    void setFriendAvInvite(const PeerId& peer, bool video);
+    void setFriendAvCreating(const FriendId& friendId, bool video);
     void setFriendAvStart(const FriendId& friendId, bool video);
     void setFriendAvPeerConnectedState(const FriendId& friendId,
                                        lib::ortc::PeerConnectionState state);

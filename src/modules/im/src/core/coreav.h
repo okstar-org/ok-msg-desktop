@@ -49,7 +49,8 @@ public:
     static CoreAVPtr makeCoreAV(Core* core);
     static CoreAV* getInstance();
 
-    ~CoreAV();
+    ~CoreAV() override;
+
     void start();
 
     bool isCallStarted(const ContactId* f) const;
@@ -60,6 +61,8 @@ public:
     void sendCallVideo(QString friendId, std::shared_ptr<lib::video::VideoFrame> frame);
     bool sendGroupCallAudio(QString groupNum, const int16_t* pcm, size_t samples, uint8_t chans,
                             uint32_t rate) const;
+
+    ToxCall* getCall(const QString& friendId);
 
     CoreVideoSource* getSelfVideoSource() {
         return selfVideoSource.get();
@@ -88,6 +91,10 @@ protected:
     void onCall(const lib::messenger::IMPeerId& peerId,  //
                 const std::string& callId, bool audio, bool video) override;
 
+    void onCallCreating(const lib::messenger::IMPeerId& peerId,  //
+                        const std::string& callId,               //
+                        bool video) override;
+
     void onCallCreated(const lib::messenger::IMPeerId& peerId,  //
                        const std::string& callId) override;
 
@@ -109,10 +116,12 @@ protected:
                                const std::string& callId,
                                lib::ortc::IceConnectionState state) override;
 
-    void receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId, const std::string& callId,
+    void receiveCallStateAccepted(const lib::messenger::IMPeerId& peerId,
+                                  const std::string& callId,
                                   bool video) override;
 
-    void receiveCallStateRejected(const lib::messenger::IMPeerId& peerId, const std::string& callId,
+    void receiveCallStateRejected(const lib::messenger::IMPeerId& peerId,
+                                  const std::string& callId,
                                   bool video) override;
 
     void onHangup(const lib::messenger::IMPeerId& peerId, lib::messenger::CallState state) override;
@@ -121,13 +130,14 @@ protected:
 
 public slots:
     bool startCall(QString friendId, bool video);
-    bool answerCall(ToxPeer peerId, bool video);
+    bool answerCall(PeerId peerId, bool video);
     bool cancelCall(const QString& friendId);
-    void rejectCall(const ToxPeer& peerId);
+    void rejectOrCancelCall(const PeerId& peerId);
     void timeoutCall(QString friendId);
 
 signals:
-    void avInvite(ToxPeer peerId, bool video);
+    void avCreating(FriendId friendId, bool video);
+    void avInvite(PeerId peerId, bool video);
     void avStart(FriendId friendId, bool video);
     void avPeerConnectionState(FriendId friendId, lib::ortc::PeerConnectionState state);
     void avEnd(FriendId friendId, bool error = false);
