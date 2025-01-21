@@ -21,7 +21,10 @@ namespace module::im {
  * @note Only CoreAV should create a CoreVideoSource since
  * only CoreAV can push images to it.
  */
-CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopped{false} {}
+CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopped{false} {
+    qRegisterMetaType<std::shared_ptr<lib::video::VideoFrame>>(
+            "std::shared_ptr<lib::video::VideoFrame>");
+}
 
 /**
  * @brief Makes a copy of the vpx_image_t and emits it as a new VideoFrame.

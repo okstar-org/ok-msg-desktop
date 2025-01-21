@@ -72,8 +72,7 @@ Nexus::Nexus(QObject* parent)
 
     qRegisterMetaType<FileDirection>("FileDirection");
     qRegisterMetaType<FileStatus>("FileStatus");
-    qRegisterMetaType<std::shared_ptr<lib::video::VideoFrame>>(
-            "std::shared_ptr<lib::video::VideoFrame>");
+
     qRegisterMetaType<FriendId>("ToxPk");
     qRegisterMetaType<ToxId>("ToxId");
     qRegisterMetaType<GroupId>("GroupId");
@@ -85,7 +84,7 @@ Nexus::Nexus(QObject* parent)
     // Create GUI
     m_widget = new Widget();
 
-    //    connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
+    // connect(this, &Nexus::destroyProfile, this, &Nexus::do_logout);
 }
 
 Nexus::~Nexus() {

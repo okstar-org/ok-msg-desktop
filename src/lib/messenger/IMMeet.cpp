@@ -20,11 +20,11 @@
 #include <jinglejsonmessage.h>
 #include <meetmanager.h>
 #include <QByteArray>
-#include <iostream>
 #include <range/v3/all.hpp>
 #include <utility>
 
 #include "IM.h"
+#include "base/basic_types.h"
 #include "base/jsons.h"
 #include "src/base/uuid.h"
 
@@ -107,7 +107,7 @@ IMMeet::~IMMeet() {
 }
 
 const std::string& IMMeet::create(const std::string& name) {
-    std::cout << __func__ << name;
+    qDebug() << __func__ << name.c_str();
 
     std::map<std::string, std::string> props;
     props.insert(std::pair("startAudioMuted", "9"));
@@ -121,7 +121,7 @@ const std::string& IMMeet::create(const std::string& name) {
 }
 
 void IMMeet::disband() {
-    std::cout << __func__;
+    qDebug() << __func__;
     leave();
 }
 
@@ -139,17 +139,16 @@ void IMMeet::join() {}
 
 void IMMeet::sendMessage(const std::string& msg) {
     if (msg.empty()) {
-        std::cerr << "Empty message!";
+        qWarning() << "Empty message!";
         return;
     }
     meet->send((msg));
 }
 
 void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) {
-    std::cout << __func__ << (from.full()) << "presence:" << presence.presence();
+    qDebug() << __func__ << qstring(from.full()) << "presence:" << presence.presence();
 
     auto pt = presence.subtype();
-
     switch (pt) {
         case gloox::Presence::PresenceType::Available: {
             // 成员上线
@@ -177,7 +176,7 @@ void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& p
             break;
         }
         default: {
-            std::cerr << "Unable to handle PresenceType:" << pt;
+            qWarning() << "Unable to handle PresenceType:" << pt;
         }
     }
 }
@@ -186,7 +185,7 @@ void IMMeet::handleHostMessage(const gloox::JID& from, const gloox::Message& msg
     auto message = (msg.body());
     auto participant = (from.resource());
 
-    std::cout << __func__ << (from.full()) << "msg:" << message;
+    qDebug() << __func__ << qstring(from.full()) << "msg:" << message.c_str();
     if (participant.empty()) {
         return;
     }
@@ -200,9 +199,9 @@ void IMMeet::handleHostMessageSession(const gloox::JID& from, const std::string&
 
 void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
                             const std::map<std::string, std::string>& props) {
-    std::cout << __func__ << (jid.full()) << "ready:" << ready;
+    qDebug() << __func__ << (jid.full().c_str()) << "ready:" << ready;
     for (const auto& kv : props) {
-        std::cout << "property:" << (kv.first) << "=>" << (kv.second);
+        qDebug() << "property:" << (kv.first.c_str()) << "=>" << (kv.second.c_str());
     }
 
     for (auto* h : handlers) {
@@ -226,7 +225,7 @@ void IMMeet::handleCreation(const gloox::JID& jid, bool ready,
 }
 
 void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Participant& participant) {
-    std::cout << __func__ << (participant.email);
+    qDebug() << __func__ << qstring(participant.email);
     for (auto* h : handlers) {
         h->onParticipantJoined(ok::base::Jid(jid.full()), toParticipant(participant));
     }
@@ -234,7 +233,7 @@ void IMMeet::handleParticipant(const gloox::JID& jid, const gloox::Meet::Partici
 void IMMeet::handleStatsId(const gloox::JID& jid, const std::string& statsId) {}
 
 void IMMeet::handleJsonMessage(const gloox::JID& jid, const gloox::JsonMessage* json) {
-    std::cout << __func__ << (json->getJson());
+    qDebug() << __func__ << (json->getJson().c_str());
 }
 
 void IMMeet::onConnecting() {}
@@ -286,12 +285,12 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
     }
 
     auto sId = (jingle->sid());
-    std::cout << __func__ << "sid:" << sId << "peer:" << peerId.toString();
+    qDebug() << __func__ << "sid:" << sId.c_str() << "peer:" << peerId.toString().c_str();
 
     ortc::OJingleContentMap cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
-        std::cout << "Is no av session!";
+        qDebug() << "Is no av session!";
         return false;
     }
     cav.sdpType = ortc::JingleSdpType::Offer;
@@ -306,7 +305,7 @@ bool IMMeet::doSessionInitiate(gloox::Jingle::Session* session,
 }
 
 void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& map) const {
-    std::cout << __func__;
+    qDebug() << __func__;
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer((peerId.toString()), map);
@@ -384,12 +383,12 @@ bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
 
 bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     SESSION_CHECK(currentSid);
-    std::cout << __func__;
+    qDebug() << __func__;
     for (const auto p : jingle->plugins()) {
         if (p->pluginType() == gloox::Jingle::PluginJsonMessage) {
             auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
             if (jm) {
-                std::cout << "json-message:" << jm->json().c_str();
+                qDebug() << "json-message:" << jm->json().c_str();
                 std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
 
@@ -406,12 +405,10 @@ bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMP
 
 bool IMMeet::doInvalidAction(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId&) {
     if (currentSid != jingle->sid()) {
-        std::cerr << __func__ << "Unable to handle session:" << currentSid;
+        qWarning() << __func__ << "Unable to handle session:" << currentSid.c_str();
         return false;
     }
-
-    std::cout << __func__;
-
+    qDebug() << __func__;
     return true;
 }
 
@@ -423,11 +420,11 @@ bool IMMeet::doSessionTerminate(gloox::Jingle::Session* session,
 }
 
 void IMMeet::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
-    std::cout << __func__;
+    qDebug() << __func__;
 }
 
 void IMMeet::clearSessionInfo(const std::string& sId) {
-    std::cout << __func__ << sId;
+    qDebug() << __func__ << sId.c_str();
 }
 
 void IMMeet::ToMeetSdp(const ortc::OJingleContentMap* av, gloox::Jingle::PluginList& plugins) {
@@ -475,7 +472,7 @@ void IMMeet::ToMeetSdp(const ortc::OJingleContentMap* av, gloox::Jingle::PluginL
 }
 
 void IMMeet::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
-    std::cout << __func__;
+    qDebug() << __func__;
 }
 
 void IMMeet::onLocalDescriptionSet(const std::string& sId, const std::string& peerId,
@@ -496,8 +493,8 @@ void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
 
 void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {
-    std::cout << __func__ << "sId:" << sId << "peerId:" << peerId
-              << "state:" << (IceGatheringStateAsStr(state));
+    qDebug() << __func__ << "sId:" << sId.c_str() << "peerId:" << peerId.c_str()
+             << "state:" << (IceGatheringStateAsStr(state).c_str());
 
     if (state == ortc::IceGatheringState::Complete) {
         doForIceCompleted(sId, peerId);
@@ -510,7 +507,7 @@ void IMMeet::onIce(const std::string& sId, const std::string& peerId, const ortc
 
 void IMMeet::doForIceCompleted(const std::string& sId, const std::string& peerId) {
     if (currentSession == nullptr) {
-        std::cerr << "Unable to find jingle session:" << sId;
+        qWarning() << "Unable to find jingle session:" << sId.c_str();
         return;
     }
 
@@ -524,20 +521,20 @@ void IMMeet::doForIceCompleted(const std::string& sId, const std::string& peerId
 
 void IMMeet::onIceConnectionChange(const std::string& sId, const std::string& peerId,
                                    ortc::IceConnectionState state) {
-    std::cout << __func__ << "sId:" << sId << "peerId:" << peerId
-              << "state:" << (ortc::IceConnectionStateAsStr(state));
+    qDebug() << __func__ << "sId:" << sId.c_str() << "peerId:" << peerId.c_str()
+             << "state:" << qstring(ortc::IceConnectionStateAsStr(state));
 }
 
 void IMMeet::onPeerConnectionChange(const std::string& sId, const std::string& peerId,
                                     ortc::PeerConnectionState state) {
-    std::cout << __func__ << "sId:" << sId << "peerId:" << peerId
-              << "state:" << (ortc::PeerConnectionStateAsStr(state));
+    qDebug() << __func__ << "sId:" << sId.c_str() << "peerId:" << peerId.c_str()
+             << "state:" << qstring(ortc::PeerConnectionStateAsStr(state));
 }
 
 void IMMeet::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
-    std::cout << __func__ << "sId:" << sId << "peerId:" << peerId
-              << "state:" << (ortc::SignalingStateAsStr(state));
+    qDebug() << __func__ << "sId:" << sId.c_str() << "peerId:" << peerId.c_str()
+             << "state:" << qstring(ortc::SignalingStateAsStr(state));
 
     if (state == ortc::SignalingState::Closed) {
         for (auto h : handlers) {
@@ -555,7 +552,7 @@ std::string extractFirstPart(const std::string& input) {
 void IMMeet::onRender(const ortc::RendererImage& image,
                       const std::string& friendId,
                       const std::string& resource_) {
-    //    std::cout << __func__ << "render friendId:" << (friendId) //
+    //    qDebug() << __func__ << "render friendId:" << (friendId) //
     //             << " image {w:" << image.width_ << ", h:" << image.height_ << "}";
     for (auto h : handlers) {
         if (friendId.empty()) {
@@ -596,7 +593,7 @@ std::vector<std::string> IMMeet::getVideoDeviceList() {
 }
 
 void IMMeet::setEnable(ortc::CtrlState state) {
-    std::cout << __func__;
+    qDebug() << __func__;
     auto pManager = ortc::OkRTCManager::getInstance();
     auto rtc = pManager->getRtc();
     if (!rtc) {

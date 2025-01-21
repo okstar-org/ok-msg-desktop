@@ -11,7 +11,7 @@
  */
 
 #include "Messenger.h"
-#include <iostream>
+#include <QDebug>
 #include <range/v3/all.hpp>
 #include "IMFile.h"
 #include "IMMeet.h"
@@ -68,7 +68,7 @@ std::string Messenger::genUniqueId() {
 }
 
 bool Messenger::sendToGroup(const std::string& g, const std::string& msg, const std::string& id) {
-    //    std::cout << std::string("sendToGroup=>%1 id:%2 msg:%2").arg(g).arg(id).arg(msg);
+    //    qDebug() << std::string("sendToGroup=>%1 id:%2 msg:%2").arg(g).arg(id).arg(msg);
     sentCount++;
     return _im->sendToRoom(g, msg, id);
 }
@@ -77,11 +77,11 @@ bool Messenger::sendToFriend(const std::string& f,
                              const std::string& msg,
                              const std::string& id,
                              bool encrypt) {
-    std::cout << __func__ << msg << "=>" << f;
+    qDebug() << __func__ << msg.c_str() << "=>" << f.c_str();
     sentCount++;
     bool y = false;
     if (encrypt) {
-        std::cerr << "Encrypt message!";
+        qDebug() << "Encrypt message!";
         return false;
         // #ifdef OK_PLUGIN
         //         auto _session = ok::Application::Instance()->getSession();
@@ -96,7 +96,7 @@ bool Messenger::sendToFriend(const std::string& f,
         //         auto ele = dom.documentElement();
         //
         //         if (pm->encryptMessageElement(_session->account(), ele)) {
-        //             std::cout << "encryptMessageElement=>" << ele.ownerDocument().toString();
+        //             qDebug() << "encryptMessageElement=>" << ele.ownerDocument().toString();
         //             auto xml = ok::base::Xmls::format(ele);
         //             _im->send(xml);
         //             y = true;
@@ -115,7 +115,7 @@ void Messenger::receiptReceived(const std::string& f, std::string receipt) {
 
 void Messenger::sendFriendRequest(const std::string& f, const std::string& nick,
                                   const std::string& message) {
-    std::cout << __func__ << f << nick << message;
+    qDebug() << __func__ << f.c_str() << nick.c_str() << message.c_str();
     _im->addFriend(gloox::JID((f)), nick, message);
 }
 
@@ -216,7 +216,7 @@ void Messenger::changePassword(const std::string& password) {
 //    }
 //    auto dom = ok::base::Xmls::parse(xml);
 //
-//    std::cout << "onEncryptedMessage:" << dom.toString();
+//    qDebug() << "onEncryptedMessage:" << dom.toString();
 //    auto _session = ok::Application::Instance()->getSession();
 //    auto info = _session->getSignInInfo();
 //
@@ -226,7 +226,7 @@ void Messenger::changePassword(const std::string& password) {
 //
 //    auto ele = dom.documentElement();
 //    bool decrypted = pm->decryptMessageElement(_session->account(), ele);
-//    std::cout << "decrypt message=>" << decrypted;
+//    qDebug() << "decrypt message=>" << decrypted;
 //
 //    auto body = ele.firstChildElement("body").text();
 //    if (body.isEmpty()) {

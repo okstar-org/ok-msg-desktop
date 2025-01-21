@@ -13,7 +13,7 @@
 //
 // Created by gaojie on 24-5-29.
 //
-
+#include <QDebug>
 #include <range/v3/range.hpp>
 #include <range/v3/view.hpp>
 
@@ -22,9 +22,9 @@
 #include <jingleiceudp.h>
 #include <jinglertp.h>
 
-#include <iostream>
 #include "IM.h"
 #include "IMCall.h"
+#include "base/basic_types.h"
 #include "lib/ortc/ok_rtc.h"
 #include "lib/ortc/ok_rtc_manager.h"
 
@@ -147,9 +147,9 @@ bool IMCall::callToFriend(const std::string& friendId, const std::string& sId, b
 }
 
 bool IMCall::callToPeerId(const IMPeerId& to, const std::string& sId, bool video) {
-    //    std::cout << std::string("peerId:%1 video:%2").arg((to.toString())).arg(video);
+    //    qDebug() << std::string("peerId:%1 video:%2").arg((to.toString())).arg(video);
     //    auto r = createCall(to, sId, video);
-    //    std::cout << "createdCall=>" << r;
+    //    qDebug() << "createdCall=>" << r;
     return true;
 }
 
@@ -200,7 +200,7 @@ bool IMCall::createCall(const IMPeerId& to, const std::string& sId, bool video) 
 }
 //
 // void IMCall::cancel(const std::string& friendId) {
-//    std::cout << __func__ << friendId;
+//    qDebug() << __func__ << friendId;
 //
 //    auto sId = m_friendSessionMap.value(IMPeerId(friendId));
 //    auto session = m_sessionMap.value(sId);
@@ -262,7 +262,7 @@ void IMCall::setSpeakerVolume(uint32_t vol) {
 }
 
 void IMCall::onCreatePeerConnection(const std::string& sId, const std::string& peerId, bool ok) {
-    std::cout << __func__ << std::endl;
+    qDebug() << __func__;
 }
 
 void IMCall::onFailure(const std::string& sId,
@@ -329,7 +329,7 @@ void IMCall::onIceConnectionChange(const std::string& sId,
     OnIceConnectionChange=>disconnected
     OnIceConnectionChange=>closed
      */
-    std::cout << __func__ << (ortc::IceConnectionStateAsStr(state)) << std::endl;
+    qDebug() << __func__ << qstring(ortc::IceConnectionStateAsStr(state));
 
     for (auto h : callHandlers) {
         h->onIceConnectionChange(IMPeerId(peerId), (sId), state);
@@ -343,7 +343,7 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
      * OnConnectionChange : connected
      * OnConnectionChange : closed
      */
-    std::cout << __func__ << (ortc::PeerConnectionStateAsStr(state));
+    qDebug() << __func__ << qstring(ortc::PeerConnectionStateAsStr(state));
 
     for (const auto& item : callHandlers) {
         assert(item);
@@ -353,7 +353,7 @@ void IMCall::onPeerConnectionChange(const std::string& sId, const std::string& p
 
 void IMCall::onSignalingChange(const std::string& sId, const std::string& peerId,
                                ortc::SignalingState state) {
-    std::cout << __func__ << "sId:" << (ortc::SignalingStateAsStr(state));
+    qDebug() << __func__ << "sId:" << qstring(ortc::SignalingStateAsStr(state));
     if (state == ortc::SignalingState::Closed) {
         for (auto h : callHandlers) {
             h->onEnd(IMPeerId((peerId)));
@@ -365,7 +365,7 @@ void IMCall::onLocalDescriptionSet(const std::string& sid,     //
                                    const std::string& peerId,  //
                                    const ortc::OJingleContentMap* oContext) {
     auto sId = (sid);
-    std::cout << __func__ << "sId:" << sId << "peerId:" << (peerId);
+    qDebug() << __func__ << "sId:" << qstring(sId) << "peerId:" << qstring(peerId);
 }
 
 void IMCall::onIce(const std::string& sId,     //
@@ -373,15 +373,16 @@ void IMCall::onIce(const std::string& sId,     //
                    const lib::ortc::OIceUdp& oIceUdp) {
     auto sid = (sId);
     if (sid.empty()) {
-        std::cerr << "sid is empty.";
+        qWarning() << "sid is empty.";
         return;
     }
 
-    std::cout << __func__ << "sId:" << sid << "peerId:" << (peerId) << "mid:" << (oIceUdp.mid);
+    qDebug() << __func__ << "sId:" << qstring(sid) << "peerId:" << qstring(peerId)
+             << "mid:" << qstring(oIceUdp.mid);
 
     auto* session = findSession(sid);
     if (!session) {
-        std::cerr << "Unable to find session:" << &sId;
+        qWarning() << "Unable to find session:" << &sId;
         return;
     }
 
@@ -436,17 +437,18 @@ bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
     ParseAV(jingle, av);
 
     if (!av.isValid()) {
-        std::cerr << "Is no call session";
+        qWarning() << "Is no call session";
         return false;
     }
     IMCallSession* pSession = nullptr;
     auto it = m_sessionMap.find(sId);
     if (it == m_sessionMap.end()) {
-        pSession = it->second;
         // 创建session
         auto selfId = im->getSelfId();
         pSession = new IMCallSession(sId, session, selfId, peerId, ortc::JingleCallType::av);
         m_sessionMap.insert(std::make_pair(sId, pSession));
+    } else {
+        pSession = it->second;
     }
 
     // RTC 接受会话
@@ -480,11 +482,11 @@ bool IMCall::doSessionAccept(gloox::Jingle::Session* session,
 }
 
 void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
-    std::cout << __func__ << "peerId:" << peerId.toString() << "sId:" << (jm->id())
-              << "action:" << gloox::Jingle::ActionValues[jm->action()];
+    qDebug() << __func__ << "peerId:" << qstring(peerId.toString()) << "sId:" << qstring(jm->id())
+             << "action:" << gloox::Jingle::ActionValues[jm->action()];
 
     auto friendId = peerId.toFriendId();
-    std::cout << "friendId:" << friendId;
+    qDebug() << "friendId:" << qstring(friendId);
 
     auto sId = (jm->id());
 
@@ -501,7 +503,7 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
         }
         case gloox::Jingle::JingleMessage::propose: {
             // 被对方发起呼叫
-            std::cout << "On call from:" << peerId.toString();
+            qDebug() << "On call from:" << qstring(peerId.toString());
 
             // 获取呼叫类型
             bool audio = false;
@@ -559,7 +561,7 @@ void IMCall::doJingleMessage(const IMPeerId& peerId, const gloox::Jingle::Jingle
 
 void IMCall::proposeJingleMessage(const std::string& friendId, const std::string& callId,
                                   bool video) {
-    std::cout << __func__ << "friend:" << friendId << callId;
+    qDebug() << __func__ << "friend:" << qstring(friendId) << qstring(callId);
 
     gloox::StanzaExtensionList exts;
     auto jm = new gloox::Jingle::JingleMessage(gloox::Jingle::JingleMessage::propose, (callId));
@@ -578,7 +580,7 @@ void IMCall::proposeJingleMessage(const std::string& friendId, const std::string
 }
 
 void IMCall::rejectJingleMessage(const std::string& peerId, const std::string& callId) {
-    std::cout << __func__ << "friend:" << peerId << callId;
+    qDebug() << __func__ << "friend:" << qstring(peerId) << "callId:" << callId.c_str();
 
     gloox::StanzaExtensionList exts;
     auto reject = new gloox::Jingle::JingleMessage(gloox::Jingle::JingleMessage::reject, (callId));
@@ -592,7 +594,7 @@ void IMCall::rejectJingleMessage(const std::string& peerId, const std::string& c
 }
 
 void IMCall::retractJingleMessage(const std::string& friendId, const std::string& callId) {
-    std::cout << __func__ << "friend:" << friendId << callId;
+    qDebug() << __func__ << "friend:" << friendId.c_str() << "callId:" << callId.c_str();
 
     auto* jm = new gloox::Jingle::JingleMessage(gloox::Jingle::JingleMessage::retract, (callId));
 
@@ -604,13 +606,13 @@ void IMCall::retractJingleMessage(const std::string& friendId, const std::string
 }
 
 void IMCall::acceptJingleMessage(const IMPeerId& peerId, const std::string& callId, bool video) {
-    std::cout << __func__ << "friend:" << peerId.toFriendId() << callId;
+    qDebug() << __func__ << "friend:" << peerId.toString().c_str() << "callId:" << callId.c_str();
 
     auto proceed = new gloox::Jingle::JingleMessage(gloox::Jingle::JingleMessage::proceed, (callId));
     gloox::Message proceedMsg(gloox::Message::Chat, gloox::JID((peerId.toString())));
     proceedMsg.addExtension(proceed);
     im->getClient()->send(proceedMsg);
-    std::cout << "Sent proceed=>" << peerId.toString();
+    qDebug() << "Sent proceed=>" << peerId.toString().c_str();
 
     // 发送给自己其它终端
     auto accept = new gloox::Jingle::JingleMessage(gloox::Jingle::JingleMessage::accept, (callId));
@@ -620,7 +622,7 @@ void IMCall::acceptJingleMessage(const IMPeerId& peerId, const std::string& call
     gloox::Message msg(gloox::Message::Chat, self);
     msg.addExtension(accept);
     im->getClient()->send(msg);
-    std::cout << "Sent accept=>" << (self.full());
+    qDebug() << "Sent accept=>" << qstring(self.full());
 
     // 设置状态为接受
     auto ws = findSession(callId);
@@ -634,7 +636,7 @@ IMCallSession* IMCall::cacheSessionInfo(const IMContactId& from,
                                         const IMPeerId& to,
                                         const std::string& sId,
                                         lib::ortc::JingleCallType callType) {
-    std::cout << __func__ << "to:" << to.toString();
+    qDebug() << __func__ << "to:" << qstring(to.toString());
     auto session = getIM()->createSession(gloox::JID((to.toString())), (sId), this);
 
     m_friendSessionMap.insert(std::make_pair(to, sId));
@@ -646,7 +648,7 @@ IMCallSession* IMCall::cacheSessionInfo(const IMContactId& from,
 }
 
 void IMCall::clearSessionInfo(const std::string& sId) {
-    std::cout << __func__ << sId;
+    qDebug() << __func__ << qstring(sId);
     auto it = m_sessionMap.find(sId);
     if (it == m_sessionMap.end()) {
         return;
@@ -667,14 +669,14 @@ IMCallSession* IMCall::createSession(const IMContactId& self,
 }
 
 void IMCall::handleJingleMessage(const IMPeerId& peerId, const gloox::Jingle::JingleMessage* jm) {
-    std::cout << __func__;
+    qDebug() << __func__;
     doJingleMessage(peerId, jm);
 }
 
 bool IMCall::doSessionInfo(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& friendId) {
-    std::cout << "jingle:%1 peerId:%2"  //
-              << (jingle->sid())        //
-              << friendId.toString();
+    qDebug() << "jingle:%1 peerId:%2"   //
+             << qstring(jingle->sid())  //
+             << friendId.toString().c_str();
     return true;
 }
 
@@ -700,7 +702,7 @@ bool IMCall::doContentReject(const gloox::Jingle::Session::Jingle*, const IMPeer
 
 bool IMCall::doTransportInfo(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     auto sid = (jingle->sid());
-    std::cout << __func__ << "sId:" << sid << "peerId:" << peerId.toString();
+    qDebug() << __func__ << "sId:" << qstring(sid) << "peerId:" << qstring(peerId.toString());
 
     if (currentSid.empty()) {
         return false;
@@ -708,7 +710,7 @@ bool IMCall::doTransportInfo(const gloox::Jingle::Session::Jingle* jingle, const
 
     auto s = findSession(sid);
     if (!s) {
-        std::cerr << ("Session is no existing.");
+        qWarning() << ("Session is no existing.");
         return false;
     }
 
@@ -766,13 +768,13 @@ void IMCall::onDisconnected(int)
 
 void IMCall::onStarted()
 {
-    std::cout << __func__;
+    qDebug() << __func__;
     onImStartedCall();
 }
 
 void IMCall::onStopped()
 {
-    std::cout << __func__;
+    qDebug() << __func__;
 }
 
 bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,
@@ -784,18 +786,18 @@ bool IMCall::doSessionInitiate(gloox::Jingle::Session* session,
     }
 
     auto sId = (jingle->sid());
-    std::cout << __func__ << "sid:" << sId;
+    qDebug() << __func__ << "sid:" << sId.c_str();
 
     ortc::OJingleContentMap cav;
     ParseAV(jingle, cav);
     if (!cav.isValid()) {
-        std::cerr << "Is invalid jingle content!";
+        qWarning() << "Is invalid jingle content!";
         return false;
     }
 
     for (const auto& item : cav.getContents()) {
         if (!item.second.isAV()) {
-            std::cerr << "Is no av content!";
+            qWarning() << "Is no av content!";
             return false;
         }
     }
@@ -815,7 +817,7 @@ bool IMCall::doSessionTerminate(gloox::Jingle::Session* session,
     }
 
     auto sId = (session->sid());
-    std::cout << __func__ << "sId:" << sId;
+    qDebug() << __func__ << "sId:" << sId.c_str();
     auto s = findSession(sId);
     if (s) {
         s->doTerminate();

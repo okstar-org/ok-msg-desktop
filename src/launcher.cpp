@@ -12,8 +12,6 @@
 #include "launcher.h"
 
 #include <memory>
-#include <iostream>
-
 #include "application.h"
 
 namespace ok {
@@ -57,7 +55,7 @@ int Launcher::executeApplication() {
     app->start();
     app->finish();
     auto retval = app->exec();
-    std::cout << "exit:" << retval << std::endl;
+    qDebug() << "exit:" << retval;
     return retval;
 }
 
