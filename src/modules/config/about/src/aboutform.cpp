@@ -83,7 +83,7 @@ AboutForm::AboutForm(QWidget* parent)
 void AboutForm::replaceVersions() {
     // TODO: When we finally have stable releases: build-in a way to tell
     bodyUI->youAreUsing->setText(
-            tr("You are using the app versiion %1.").arg(QString(GIT_DESCRIBE)));
+            tr("You are using the app version %1.").arg(QString(GIT_DESCRIBE)));
 
 #if UPDATE_CHECK_ENABLED
     if (updateCheck != nullptr) {

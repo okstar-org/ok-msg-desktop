@@ -12,7 +12,7 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="ko" version="2.1">
+<TS version="2.1" language="ko">
     <context>
         <name>MainWindow</name>
         <message>
@@ -47,6 +47,10 @@
             <translation>메시지</translation>
         </message>
         <message>
+            <source>Document</source>
+            <translation>문서조사</translation>
+        </message>
+        <message>
             <source>Setting</source>
             <translation>설정</translation>
         </message>
@@ -57,6 +61,10 @@
         <message>
             <source>Meeting</source>
             <translation>회의</translation>
+        </message>
+        <message>
+            <source>Classroom</source>
+            <translation>교실</translation>
         </message>
     </context>
 </TS>

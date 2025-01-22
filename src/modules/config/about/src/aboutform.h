@@ -30,7 +30,8 @@ class AboutForm : public lib::ui::GenericForm {
 public:
     AboutForm(QWidget* parent = nullptr);
     ~AboutForm();
-    virtual QString getFormName() final override { return tr("About form"); }
+    virtual QString getFormName() final override { return tr("About"); }
+    void retranslateUi() override;
 
 public slots:
     void onUpdateAvailable(QString latestVersion, QUrl link);
@@ -38,7 +39,6 @@ public slots:
     void onUpdateCheckFailed();
 
 private:
-    void retranslateUi();
     void replaceVersions();
     inline QString createLink(QString path, QString text) const;
 

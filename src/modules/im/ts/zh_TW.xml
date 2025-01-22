@@ -12,9 +12,9 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="zh_TW" version="2.1">
+<TS version="2.1" language="zh_TW">
     <context>
-        <name>module::im::AVForm</name>
+        <name>AVForm</name>
         <message>
             <source>Audio Settings</source>
             <translation>音訊設定</translation>
@@ -83,57 +83,9 @@ which may lead to problems with video calls.</source>
             <source>Rescan devices</source>
             <translation>重新掃描裝置</translation>
         </message>
-        <message>
-            <source>Play a test sound while changing the output volume.</source>
-            <translation>在更改輸出音量的同時播放測試聲音。</translation>
-        </message>
-        <message>
-            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
-            <translation>使用滑塊設置輸入設備的增益，範圍從 %1dB 到 %2dB。</translation>
-        </message>
-        <message>
-            <source>Use slider to set the activation volume for your input device.</source>
-            <translation>使用滑塊設置輸入設備的啟動音量。</translation>
-        </message>
-        <message>
-            <source>Default resolution</source>
-            <translation>預設解析度</translation>
-        </message>
-        <message>
-            <source>Screen %1</source>
-            <translation>螢幕 %1</translation>
-        </message>
-        <message>
-            <source>Select region</source>
-            <translation>選擇區域</translation>
-        </message>
-        <message>
-            <source>High (64 kbps)</source>
-            <translation>高 （64 kbps）</translation>
-        </message>
-        <message>
-            <source>Medium (32 kbps)</source>
-            <translation>中 （32kbps）</translation>
-        </message>
-        <message>
-            <source>Low (16 kbps)</source>
-            <translation>低 （16 kbps）</translation>
-        </message>
-        <message>
-            <source>Very low (8 kbps)</source>
-            <translation>極低 （8 kbps）</translation>
-        </message>
-        <message>
-            <source>Disabled</source>
-            <translation>已停用</translation>
-        </message>
-        <message>
-            <source>Audio/Video</source>
-            <translation>音訊/視訊</translation>
-        </message>
     </context>
     <context>
-        <name>module::im::AboutFriendForm</name>
+        <name>AboutFriendForm</name>
         <message>
             <source>Dialog</source>
             <translation>對話</translation>
@@ -151,36 +103,12 @@ which may lead to problems with video calls.</source>
             <translation>發送消息</translation>
         </message>
         <message>
-            <source>Default directory to save files:</source>
-            <translation>預設檔案儲存目錄：</translation>
+            <source>Alias:</source>
+            <translation>別名：</translation>
         </message>
         <message>
             <source>Account:</source>
             <translation>帳號：</translation>
-        </message>
-        <message>
-            <source>Automatically accept files from contact if set</source>
-            <translation>如果設置則自動接收來自聯繫人的檔</translation>
-        </message>
-        <message>
-            <source>Auto accept files</source>
-            <translation>自動接受檔案</translation>
-        </message>
-        <message>
-            <source>Manual</source>
-            <translation>手動</translation>
-        </message>
-        <message>
-            <source>Audio</source>
-            <translation>音訊</translation>
-        </message>
-        <message>
-            <source>Audio + Video</source>
-            <translation>音訊與視訊</translation>
-        </message>
-        <message>
-            <source>Alias:</source>
-            <translation>別名：</translation>
         </message>
         <message>
             <source>Clear</source>
@@ -190,30 +118,9 @@ which may lead to problems with video calls.</source>
             <source>Clear history:</source>
             <translation>清除歷史記錄：</translation>
         </message>
-        <message>
-            <source>Auto accept call:</source>
-            <translation>自動接受通話：</translation>
-        </message>
-        <message>
-            <source>Auto accept for this contact is disabled</source>
-            <translation>已針對這個聯繫人禁用了自動接收</translation>
-        </message>
-        <message>
-            <source>Choose an auto accept directory</source>
-            <extracomment>popup title</extracomment>
-            <translation>選擇自動接受目錄</translation>
-        </message>
-        <message>
-            <source>Confirmation</source>
-            <translation>確認</translation>
-        </message>
-        <message>
-            <source>Are you sure to remove %1 chat history?</source>
-            <translation>您確定要移除與 %1 的聊天記錄嗎？</translation>
-        </message>
     </context>
     <context>
-        <name>module::im::AboutGroupForm</name>
+        <name>AboutGroupForm</name>
         <message>
             <source>Form</source>
             <translation>表單</translation>
@@ -296,7 +203,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>module::im::AddFriendForm</name>
+        <name>AddFriendForm</name>
         <message>
             <source>Form</source>
             <translation>表單</translation>
@@ -305,6 +212,663 @@ which may lead to problems with video calls.</source>
             <source>Search</source>
             <translation>搜索</translation>
         </message>
+    </context>
+    <context>
+        <name>CallDurationForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>00:00:00</source>
+            <translation>00:00:00.000</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatReplyForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Open profile</source>
+            <translation>打開個人檔案</translation>
+        </message>
+        <message>
+            <source>Open profile page when clicked</source>
+            <translation>點擊后打開個人檔案頁面</translation>
+        </message>
+        <message>
+            <source>Your name</source>
+            <translation>你的名字</translation>
+        </message>
+        <message>
+            <source>Status message input</source>
+            <translation>輸入狀態消息</translation>
+        </message>
+        <message>
+            <source>Set your status message that will be shown to others</source>
+            <translation>設置您要展示給他人的個人狀態消息</translation>
+        </message>
+        <message>
+            <source>Your status</source>
+            <translation>你的狀態</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>狀態</translation>
+        </message>
+        <message>
+            <source>Set availability status</source>
+            <translation>設置個人狀態</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>搜索連絡人</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactSelectDialog</name>
+        <message>
+            <source>Dialog</source>
+            <translation>對話</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>搜索連絡人</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
+        </message>
+    </context>
+    <context>
+        <name>DesktopNotify</name>
+        <message>
+            <source>New message</source>
+            <translation>新訊息</translation>
+        </message>
+        <message>
+            <source>Incoming file transfer</source>
+            <translation>傳入檔案傳輸</translation>
+        </message>
+        <message>
+            <source>Friend request received</source>
+            <translation>收到的好友請求</translation>
+        </message>
+        <message>
+            <source>New group message</source>
+            <translation>新群組消息</translation>
+        </message>
+        <message>
+            <source>Group invite received</source>
+            <translation>收到的群組邀請</translation>
+        </message>
+    </context>
+    <context>
+        <name>FileTransferWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Filename</source>
+            <translation>檔案名稱</translation>
+        </message>
+        <message>
+            <source>10Mb</source>
+            <translation>10Mb</translation>
+        </message>
+        <message>
+            <source>0kb/s</source>
+            <translation>0kb/s</translation>
+        </message>
+        <message>
+            <source>ETA:10:10</source>
+            <translation>ETA:10:10</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendForm</name>
+        <message>
+            <source>Frame</source>
+            <translation>框架</translation>
+        </message>
+        <message>
+            <source>id</source>
+            <translation>身份證</translation>
+        </message>
+        <message>
+            <source>+</source>
+            <translation>+</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralSettings</name>
+        <message>
+            <source>Chat</source>
+            <translation>聊天</translation>
+        </message>
+        <message>
+            <source>Base font:</source>
+            <translation>基礎字體</translation>
+        </message>
+        <message>
+            <source>px</source>
+            <translation>px</translation>
+        </message>
+        <message>
+            <source>Size:</source>
+            <translation>大小</translation>
+        </message>
+        <message>
+            <source>New text styling preference may not load until OkMsg restarts.</source>
+            <translation>在 OkMsg 重新啟動之前，新的文字樣式首選項可能不會載入。</translation>
+        </message>
+        <message>
+            <source>Text Style format:</source>
+            <translation>文本格式</translation>
+        </message>
+        <message>
+            <source>Select text styling preference.</source>
+            <translation>選擇文字樣式首選項。</translation>
+        </message>
+        <message>
+            <source>Plaintext</source>
+            <translation>純文本</translation>
+        </message>
+        <message>
+            <source>Show formatting characters</source>
+            <translation>顯示格式化字符</translation>
+        </message>
+        <message>
+            <source>Don't show formatting characters</source>
+            <translation>不顯示格式化字符</translation>
+        </message>
+        <message>
+            <source>Use colored nicknames in chats</source>
+            <translation>在交談中使用彩色名稱</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新訊息</translation>
+        </message>
+        <message>
+            <source>Your status is changed to Away after set period of inactivity.</source>
+            <translation>您的狀態將在給定的無活動分鐘數后被修改為離開。</translation>
+        </message>
+        <message>
+            <source>Auto away after (0 to disable):</source>
+            <translation>超過此時間自動離開（0 為禁用）：</translation>
+        </message>
+        <message>
+            <source>Set to 0 to disable</source>
+            <translation>設為 0 禁用</translation>
+        </message>
+        <message>
+            <source>Show a notification when you receive a new message and the window is not selected.</source>
+            <comment>tooltip for Notify setting</comment>
+            <translation>當您收到新消息且視窗未被選取時顯示通知。</translation>
+        </message>
+        <message>
+            <source>Notify</source>
+            <translation>通知</translation>
+        </message>
+        <message>
+            <source>Onlys notify about new messages in groupchats when mentioned.</source>
+            <comment>toolTip for Group chats only notify when mentioned</comment>
+            <translation>只有當被提及時，才會通知群聊中的新消息。</translation>
+        </message>
+        <message>
+            <source>Group chats only notify when mentioned</source>
+            <translation>群聊消息只有在被提到時才通知</translation>
+        </message>
+        <message>
+            <source>Play sound</source>
+            <translation>播放聲音</translation>
+        </message>
+        <message>
+            <source>Play sound while Busy</source>
+            <translation>忙碌狀態時仍播放提示音</translation>
+        </message>
+        <message>
+            <source>Notify via desktop notifications</source>
+            <translation>通過桌面提醒來通知</translation>
+        </message>
+        <message>
+            <source>Hide message sender and contents</source>
+            <translation>隱藏消息寄件人和內容</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>隱私</translation>
+        </message>
+        <message>
+            <source>Your friends will be able to see when you are typing.</source>
+            <comment>tooltip for typing notifications setting</comment>
+            <translation>您的朋友將能夠看到您何時鍵入。</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>發送正在輸入通知</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupCreateForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Group name</source>
+            <translation>群組名稱</translation>
+        </message>
+        <message>
+            <source>Confirm</source>
+            <translation>確定</translation>
+        </message>
+    </context>
+    <context>
+        <name>IMMainWindow</name>
+        <message>
+            <source>Close</source>
+            <translation>關閉</translation>
+        </message>
+    </context>
+    <context>
+        <name>IdentitySettings</name>
+        <message>
+            <source>My profile</source>
+            <translation>個人檔案</translation>
+        </message>
+        <message>
+            <source>Public Information</source>
+            <translation>公開資訊</translation>
+        </message>
+        <message>
+            <source>Nickname:</source>
+            <translation>昵稱：</translation>
+        </message>
+        <message>
+            <source>Name input</source>
+            <translation>輸入名字</translation>
+        </message>
+        <message>
+            <source>Name visible to contacts</source>
+            <translation>名字對聯繫人可見</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>帳號：</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>位置：</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>個人資訊</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>姓名：</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>手機：</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>郵箱：</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>電話：</translation>
+        </message>
+        <message>
+            <source>Profile</source>
+            <translation>配置檔</translation>
+        </message>
+        <message>
+            <source>Go back to the login screen</source>
+            <comment>tooltip for logout button</comment>
+            <translation>返回到登錄螢幕</translation>
+        </message>
+        <message>
+            <source>Exit</source>
+            <comment>import profile button</comment>
+            <translation>結束</translation>
+        </message>
+        <message>
+            <source>Logout</source>
+            <comment>import profile button</comment>
+            <translation>登出</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoadHistoryDialog</name>
+        <message>
+            <source>Load History Dialog</source>
+            <translation>載入歷史記錄對話框</translation>
+        </message>
+        <message>
+            <source>Load history from:</source>
+            <translation>載入歷史來自：</translation>
+        </message>
+    </context>
+    <context>
+        <name>QApplication</name>
+        <message>
+            <source>Ok</source>
+            <translation>Ok</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>取消</translation>
+        </message>
+        <message>
+            <source>Yes</source>
+            <translation>是</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>否</translation>
+        </message>
+    </context>
+    <context>
+        <name>QObject</name>
+        <message>
+            <source>Reformatting text in progress..</source>
+            <translation>重新設定文字格式...</translation>
+        </message>
+        <message>
+            <source>online</source>
+            <comment>contact status</comment>
+            <translation>在線</translation>
+        </message>
+        <message>
+            <source>away</source>
+            <comment>contact status</comment>
+            <translation>離開</translation>
+        </message>
+        <message>
+            <source>busy</source>
+            <comment>contact status</comment>
+            <translation>忙碌</translation>
+        </message>
+        <message>
+            <source>offline</source>
+            <comment>contact status</comment>
+            <translation>離線</translation>
+        </message>
+        <message>
+            <source>blocked</source>
+            <comment>contact status</comment>
+            <translation>已遮罩</translation>
+        </message>
+        <message>
+            <source>Incoming call...</source>
+            <translation>來電...</translation>
+        </message>
+    </context>
+    <context>
+        <name>RemoveFriendDialog</name>
+        <message>
+            <source>Remove friend</source>
+            <translation>刪除好友</translation>
+        </message>
+        <message>
+            <source>Remove all chat history with the friend if set</source>
+            <translation>如果設置則刪除與該好友的所有聊天歷史記錄</translation>
+        </message>
+        <message>
+            <source>Also remove chat history</source>
+            <translation>同時刪除聊天歷史記錄</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchSettingsForm</name>
+        <message>
+            <source>Form</source>
+            <translation>表單</translation>
+        </message>
+        <message>
+            <source>Start search:</source>
+            <translation>開始搜尋：</translation>
+        </message>
+        <message>
+            <source>from the end</source>
+            <translation>從結尾</translation>
+        </message>
+        <message>
+            <source>from the beginning</source>
+            <translation>從開頭</translation>
+        </message>
+        <message>
+            <source>after date</source>
+            <translation>日期之後</translation>
+        </message>
+        <message>
+            <source>before date</source>
+            <translation>日期之前</translation>
+        </message>
+        <message>
+            <source>00.00.0000</source>
+            <translation>00.00.0000</translation>
+        </message>
+        <message>
+            <source>Case sensitive</source>
+            <translation>區分大小寫</translation>
+        </message>
+        <message>
+            <source>Whole words only</source>
+            <translation>僅完整的詞</translation>
+        </message>
+        <message>
+            <source>Use regular expressions</source>
+            <translation>使用正則表達式</translation>
+        </message>
+    </context>
+    <context>
+        <name>SetPasswordDialog</name>
+        <message>
+            <source>Set your password</source>
+            <translation>設置密碼</translation>
+        </message>
+        <message>
+            <source>Confirm:</source>
+            <translation>確認：</translation>
+        </message>
+        <message>
+            <source>Password:</source>
+            <translation>密碼：</translation>
+        </message>
+        <message>
+            <source>Confirm password</source>
+            <translation>確認密碼</translation>
+        </message>
+        <message>
+            <source>Confirm password input</source>
+            <translation>確認密碼輸入框</translation>
+        </message>
+        <message>
+            <source>Password input</source>
+            <translation>密碼輸入</translation>
+        </message>
+        <message>
+            <source>Password input field, minimum 6 characters long</source>
+            <translation>密碼輸入框，最小長度為6個字元</translation>
+        </message>
+        <message>
+            <source>Password strength: %p%</source>
+            <translation>密碼長度：%p%</translation>
+        </message>
+    </context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Local Storage</source>
+            <translation>本地存儲</translation>
+        </message>
+        <message>
+            <source>Summary:</source>
+            <translation>總結：</translation>
+        </message>
+        <message>
+            <source>400MB</source>
+            <translation>400兆位元組</translation>
+        </message>
+        <message>
+            <source>Set where files will be saved.</source>
+            <translation>設置檔保存位置。</translation>
+        </message>
+        <message>
+            <source>clear all</source>
+            <translation>全部清除</translation>
+        </message>
+        <message>
+            <source>Total size limit:</source>
+            <translation>總大小限制：</translation>
+        </message>
+        <message>
+            <source>3GB</source>
+            <translation>3GB</translation>
+        </message>
+        <message>
+            <source>Media cache limit:</source>
+            <translation>媒體快取限制：</translation>
+        </message>
+        <message>
+            <source>2GB</source>
+            <translation>2GB</translation>
+        </message>
+        <message>
+            <source>Clear files older than:</source>
+            <translation>清除早於以下時間的檔案：</translation>
+        </message>
+        <message>
+            <source>1 month</source>
+            <translation>1 個月</translation>
+        </message>
+        <message>
+            <source>1866 images</source>
+            <translation>1866 張圖片</translation>
+        </message>
+        <message>
+            <source>44.4MB</source>
+            <translation>44.4兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>clear</source>
+            <translation>清楚</translation>
+        </message>
+        <message>
+            <source>511 stickers</source>
+            <translation>511 張貼紙</translation>
+        </message>
+        <message>
+            <source>11.0MB</source>
+            <translation>11.0兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>13 GIF animations</source>
+            <translation>13 個 GIF 動畫</translation>
+        </message>
+        <message>
+            <source>2.5MB</source>
+            <translation>2.5兆位元組（MB）</translation>
+        </message>
+        <message>
+            <source>Media cache</source>
+            <translation>媒體快取</translation>
+        </message>
+        <message>
+            <source>405.7MB</source>
+            <translation>405.7兆位元組（MB）</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AVForm</name>
+        <message>
+            <source>Play a test sound while changing the output volume.</source>
+            <translation>在更改輸出音量的同時播放測試聲音。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+            <translation>使用滑塊設置輸入設備的增益，範圍從 %1dB 到 %2dB。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the activation volume for your input device.</source>
+            <translation>使用滑塊設置輸入設備的啟動音量。</translation>
+        </message>
+        <message>
+            <source>Default resolution</source>
+            <translation>預設解析度</translation>
+        </message>
+        <message>
+            <source>Screen %1</source>
+            <translation>螢幕 %1</translation>
+        </message>
+        <message>
+            <source>Select region</source>
+            <translation>選擇區域</translation>
+        </message>
+        <message>
+            <source>High (64 kbps)</source>
+            <translation>高 （64 kbps）</translation>
+        </message>
+        <message>
+            <source>Medium (32 kbps)</source>
+            <translation>中 （32kbps）</translation>
+        </message>
+        <message>
+            <source>Low (16 kbps)</source>
+            <translation>低 （16 kbps）</translation>
+        </message>
+        <message>
+            <source>Very low (8 kbps)</source>
+            <translation>極低 （8 kbps）</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>已停用</translation>
+        </message>
+        <message>
+            <source>Audio/Video</source>
+            <translation>音訊/視訊</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AboutFriendForm</name>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 chat history?</source>
+            <translation>您確定要移除與 %1 的聊天記錄嗎？</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AddFriendForm</name>
         <message>
             <source>Account/E-Mail/Phone Number</source>
             <translation>帳號/郵箱/手機號</translation>
@@ -337,14 +901,6 @@ which may lead to problems with video calls.</source>
     </context>
     <context>
         <name>module::im::CallDurationForm</name>
-        <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>00:00:00</source>
-            <translation>00:00:00.000</translation>
-        </message>
         <message>
             <source>Call duration: </source>
             <translation>通話時長：</translation>
@@ -389,7 +945,7 @@ so you can save the file on windows.</source>
         </message>
         <message>
             <source>OkMsg wasn't able to save the screenshot</source>
-            <translation>OkMsg 無法保存截圖</translation>
+            <translation>OkMsg 無法保存螢幕截圖</translation>
         </message>
         <message>
             <source>Copy</source>
@@ -537,13 +1093,6 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::ChatReplyForm</name>
-        <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::ChatTextEdit</name>
         <message>
             <source>Type your message here...</source>
@@ -552,50 +1101,6 @@ so you can save the file on windows.</source>
     </context>
     <context>
         <name>module::im::ChatWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>Open profile</source>
-            <translation>打開個人檔案</translation>
-        </message>
-        <message>
-            <source>Open profile page when clicked</source>
-            <translation>點擊后打開個人檔案頁面</translation>
-        </message>
-        <message>
-            <source>Your name</source>
-            <translation>你的名字</translation>
-        </message>
-        <message>
-            <source>Status message input</source>
-            <translation>輸入狀態消息</translation>
-        </message>
-        <message>
-            <source>Set your status message that will be shown to others</source>
-            <translation>設置您要展示給他人的個人狀態消息</translation>
-        </message>
-        <message>
-            <source>Your status</source>
-            <translation>你的狀態</translation>
-        </message>
-        <message>
-            <source>Status</source>
-            <translation>狀態</translation>
-        </message>
-        <message>
-            <source>Set availability status</source>
-            <translation>設置個人狀態</translation>
-        </message>
-        <message>
-            <source>Contact search</source>
-            <translation>搜索連絡人</translation>
-        </message>
-        <message>
-            <source>Contact search input for known friends</source>
-            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
-        </message>
         <message numerus="yes">
             <source>%n New Group Invite(s)</source>
             <translation>
@@ -623,28 +1128,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::CircleWidget</name>
-        <message>
-            <source>Rename circle</source>
-            <comment>Menu for renaming a circle</comment>
-            <translation>重新命名圈子</translation>
-        </message>
-        <message>
-            <source>Remove circle</source>
-            <comment>Menu for removing a circle</comment>
-            <translation>刪除圈子</translation>
-        </message>
-        <message>
-            <source>Open all in new window</source>
-            <translation>全部在新視窗中打開</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::ContactSelectDialog</name>
-        <message>
-            <source>Dialog</source>
-            <translation>對話</translation>
-        </message>
         <message>
             <source>Please select contact</source>
             <translation>請選擇聯繫人</translation>
@@ -652,18 +1136,6 @@ so you can save the file on windows.</source>
     </context>
     <context>
         <name>module::im::ContactWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>Contact search</source>
-            <translation>搜索連絡人</translation>
-        </message>
-        <message>
-            <source>Contact search input for known friends</source>
-            <translation>搜索已知好友的聯繫人搜索輸入框</translation>
-        </message>
         <message>
             <source>Search Contacts</source>
             <translation>搜索聯系人</translation>
@@ -694,56 +1166,9 @@ so you can save the file on windows.</source>
             <comment>Error while sending friendship request</comment>
             <translation>已添加 IMFriend</translation>
         </message>
-        <message>
-            <source>/me offers friendship, "%1"</source>
-            <translation>/me 提供了好友關係，“%1”</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::DesktopNotify</name>
-        <message>
-            <source>New message</source>
-            <translation>新訊息</translation>
-        </message>
-        <message>
-            <source>Incoming file transfer</source>
-            <translation>傳入檔案傳輸</translation>
-        </message>
-        <message>
-            <source>Friend request received</source>
-            <translation>收到的好友請求</translation>
-        </message>
-        <message>
-            <source>New group message</source>
-            <translation>新群組消息</translation>
-        </message>
-        <message>
-            <source>Group invite received</source>
-            <translation>收到的群組邀請</translation>
-        </message>
     </context>
     <context>
         <name>module::im::FileTransferWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>Filename</source>
-            <translation>檔案名稱</translation>
-        </message>
-        <message>
-            <source>10Mb</source>
-            <translation>10Mb</translation>
-        </message>
-        <message>
-            <source>0kb/s</source>
-            <translation>0kb/s</translation>
-        </message>
-        <message>
-            <source>ETA:10:10</source>
-            <translation>ETA:10:10</translation>
-        </message>
         <message>
             <source>Location not writable</source>
             <comment>Title of permissions popup</comment>
@@ -804,21 +1229,6 @@ so you can save the file on windows.</source>
         <message>
             <source>Uploads</source>
             <translation>上傳</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::FriendForm</name>
-        <message>
-            <source>Frame</source>
-            <translation>框架</translation>
-        </message>
-        <message>
-            <source>id</source>
-            <translation>身份證</translation>
-        </message>
-        <message>
-            <source>+</source>
-            <translation>+</translation>
         </message>
     </context>
     <context>
@@ -910,116 +1320,6 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::GeneralSettings</name>
-        <message>
-            <source>Chat</source>
-            <translation>聊天</translation>
-        </message>
-        <message>
-            <source>Base font:</source>
-            <translation>基礎字體</translation>
-        </message>
-        <message>
-            <source>px</source>
-            <translation>px</translation>
-        </message>
-        <message>
-            <source>Size:</source>
-            <translation>大小</translation>
-        </message>
-        <message>
-            <source>New text styling preference may not load until OkMsg restarts.</source>
-            <translation>OkMsg 重新啟動之前可能不會載入新的文字樣式設置。</translation>
-        </message>
-        <message>
-            <source>Text Style format:</source>
-            <translation>文本格式</translation>
-        </message>
-        <message>
-            <source>Select text styling preference.</source>
-            <translation>選擇文字樣式首選項。</translation>
-        </message>
-        <message>
-            <source>Plaintext</source>
-            <translation>純文本</translation>
-        </message>
-        <message>
-            <source>Show formatting characters</source>
-            <translation>顯示格式化字符</translation>
-        </message>
-        <message>
-            <source>Don't show formatting characters</source>
-            <translation>不顯示格式化字符</translation>
-        </message>
-        <message>
-            <source>Use colored nicknames in chats</source>
-            <translation>在交談中使用彩色名稱</translation>
-        </message>
-        <message>
-            <source>New message</source>
-            <translation>新訊息</translation>
-        </message>
-        <message>
-            <source>Your status is changed to Away after set period of inactivity.</source>
-            <translation>您的狀態將在給定的無活動分鐘數后被修改為離開。</translation>
-        </message>
-        <message>
-            <source>Auto away after (0 to disable):</source>
-            <translation>超過此時間自動離開（0 為禁用）：</translation>
-        </message>
-        <message>
-            <source>Set to 0 to disable</source>
-            <translation>設為 0 禁用</translation>
-        </message>
-        <message>
-            <source>Show a notification when you receive a new message and the window is not selected.</source>
-            <comment>tooltip for Notify setting</comment>
-            <translation>當您收到新消息且視窗未被選取時顯示通知。</translation>
-        </message>
-        <message>
-            <source>Notify</source>
-            <translation>通知</translation>
-        </message>
-        <message>
-            <source>Onlys notify about new messages in groupchats when mentioned.</source>
-            <comment>toolTip for Group chats only notify when mentioned</comment>
-            <translation>只有當被提及時，才會通知群聊中的新消息。</translation>
-        </message>
-        <message>
-            <source>Group chats only notify when mentioned</source>
-            <translation>群聊消息只有在被提到時才通知</translation>
-        </message>
-        <message>
-            <source>Play sound</source>
-            <translation>播放聲音</translation>
-        </message>
-        <message>
-            <source>Play sound while Busy</source>
-            <translation>忙碌狀態時仍播放提示音</translation>
-        </message>
-        <message>
-            <source>Notify via desktop notifications</source>
-            <translation>通過桌面提醒來通知</translation>
-        </message>
-        <message>
-            <source>Hide message sender and contents</source>
-            <translation>隱藏消息寄件人和內容</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>隱私</translation>
-        </message>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>您的朋友將能夠看到您何時鍵入。</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>發送正在輸入通知</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::GenericChatForm</name>
         <message>
             <source>Confirmation</source>
@@ -1036,6 +1336,10 @@ so you can save the file on windows.</source>
         <message>
             <source>Save chat log</source>
             <translation>保存聊天記錄</translation>
+        </message>
+        <message>
+            <source>The feature unsupported in the open-source version</source>
+            <translation>開源版本不支援的功能</translation>
         </message>
         <message>
             <source>The community version cannot send files to offline contacts!</source>
@@ -1129,18 +1433,6 @@ so you can save the file on windows.</source>
     <context>
         <name>module::im::GroupCreateForm</name>
         <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>Group name</source>
-            <translation>群組名稱</translation>
-        </message>
-        <message>
-            <source>Confirm</source>
-            <translation>確定</translation>
-        </message>
-        <message>
             <source>Create new group</source>
             <translation>創建聊天群組</translation>
         </message>
@@ -1197,94 +1489,6 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::IMMainWindow</name>
-        <message>
-            <source>Close</source>
-            <translation>關閉</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::IdentitySettings</name>
-        <message>
-            <source>My profile</source>
-            <translation>個人檔案</translation>
-        </message>
-        <message>
-            <source>Public Information</source>
-            <translation>公開資訊</translation>
-        </message>
-        <message>
-            <source>Nickname:</source>
-            <translation>昵稱：</translation>
-        </message>
-        <message>
-            <source>Name input</source>
-            <translation>輸入名字</translation>
-        </message>
-        <message>
-            <source>Name visible to contacts</source>
-            <translation>名字對聯繫人可見</translation>
-        </message>
-        <message>
-            <source>Account:</source>
-            <translation>帳號：</translation>
-        </message>
-        <message>
-            <source>Location:</source>
-            <translation>位置：</translation>
-        </message>
-        <message>
-            <source>Personal Information</source>
-            <translation>個人資訊</translation>
-        </message>
-        <message>
-            <source>My name:</source>
-            <translation>姓名：</translation>
-        </message>
-        <message>
-            <source>My phone:</source>
-            <translation>手機：</translation>
-        </message>
-        <message>
-            <source>My E-Mail:</source>
-            <translation>郵箱：</translation>
-        </message>
-        <message>
-            <source>My telephone:</source>
-            <translation>電話：</translation>
-        </message>
-        <message>
-            <source>Profile</source>
-            <translation>配置檔</translation>
-        </message>
-        <message>
-            <source>Go back to the login screen</source>
-            <comment>tooltip for logout button</comment>
-            <translation>返回到登錄螢幕</translation>
-        </message>
-        <message>
-            <source>Exit</source>
-            <comment>import profile button</comment>
-            <translation>結束</translation>
-        </message>
-        <message>
-            <source>Logout</source>
-            <comment>import profile button</comment>
-            <translation>登出</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::LoadHistoryDialog</name>
-        <message>
-            <source>Load History Dialog</source>
-            <translation>載入歷史記錄對話框</translation>
-        </message>
-        <message>
-            <source>Load history from:</source>
-            <translation>載入歷史來自：</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::MessageSessionListWidget</name>
         <message>
             <source>Today</source>
@@ -1320,6 +1524,18 @@ so you can save the file on windows.</source>
         <message>
             <source>Show details</source>
             <translation>查看詳情</translation>
+        </message>
+        <message>
+            <source>Calling...</source>
+            <translation>呼叫中...</translation>
+        </message>
+        <message>
+            <source>The feature unsupported in the open-source version</source>
+            <translation>開源版本不支援的功能</translation>
+        </message>
+        <message>
+            <source>The call cannot be made due participant is offline!</source>
+            <translation>由於參與者離線，無法撥打電話！</translation>
         </message>
     </context>
     <context>
@@ -1364,13 +1580,6 @@ so you can save the file on windows.</source>
             <translation>
                 <numerusform>未讀消息</numerusform>
             </translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::PasswordEdit</name>
-        <message>
-            <source>CAPS-LOCK ENABLED</source>
-            <translation>大寫鎖定已啟用</translation>
         </message>
     </context>
     <context>
@@ -1476,15 +1685,6 @@ Please use another image.</source>
             <translation>錯誤</translation>
         </message>
         <message>
-            <source>Export profile</source>
-            <translation>匯出帳戶</translation>
-        </message>
-        <message>
-            <source>Tox save file (*.tox)</source>
-            <extracomment>save dialog filter</extracomment>
-            <translation>Tox 存檔檔 （*.tox）</translation>
-        </message>
-        <message>
             <source>Save</source>
             <comment>save qr image</comment>
             <translation>保存</translation>
@@ -1567,92 +1767,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>module::im::QApplication</name>
-        <message>
-            <source>Ok</source>
-            <translation>Ok</translation>
-        </message>
-        <message>
-            <source>Cancel</source>
-            <translation>取消</translation>
-        </message>
-        <message>
-            <source>Yes</source>
-            <translation>是</translation>
-        </message>
-        <message>
-            <source>No</source>
-            <translation>否</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::QObject</name>
-        <message>
-            <source>Reformatting text in progress..</source>
-            <translation>重新設定文字格式...</translation>
-        </message>
-        <message>
-            <source>online</source>
-            <comment>contact status</comment>
-            <translation>在線</translation>
-        </message>
-        <message>
-            <source>away</source>
-            <comment>contact status</comment>
-            <translation>離開</translation>
-        </message>
-        <message>
-            <source>busy</source>
-            <comment>contact status</comment>
-            <translation>忙碌</translation>
-        </message>
-        <message>
-            <source>offline</source>
-            <comment>contact status</comment>
-            <translation>離線</translation>
-        </message>
-        <message>
-            <source>blocked</source>
-            <comment>contact status</comment>
-            <translation>已遮罩</translation>
-        </message>
-        <message>
-            <source>Error</source>
-            <translation>錯誤</translation>
-        </message>
-        <message>
-            <source>Couldn't open your chat logs, they will be exit.</source>
-            <translation>無法打開聊天歷史，程式將退出。</translation>
-        </message>
-        <message>
-            <source>None</source>
-            <comment>No camera device set</comment>
-            <translation>無</translation>
-        </message>
-        <message>
-            <source>Desktop</source>
-            <comment>Desktop as a camera input for screen sharing</comment>
-            <translation>桌面</translation>
-        </message>
-        <message>
-            <source>Incoming call...</source>
-            <translation>來電...</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::RemoveFriendDialog</name>
-        <message>
-            <source>Remove friend</source>
-            <translation>刪除好友</translation>
-        </message>
-        <message>
-            <source>Remove all chat history with the friend if set</source>
-            <translation>如果設置則刪除與該好友的所有聊天歷史記錄</translation>
-        </message>
-        <message>
-            <source>Also remove chat history</source>
-            <translation>同時刪除聊天歷史記錄</translation>
-        </message>
         <message>
             <source>Are you sure you want to remove %1 from your contacts list?</source>
             <translation>您確定要從聯絡人名單中刪除 %1 嗎？</translation>
@@ -1704,46 +1819,6 @@ Please use another image.</source>
     <context>
         <name>module::im::SearchSettingsForm</name>
         <message>
-            <source>Form</source>
-            <translation>表單</translation>
-        </message>
-        <message>
-            <source>Start search:</source>
-            <translation>開始搜尋：</translation>
-        </message>
-        <message>
-            <source>from the end</source>
-            <translation>從結尾</translation>
-        </message>
-        <message>
-            <source>from the beginning</source>
-            <translation>從開頭</translation>
-        </message>
-        <message>
-            <source>after date</source>
-            <translation>日期之後</translation>
-        </message>
-        <message>
-            <source>before date</source>
-            <translation>日期之前</translation>
-        </message>
-        <message>
-            <source>00.00.0000</source>
-            <translation>00.00.0000</translation>
-        </message>
-        <message>
-            <source>Case sensitive</source>
-            <translation>區分大小寫</translation>
-        </message>
-        <message>
-            <source>Whole words only</source>
-            <translation>僅完整的詞</translation>
-        </message>
-        <message>
-            <source>Use regular expressions</source>
-            <translation>使用正則表達式</translation>
-        </message>
-        <message>
             <source>Select Date Dialog</source>
             <translation>選擇日期對話框</translation>
         </message>
@@ -1754,38 +1829,6 @@ Please use another image.</source>
     </context>
     <context>
         <name>module::im::SetPasswordDialog</name>
-        <message>
-            <source>Set your password</source>
-            <translation>設置密碼</translation>
-        </message>
-        <message>
-            <source>Confirm:</source>
-            <translation>確認：</translation>
-        </message>
-        <message>
-            <source>Password:</source>
-            <translation>密碼：</translation>
-        </message>
-        <message>
-            <source>Confirm password</source>
-            <translation>確認密碼</translation>
-        </message>
-        <message>
-            <source>Confirm password input</source>
-            <translation>確認密碼輸入框</translation>
-        </message>
-        <message>
-            <source>Password input</source>
-            <translation>密碼輸入</translation>
-        </message>
-        <message>
-            <source>Password input field, minimum 6 characters long</source>
-            <translation>密碼輸入框，最小長度為6個字元</translation>
-        </message>
-        <message>
-            <source>Password strength: %p%</source>
-            <translation>密碼長度：%p%</translation>
-        </message>
         <message>
             <source>The password is too short</source>
             <translation>密碼長度太短</translation>
@@ -1804,86 +1847,6 @@ Please use another image.</source>
     </context>
     <context>
         <name>module::im::StorageSettingsForm</name>
-        <message>
-            <source>Local Storage</source>
-            <translation>本地存儲</translation>
-        </message>
-        <message>
-            <source>Summary:</source>
-            <translation>總結：</translation>
-        </message>
-        <message>
-            <source>400MB</source>
-            <translation>400兆位元組</translation>
-        </message>
-        <message>
-            <source>Set where files will be saved.</source>
-            <translation>設置檔保存位置。</translation>
-        </message>
-        <message>
-            <source>clear all</source>
-            <translation>全部清除</translation>
-        </message>
-        <message>
-            <source>Total size limit:</source>
-            <translation>總大小限制：</translation>
-        </message>
-        <message>
-            <source>3GB</source>
-            <translation>3GB</translation>
-        </message>
-        <message>
-            <source>Media cache limit:</source>
-            <translation>媒體快取限制：</translation>
-        </message>
-        <message>
-            <source>2GB</source>
-            <translation>2GB</translation>
-        </message>
-        <message>
-            <source>Clear files older than:</source>
-            <translation>清除早於以下時間的檔案：</translation>
-        </message>
-        <message>
-            <source>1 month</source>
-            <translation>1 個月</translation>
-        </message>
-        <message>
-            <source>1866 images</source>
-            <translation>1866 張圖片</translation>
-        </message>
-        <message>
-            <source>44.4MB</source>
-            <translation>44.4兆位元組（MB）</translation>
-        </message>
-        <message>
-            <source>clear</source>
-            <translation>清楚</translation>
-        </message>
-        <message>
-            <source>511 stickers</source>
-            <translation>511 張貼紙</translation>
-        </message>
-        <message>
-            <source>11.0MB</source>
-            <translation>11.0兆位元組（MB）</translation>
-        </message>
-        <message>
-            <source>13 GIF animations</source>
-            <translation>13 個 GIF 動畫</translation>
-        </message>
-        <message>
-            <source>2.5MB</source>
-            <translation>2.5兆位元組（MB）</translation>
-        </message>
-        <message>
-            <source>Media cache</source>
-            <translation>媒體快取</translation>
-        </message>
-        <message>
-            <source>405.7MB</source>
-            <translation>405.7兆位元組（MB）</translation>
-        </message>
         <message>
             <source>Choose an auto accept directory</source>
             <comment>popup title</comment>
@@ -1913,21 +1876,14 @@ Please use another image.</source>
             <translation>toxcore 啟動失敗，應用程式將在您關閉此消息后終止。</translation>
         </message>
         <message>
-            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and restart.</source>
-            <comment>popup text</comment>
-            <translation>核心無法使用您的代理設置啟動。所以不能逃跑;請修改您的設置並重新啟動。</translation>
-        </message>
-        <message>
             <source>Executable file</source>
             <comment>popup title</comment>
             <translation>可執行檔</translation>
         </message>
         <message>
-            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your
-                computer. Are you sure want to open this file?
-            </source>
+            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
             <comment>popup text</comment>
-            <translation>您已要求 OkMsg 打開一個可執行檔。可執行檔可能會損壞您的電腦。是否確實要打開此檔？</translation>
+            <translation>您已要求OkMsg打開一個可執行檔。可執行檔可能會損壞您的電腦。是否確實要打開此檔？</translation>
         </message>
         <message>
             <source>Couldn't request friendship</source>

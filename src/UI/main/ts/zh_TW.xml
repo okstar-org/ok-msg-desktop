@@ -12,7 +12,7 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="zh_TW" version="2.1">
+<TS version="2.1" language="zh_TW">
     <context>
         <name>MainWindow</name>
         <message>
@@ -47,6 +47,10 @@
             <translation>消息</translation>
         </message>
         <message>
+            <source>Document</source>
+            <translation>文件</translation>
+        </message>
+        <message>
             <source>Setting</source>
             <translation>設置</translation>
         </message>
@@ -57,6 +61,10 @@
         <message>
             <source>Meeting</source>
             <translation>會議</translation>
+        </message>
+        <message>
+            <source>Classroom</source>
+            <translation>課堂</translation>
         </message>
     </context>
 </TS>

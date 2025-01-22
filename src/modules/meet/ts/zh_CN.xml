@@ -12,7 +12,7 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="zh_CN" version="2.1">
+<TS version="2.1" language="zh_CN">
     <context>
         <name>MeetingSettingWidget</name>
         <message>
@@ -79,6 +79,22 @@
         <message>
             <source>Share</source>
             <translation>共享</translation>
+        </message>
+        <message>
+            <source>Exit fullscreen</source>
+            <translation>退出全屏</translation>
+        </message>
+        <message>
+            <source>Show fullscreen</source>
+            <translation>全屏显示</translation>
+        </message>
+        <message>
+            <source>Leave meeting</source>
+            <translation>离开会议</translation>
+        </message>
+        <message>
+            <source>Record</source>
+            <translation>录制</translation>
         </message>
     </context>
     <context>
