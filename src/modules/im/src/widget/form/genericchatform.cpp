@@ -837,7 +837,9 @@ void GenericChatForm::sendFile(const QFile& file) {
     auto sent = Nexus::getProfile()->getCoreFile()->sendFile(contact->getIdAsString(), file);
     if (!sent) {
         ok::base::MessageBox::warning(
-                this, "", tr("The community version cannot send files to offline contacts!"));
+                this,
+                tr("The feature unsupported in the open-source version"),
+                tr("The community version cannot send files to offline contacts!"));
     }
 }
 }  // namespace module::im
