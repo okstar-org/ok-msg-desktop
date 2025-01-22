@@ -11,28 +11,6 @@
  */
 
 #include "friendwidget.h"
-#include "gui.h"
-
-#include "ContactListWidget.h"
-
-#include "contentdialogmanager.h"
-#include "contentlayout.h"
-#include "groupwidget.h"
-#include "lib/ui/widget/tools/CroppingLabel.h"
-#include "src/core/core.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
-#include "src/model/aboutfriend.h"
-#include "src/model/chatroom/friendchatroom.h"
-#include "src/model/friend.h"
-#include "src/model/friendlist.h"
-#include "src/model/group.h"
-#include "src/model/status.h"
-#include "src/nexus.h"
-#include "src/persistence/settings.h"
-#include "src/widget/form/aboutfriendform.h"
-#include "src/widget/form/chatform.h"
-#include "src/widget/widget.h"
 
 #include <QApplication>
 #include <QBitmap>
@@ -46,11 +24,26 @@
 #include <QPainter>
 #include <QStyleOption>
 
+#include "ContactListWidget.h"
 #include "base/MessageBox.h"
+#include "contentdialogmanager.h"
 #include "form/chatform.h"
-#include "src/lib/session/profile.h"
-#include "src/model/chathistory.h"
+#include "lib/ui/gui.h"
+#include "lib/ui/widget/tools/CroppingLabel.h"
+#include "src/core/core.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/lib/ui/widget/tools/MaskablePixmap.h"
+#include "src/model/aboutfriend.h"
+#include "src/model/chatroom/friendchatroom.h"
+#include "src/model/friend.h"
+#include "src/model/friendlist.h"
+#include "src/model/status.h"
+#include "src/nexus.h"
+#include "src/persistence/settings.h"
 #include "src/widget/form/GroupCreateForm.h"
+#include "src/widget/form/aboutfriendform.h"
+#include "src/widget/form/chatform.h"
+#include "src/widget/widget.h"
 
 namespace module::im {
 
@@ -306,8 +299,8 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event) {
     }
 
     if (selected == removeAct) {
-        const bool yes = GUI::askQuestion(tr("Confirmation"),
-                                          tr("Are you sure to remove %1 ?").arg(getName()),
+        const bool yes = lib::ui::GUI::askQuestion(tr("Confirmation"),
+                                                   tr("Are you sure to remove %1 ?").arg(getName()),
                                           false,
                                           true,
                                           true);

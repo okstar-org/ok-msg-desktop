@@ -113,6 +113,10 @@ QMessageBox
     background-color: white;
 }
 
+QMessageBox QLabel {
+
+}
+
 QCheckBox
 {
     color: black;

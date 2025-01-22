@@ -24,6 +24,8 @@
 #include "application.h"
 #include "base/MessageBox.h"
 
+namespace lib::ui {
+
 /**
  * @class GUI
  * @brief Abstracts the GUI from the target backend (DesktopGUI, ...)
@@ -38,6 +40,7 @@
 GUI::GUI(QObject* parent) : QObject(parent) {
     assert(QThread::currentThread() == qApp->thread());
 }
+GUI::~GUI() {}
 
 /**
  * @brief Returns the singleton instance.
@@ -226,3 +229,4 @@ bool GUI::_askQuestion(const QString& title, const QString& msg, const QString& 
 QWidget* GUI::getMainWidget() {
     return ok::Application::Instance()->getMainWidget();
 }
+}  // namespace lib::ui

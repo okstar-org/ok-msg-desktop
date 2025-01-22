@@ -22,19 +22,7 @@ set(${PROJECT_NAME}_RESOURCES
     ${${PROJECT_NAME}_RC_FILES}
     ${${PROJECT_NAME}_QRC_FILES})
 
-set(${PROJECT_NAME}_SOURCES
-    main.cpp
-    application.h
-    application.cpp
-    launcher.h
-    launcher.cpp
-    ipc.h
-    ipc.cpp
-    Bus.h
-    Bus.cpp
-    gui.h
-    gui.cpp
-)
+file(GLOB ${PROJECT_NAME}_SOURCES *.h *.cpp)
 
 list(APPEND OK_LIBS
     UI

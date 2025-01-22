@@ -23,20 +23,18 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QMenu>
-#include "src/nexus.h"
-
 #include <QMouseEvent>
 #include <QWindow>
-#include "gui.h"
+
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/gui.h"
 #include "lib/ui/widget/QRWidget.h"
 #include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
-#include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/profile/iprofileinfo.h"
-#include "src/persistence/profilelocker.h"
+#include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/setpassworddialog.h"
@@ -282,7 +280,7 @@ void ProfileForm::onAvatarClicked() {
         return;
     }
 
-    GUI::showError(tr("Error"), SET_AVATAR_ERROR[result]);
+    lib::ui::GUI::showError(tr("Error"), SET_AVATAR_ERROR[result]);
 }
 
 void ProfileForm::onExportClicked() {
@@ -345,24 +343,25 @@ void ProfileForm::onSaveQrClicked() {
     }
 
     const QPair<QString, QString> error = SAVE_ERROR[result];
-    GUI::showWarning(error.first, error.second);
+    lib::ui::GUI::showWarning(error.first, error.second);
 }
 
 void ProfileForm::onDeletePassClicked() {
     if (!profileInfo->isEncrypted()) {
-        GUI::showInfo(tr("Nothing to remove"), tr("Your profile does not have a password!"));
+        lib::ui::GUI::showInfo(tr("Nothing to remove"),
+                               tr("Your profile does not have a password!"));
         return;
     }
 
     const QString title = tr("Really delete password?", "deletion confirmation title");
     //: deletion confirmation text
     const QString body = tr("Are you sure you want to delete your password?");
-    if (!GUI::askQuestion(title, body)) {
+    if (!lib::ui::GUI::askQuestion(title, body)) {
         return;
     }
 
     if (!profileInfo->deletePassword()) {
-        GUI::showInfo(CAN_NOT_CHANGE_PASSWORD.first, CAN_NOT_CHANGE_PASSWORD.second);
+        lib::ui::GUI::showInfo(CAN_NOT_CHANGE_PASSWORD.first, CAN_NOT_CHANGE_PASSWORD.second);
     }
 }
 
@@ -375,7 +374,7 @@ void ProfileForm::onChangePassClicked() {
 
     QString newPass = dialog->getPassword();
     if (!profileInfo->setPassword(newPass)) {
-        GUI::showInfo(CAN_NOT_CHANGE_PASSWORD.first, CAN_NOT_CHANGE_PASSWORD.second);
+        lib::ui::GUI::showInfo(CAN_NOT_CHANGE_PASSWORD.first, CAN_NOT_CHANGE_PASSWORD.second);
     }
 }
 

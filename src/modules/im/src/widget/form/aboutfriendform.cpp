@@ -14,7 +14,7 @@
 #include "ui_aboutfriendform.h"
 
 #include "base/SvgUtils.h"
-#include "gui.h"
+#include "lib/ui/gui.h"
 #include "src/core/core.h"
 #include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
@@ -66,11 +66,12 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     ui->alias->setText(about->getAlias());
     ui->alias->setPlaceholderText(about->getName());
     connect(about->getFriend(), &Contact::aliasChanged,
-            [&](auto alias) { ui->alias->setText(alias); });
+            [&](const auto& alias) { ui->alias->setText(alias); });
 
     connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
 
-    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &AboutFriendForm::reloadTheme);
+    connect(&lib::ui::GUI::getInstance(), &lib::ui::GUI::themeApplyRequest, this,
+            &AboutFriendForm::reloadTheme);
 }
 
 /**
@@ -82,7 +83,7 @@ void AboutFriendForm::onSendMessageClicked() {
 }
 
 void AboutFriendForm::onRemoveHistoryClicked() {
-    const bool retYes = GUI::askQuestion(
+    const bool retYes = lib::ui::GUI::askQuestion(
             tr("Confirmation"), tr("Are you sure to remove %1 chat history?").arg(about->getName()),
             /* defaultAns = */ false, /* warning = */ true, /* yesno = */ true);
     if (!retYes) {

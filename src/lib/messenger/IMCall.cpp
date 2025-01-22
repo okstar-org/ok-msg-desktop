@@ -134,6 +134,8 @@ void IMCall::addCallHandler(CallHandler* hdr) {
 }
 
 bool IMCall::callToFriend(const std::string& friendId, const std::string& sId, bool video) {
+    qDebug() << __func__ << "friend:" << friendId.c_str();
+
     proposeJingleMessage(friendId, sId, video);
 
     auto resources = im->getOnlineResources((friendId));

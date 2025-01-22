@@ -71,7 +71,7 @@ signals:
     // 用户名称
     void nameChanged(const QString& name);
     // 备注名称
-    void aliasChanged(QString alias);
+    void aliasChanged(const QString& alias);
     // 显示名称（备注名》用户姓名》用户名）
     void displayedNameChanged(const QString& newName);
     // 头像

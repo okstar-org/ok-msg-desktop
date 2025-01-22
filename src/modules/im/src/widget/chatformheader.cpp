@@ -139,7 +139,7 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
     statusIcon = new QToolButton(this);
     statusIcon->setIconSize(QSize(10, 10));
     statusIcon->setStyleSheet("border:0px solid; padding:0px");
-    QHBoxLayout* status_lyt = new QHBoxLayout();
+    QHBoxLayout* status_lyt = new QHBoxLayout(this);
     status_lyt->addWidget(statusIcon);
     status_lyt->addWidget(statusLabel);
     status_lyt->addStretch(1);
@@ -257,8 +257,8 @@ void ChatFormHeader::retranslateUi() {
 }
 
 void ChatFormHeader::updateButtonsView() {
-    callButton->setEnabled(callState != CallButtonState::Disabled);
-    videoButton->setEnabled(videoState != CallButtonState::Disabled);
+    // callButton->setEnabled(callState != CallButtonState::Disabled);
+    // videoButton->setEnabled(videoState != CallButtonState::Disabled);
     retranslateUi();
     base::Styles::repolish(this);
 }

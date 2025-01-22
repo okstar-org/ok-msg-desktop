@@ -7,7 +7,7 @@ add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})
 pkg_check_modules(QRENCODE REQUIRED libqrencode)
 include_directories(${QRENCODE_INCLUDE_DIRS})
 
-find_package(Qt5 COMPONENTS Core Widgets WebChannel WebSockets WebEngine WebEngineWidgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets WebChannel WebSockets WebEngine WebEngineWidgets REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${Qt5WebEngineWidgets_LIBRARIES}

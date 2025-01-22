@@ -48,11 +48,12 @@
 #include <cassert>
 
 #include "form/chatform.h"
+#include "lib/ui/gui.h"
 #include "src/chatlog/chatlog.h"
+#include "src/core/coreav.h"
 #include "src/nexus.h"
 #include "src/widget/chatformheader.h"
 
-#include "src/core/coreav.h"
 namespace module::im {
 
 /**
@@ -579,16 +580,29 @@ void MessageSessionWidget::doRejectCall(const PeerId& p) {
     coreav->rejectOrCancelCall(p);
 }
 
+/**
+ * 执行呼叫
+ */
 void MessageSessionWidget::doCall() {
-    auto fId = contactId.getId();
-    qDebug() << __func__ << fId;
+    auto cId = contactId.getId();
+    qDebug() << __func__ << cId;
     auto av = CoreAV::getInstance();
     if (av->isCallStarted(&contactId)) {
-        av->cancelCall(fId);
-    } else if (av->startCall(fId, false)) {
-        auto nexus = Nexus::getInstance();
-        nexus->outgoingNotification();
+        av->cancelCall(cId);
+        return;
     }
+
+    auto started = av->startCall(cId, false);
+    if (!started) {
+        // 返回失败对方可能不在线，免费版本不支持离线呼叫！
+        lib::ui::GUI::showWarning(tr("The feature unsupported in the open-source version"),
+                                  tr("The call cannot be made due participant is offline!"));
+        return;
+    }
+
+    // 播放外呼声音
+    auto nexus = Nexus::getInstance();
+    nexus->outgoingNotification();
 }
 
 void MessageSessionWidget::doVideoCall() {
@@ -599,9 +613,14 @@ void MessageSessionWidget::doVideoCall() {
         if (av->isCallVideoEnabled(&contactId)) {
             av->cancelCall(cId);
         }
-    } else if (av->startCall(cId, true)) {
-        auto nexus = Nexus::getInstance();
-        nexus->outgoingNotification();
+    }
+
+    auto started = av->startCall(cId, true);
+    if (!started) {
+        // 返回失败对方可能不在线，免费版本不支持离线呼叫！
+        lib::ui::GUI::showWarning(tr("The feature unsupported in the open-source version"),
+                                  tr("The call cannot be made due participant is offline!"));
+        return;
     }
 }
 

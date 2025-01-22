@@ -18,19 +18,20 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QPalette>
+
 #include "contentdialogmanager.h"
-#include "contentlayout.h"
 #include "form/groupchatform.h"
 #include "groupwidget.h"
-#include "gui.h"
+#include "lib/storage/settings/style.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/gui.h"
 #include "lib/ui/widget/tools/CroppingLabel.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
+#include "lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/status.h"
 #include "src/nexus.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
+
 namespace module::im {
 
 GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName)
@@ -216,8 +217,8 @@ void GroupWidget::contextMenuEvent(QContextMenuEvent* event) {
 
     if (selectedItem == quitGroup) {
         const bool retYes =
-                GUI::askQuestion(tr("Confirmation"),
-                                 tr("Are you sure to quit %1 chat group?").arg(getName()),
+                lib::ui::GUI::askQuestion(tr("Confirmation"),
+                                          tr("Are you sure to quit %1 chat group?").arg(getName()),
                                  /* defaultAns = */ false,
                                  /* warning = */ true,
                                  /* yesno = */ true);

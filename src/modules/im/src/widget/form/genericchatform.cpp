@@ -26,9 +26,9 @@
 #include "base/MessageBox.h"
 #include "base/files.h"
 #include "base/images.h"
-#include "gui.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/gui.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
@@ -235,10 +235,8 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
 
     // menu.addSeparator();
 
-    // searchAction =
-    //     menu.addAction(QIcon(), QString(), this, SLOT(searchFormShow()),
-    //                    QKeySequence(Qt::CTRL + Qt::Key_F));
-    // addAction(searchAction);
+    // searchAction = menu.addAction(QIcon(), QString(), this,
+    // SLOT(searchFormShow()),QKeySequence(Qt::CTRL + Qt::Key_F)); addAction(searchAction);
 
     connect(&iChatLog, &IChatLog::itemUpdated, this, &GenericChatForm::renderMessage0);
 
@@ -253,7 +251,8 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     // connect(this, &GenericChatForm::messageNotFoundShow, searchForm,
     //         &SearchForm::showMessageNotFound);
 
-    connect(&GUI::getInstance(), &GUI::themeApplyRequest, this, &GenericChatForm::reloadTheme);
+    connect(&lib::ui::GUI::getInstance(), &lib::ui::GUI::themeApplyRequest, this,
+            &GenericChatForm::reloadTheme);
 
     auto chatLogIdxRange = iChatLog.getNextIdx() - iChatLog.getFirstIdx();
     auto firstChatLogIdx =

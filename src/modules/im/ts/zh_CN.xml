@@ -1321,6 +1321,14 @@ so you can save the file on windows.</source>
             <source>Show details</source>
             <translation>查看详情</translation>
         </message>
+        <message>
+            <source>The feature unsupported in the open-source version</source>
+            <translation>开源版本不支持该功能</translation>
+        </message>
+        <message>
+            <source>The call cannot be made due participant is offline!</source>
+            <translation>由于对方不在线无法呼叫！</translation>
+        </message>
     </context>
     <context>
         <name>module::im::Nexus</name>

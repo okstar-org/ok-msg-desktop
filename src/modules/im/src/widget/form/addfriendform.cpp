@@ -24,10 +24,10 @@
 #include <QWindow>
 #include "application.h"
 #include "friendform.h"
-#include "gui.h"
 #include "lib/backend/UserService.h"
 #include "lib/session/AuthSession.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/gui.h"
 #include "lib/ui/widget/tools/CroppingLabel.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
@@ -155,21 +155,22 @@ void AddFriendForm::searchFriend(const QString& idText) {
     userService->search(
             idText,
             [this](const QList<lib::backend::OrgStaff*>& qList) { emit friendReceipts(qList); },
-            [](int code, QByteArray body) { GUI::showWarning("Warning", QString(body)); });
+            [](int code, QByteArray body) { lib::ui::GUI::showWarning("Warning", QString(body)); });
 }
 
 void AddFriendForm::addFriend(const QString& idText, const QString& nick) {
     qDebug() << "addFriend" << idText << nick;
     FriendId friendId(idText);
     if (!friendId.isValid()) {
-        GUI::showWarning(tr("Couldn't add friend"),
-                         tr("%1 Ok ID is invalid", "Tox address error").arg(idText));
+        lib::ui::GUI::showWarning(tr("Couldn't add friend"),
+                                  tr("%1 Ok ID is invalid", "Tox address error").arg(idText));
         return;
     }
 
     if (friendId == Core::getInstance()->getSelfId()) {
         // When trying to add your own Ok ID as friend
-        GUI::showWarning(tr("Couldn't add friend"), tr("You can't add yourself as a friend!"));
+        lib::ui::GUI::showWarning(tr("Couldn't add friend"),
+                                  tr("You can't add yourself as a friend!"));
         return;
     }
 

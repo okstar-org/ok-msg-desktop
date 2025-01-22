@@ -47,10 +47,10 @@
 #include "form/groupchatform.h"
 #include "friendwidget.h"
 #include "groupwidget.h"
-#include "gui.h"
 #include "lib/audio/audio.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
+#include "lib/ui/gui.h"
 #include "splitterrestorer.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/core/core.h"
@@ -429,8 +429,9 @@ void Widget::confirmExecutableOpen(const QFileInfo& file) {
             "sh",  "src", "vb",     "vbe",  "vbs",     "ws",   "wsc",     "wsf",    "wsh"};
 
     if (dangerousExtensions.contains(file.suffix())) {
-        bool answer = GUI::askQuestion(tr("Executable file", "popup title"),
-                                       tr("You have asked OkMsg to open an executable file. "
+        bool answer = lib::ui::GUI::askQuestion(
+                tr("Executable file", "popup title"),
+                tr("You have asked OkMsg to open an executable file. "
                                           "Executable files can potentially damage your computer. "
                                           "Are you sure want to open this file?",
                                           "popup text"),

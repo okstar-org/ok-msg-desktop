@@ -17,12 +17,16 @@
 
 class QWidget;
 
+namespace lib::ui {
+
 /**
  * 图形/界面工具类
  */
 class GUI : public QObject {
     Q_OBJECT
 public:
+    ~GUI() override;
+
     static GUI& getInstance();
     static QWidget* getMainWidget();
     //    static void setEnabled(bool state);
@@ -55,5 +59,5 @@ private slots:
     bool _askQuestion(const QString& title, const QString& msg, const QString& button1,
                       const QString& button2, bool defaultAns = false, bool warning = true);
 };
-
+}  // namespace lib::ui
 #endif  // GUI_H

@@ -13,7 +13,7 @@
 #include "filetransferwidget.h"
 #include "ui_filetransferwidget.h"
 
-#include "gui.h"
+#include "lib/ui/gui.h"
 #include "src/core/core.h"
 #include "src/core/corefile.h"
 #include "src/lib/storage/settings/style.h"
@@ -187,8 +187,9 @@ void FileTransferWidget::acceptTransfer(const QString& filepath) {
 
     // test if writable
     if (!tryRemoveFile(filepath)) {
-        GUI::showWarning(tr("Location not writable", "Title of permissions popup"),
-                         tr("You do not have permission to write that location. Choose another, or "
+        lib::ui::GUI::showWarning(
+                tr("Location not writable", "Title of permissions popup"),
+                tr("You do not have permission to write that location. Choose another, or "
                             "cancel the save dialog.",
                             "text of permissions popup"));
         return;
