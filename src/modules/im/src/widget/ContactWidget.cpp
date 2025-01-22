@@ -194,7 +194,7 @@ void ContactWidget::onFriendRemoved(const Friend* f) {
 }
 
 void ContactWidget::onFriendAvatarChanged(const FriendId& friendnumber, const QByteArray& avatar) {
-    qDebug() << __func__ << "friend:" << friendnumber.toString() << avatar.size();
+    qDebug() << __func__ << "friend:" << friendnumber.toString() << "size:" << avatar.size();
     contactListWidget->setFriendAvatar(friendnumber, avatar);
 }
 

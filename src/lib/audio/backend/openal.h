@@ -13,26 +13,26 @@
 #ifndef OPENAL_H
 #define OPENAL_H
 
-#include "alsink.h"
-#include "alsource.h"
-#include "base/compatiblerecursivemutex.h"
-#include "src/lib/audio/iaudiocontrol.h"
-
 #include <memory>
 #include <unordered_set>
-
-#include <atomic>
-#include <cmath>
 
 #include <QMutex>
 #include <QObject>
 #include <QTimer>
 
 #include <cassert>
+#include <cmath>
 
 #include <AL/al.h>
 #include <AL/alc.h>
+
+#include "alsink.h"
+#include "alsource.h"
+#include "base/compatiblerecursivemutex.h"
+#include "src/lib/audio/iaudiocontrol.h"
+
 namespace lib::audio {
+
 #ifndef ALC_ALL_DEVICES_SPECIFIER
 // compatibility with older versions of OpenAL
 #include <AL/alext.h>

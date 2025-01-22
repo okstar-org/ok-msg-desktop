@@ -11,23 +11,27 @@
  */
 
 #include "MeetingOptionWidget.h"
-#include "base/RoundedPixmapLabel.h"
-#include "base/images.h"
-#include "lib/ui/widget/tools/PopupMenuComboBox.h"
-#include "src/Bus.h"
-#include "src/application.h"
 
+#include <QAction>
 #include <QLabel>
+#include <QMenu>
+#include <QPainter>
 #include <QPushButton>
 #include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include "base/RoundedPixmapLabel.h"
+#include "lib/audio/backend/openal.h"
+#include "lib/ui/widget/tools/PopupMenuComboBox.h"
+#include "lib/video/cameradevice.h"
+#include "lib/video/camerasource.h"
+#include "src/application.h"
+
 namespace module::meet {
 
-MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
-        , ctrlState{true, true, true}
-{
+MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
+        : QWidget(parent), ctrlState{true, false, true}, camera(nullptr) {
     auto profile = ok::Application::Instance()->getProfile();
 
     avatarLabel = new RoundedPixmapLabel(this);
@@ -63,6 +67,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
         updateAudioVideoIcon(false, false, true);
     });
 
+    // 默认关闭视频
     updateAudioVideoIcon(true, true, true);
 
     volumnSlider = new QSlider(Qt::Horizontal, volumnSetting);
@@ -86,9 +91,19 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent)
     mainLayout->addWidget(avatarLabel, 1);
     mainLayout->addLayout(footerLayout);
 
-    //    auto profile = ok::Application::Instance()->getProfile();
-    //    connect(profile, &lib::session::Profile::selfAvatarChanged, avatarLabel,
-    //    &RoundedPixmapLabel::setImage);
+    // 初始化设备控件
+    audioMenu = new QMenu(this);
+    aGroup = new QActionGroup(this);
+    aGroup->setExclusive(true);
+    micSpeakSetting->setMenu(audioMenu);
+    connect(audioMenu, &QMenu::triggered, this, &MeetingOptionWidget::audioSelected);
+
+    videoMenu = new QMenu(this);
+    vGroup = new QActionGroup(this);
+    vGroup->setExclusive(true);
+
+    cameraSetting->setMenu(videoMenu);
+    connect(videoMenu, &QMenu::triggered, this, &MeetingOptionWidget::videoSelected);
 }
 
 void MeetingOptionWidget::addFooterButton(QPushButton* button) {
@@ -100,7 +115,80 @@ void MeetingOptionWidget::retranslateUi() {
     cameraSetting->setLabel(tr("Camera"));
 }
 
-void MeetingOptionWidget::showEvent(QShowEvent* event) {}
+void MeetingOptionWidget::showEvent(QShowEvent* event) {
+    QTimer::singleShot(100, this, [this]() {
+        // 延迟执行获取设备信息
+        this->initDeviceInfo();
+    });
+}
+
+void MeetingOptionWidget::paintEvent(QPaintEvent* event) {
+    if (!lastFrame) return;
+
+    auto boundingRect = avatarLabel->rect();
+
+    QPainter painter(this);
+    painter.fillRect(painter.viewport(), Qt::black);
+    if (lastFrame) {
+        QImage frame = lastFrame->toQImage(rect().size());
+        if (frame.isNull()) {
+            lastFrame.reset();
+            return;
+        }
+        painter.drawImage(boundingRect, frame, frame.rect(), Qt::NoFormatConversion);
+        // avatarLabel->setVisible(false);
+    }
+}
+
+/**
+ * 获取设备信息
+ */
+void MeetingOptionWidget::initDeviceInfo() {
+    for (auto a : audioMenu->actions()) {
+        aGroup->removeAction(a);
+        audioMenu->removeAction(a);
+    }
+
+    // audioMenu->clear();
+
+    auto oa = std::make_unique<lib::audio::OpenAL>();
+    auto alist = oa->inDeviceNames();
+    for (auto& a : alist) {
+        qDebug() << "audio device:" << a;
+        for (auto act0 : audioMenu->actions()) {
+            if (act0->text() == a) {
+                continue;
+            }
+        }
+
+        auto act = new QAction(a, this);
+        act->setCheckable(true);
+        audioMenu->addAction(act);
+        aGroup->addAction(act);
+    }
+
+    for (auto a : videoMenu->actions()) {
+        vGroup->removeAction(a);
+        videoMenu->removeAction(a);
+    }
+
+    auto vlist = lib::video::CameraDevice::getDeviceList();
+    for (auto& a : vlist) {
+        if (a.first == "none") continue;
+        qDebug() << "video device:" << a;
+        for (auto act0 : videoMenu->actions()) {
+            if (act0->text() == a.second) {
+                continue;
+            }
+        }
+
+        auto act = new QAction(a.second, this);
+        act->setData(a.first);
+        act->setCheckable(true);
+        videoMenu->addAction(act);
+        vGroup->addAction(act);
+    }
+}
 
 void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool speaker) {
     if (audio) {
@@ -113,12 +201,14 @@ void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool spea
     if (video) {
         if (ctrlState.enableCam) {
             cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
+            doOpenVideo();
         } else {
             cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
+            doCloseVideo();
         }
     }
 
-    if(speaker){
+    if (speaker) {
         if (ctrlState.enableSpk) {
             volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker.svg"));
         } else {
@@ -126,4 +216,44 @@ void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool spea
         }
     }
 }
+
+void MeetingOptionWidget::audioSelected(QAction* action) {
+    if (action->isChecked()) {
+        selectedAudio = action;
+    } else {
+        selectedAudio = nullptr;
+    }
+}
+
+void MeetingOptionWidget::videoSelected(QAction* action) {
+    if (action->isChecked()) {
+        selectedVideo = action;
+    } else {
+        selectedVideo = nullptr;
+    }
+}
+
+void MeetingOptionWidget::doOpenVideo() {
+    if (!selectedVideo) return;
+
+    qDebug() << "select video device:" << selectedVideo->text();
+    lib::video::VideoMode mode{200, 400, 0, 0, 30};
+    camera = lib::video::CameraSource::getInstance();
+    connect(camera, &lib::video::CameraSource::frameAvailable, this,
+            [&](std::shared_ptr<lib::video::VideoFrame> frame) {
+                lastFrame = std::move(frame);
+                update();
+            });
+    camera->setupDevice(selectedVideo->data().toString(), mode);
+    camera->subscribe();
+}
+
+void MeetingOptionWidget::doCloseVideo() {
+    if (camera) {
+        camera->unsubscribe();
+        camera->destroyInstance();
+        camera = nullptr;
+    }
+}
+
 }  // namespace module::meet

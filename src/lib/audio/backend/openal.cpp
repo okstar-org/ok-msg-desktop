@@ -692,7 +692,6 @@ QStringList OpenAL::outDeviceNames() {
 QStringList OpenAL::inDeviceNames() {
     QStringList list;
     const ALchar* pDeviceList = alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
-
     if (pDeviceList) {
         while (*pDeviceList) {
             int len = static_cast<int>(strlen(pDeviceList));
@@ -700,7 +699,6 @@ QStringList OpenAL::inDeviceNames() {
             pDeviceList += len + 1;
         }
     }
-
     return list;
 }
 

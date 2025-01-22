@@ -30,8 +30,7 @@ class MeetingOptionWidget;
 class StartMeetingWidget : public QWidget {
     Q_OBJECT
 signals:
-    void requstStartMeeting(const QString& name,
-                            const lib::ortc::CtrlState& ctrlState);
+    void requstStartMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState);
     void requstDisbandMeeting();
     void requstShareMeeting();
 
@@ -40,12 +39,11 @@ public:
     QString getName();
     void setMeetingState(MeetingState state);
     void focusInput();
-
-public:
     void retranslateUi();
-
-private:
     void updateUi();
+
+protected:
+    void showEvent(QShowEvent* e) override;
 
 private:
     MeetingOptionWidget* optionWidget = nullptr;

@@ -13,7 +13,9 @@
 #pragma once
 
 #include <QFrame>
+#include <QMenu>
 #include <QPointer>
+
 #include "Defines.h"
 #include "lib/ortc/ok_rtc.h"
 
@@ -26,6 +28,11 @@ class RoundedPixmapLabel;
 namespace lib::ui {
 class PopupMenuComboBox;
 }
+
+namespace lib::video {
+class CameraSource;
+class VideoFrame;
+}  // namespace lib::video
 
 namespace module::meet {
 
@@ -41,29 +48,53 @@ public:
 
     void retranslateUi();
 
-    inline const lib::ortc::CtrlState& getCtrlState() const {
+    [[nodiscard]] inline const lib::ortc::CtrlState& getCtrlState() const {
         return ctrlState;
     }
 
 protected:
     void showEvent(QShowEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
+    void initDeviceInfo();
     void updateAudioVideoIcon(bool audio, bool video, bool spk);
 
-private:
     RoundedPixmapLabel* avatarLabel = nullptr;
 
     lib::ui::PopupMenuComboBox* micSpeakSetting = nullptr;
     lib::ui::PopupMenuComboBox* cameraSetting = nullptr;
     lib::ui::PopupMenuComboBox* volumnSetting = nullptr;
+
     QSlider* volumnSlider = nullptr;
 
     QHBoxLayout* buttonLayout = nullptr;
 
     lib::ortc::CtrlState ctrlState;
+
+    // 音频设备
+    QMenu* audioMenu;
+    QActionGroup* aGroup;
+    QAction* selectedAudio;
+
+    // 视频设备
+    QMenu* videoMenu;
+    QAction* selectedVideo;
+    QActionGroup* vGroup;
+
+    lib::video::CameraSource* camera;
+    std::shared_ptr<lib::video::VideoFrame> lastFrame;
+
 signals:
     // 状态改变事件
     void stateChanged();
+
+public slots:
+    void audioSelected(QAction* action);
+    void videoSelected(QAction* action);
+
+    void doOpenVideo();
+    void doCloseVideo();
 };
+
 }  // namespace module::meet

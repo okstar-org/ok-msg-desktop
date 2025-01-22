@@ -13,12 +13,15 @@
 #ifndef ALSOURCE_H
 #define ALSOURCE_H
 
-#include <QMutex>
 #include <QObject>
+
+#include <QMutex>
+
 #include "base/compatiblerecursivemutex.h"
 #include "src/lib/audio/iaudiosource.h"
 
 namespace lib::audio {
+
 class OpenAL;
 
 class AlSource : public IAudioSource {

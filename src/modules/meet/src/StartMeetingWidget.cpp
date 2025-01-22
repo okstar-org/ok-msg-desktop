@@ -41,8 +41,8 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
     meetingNameEdit = new QLineEdit(this);
     meetingNameEdit->setAlignment(Qt::AlignCenter);
     meetingNameEdit->setPlaceholderText(tr("Meeting Name"));
-    optionWidget = new MeetingOptionWidget(this);
 
+    optionWidget = new MeetingOptionWidget(this);
     confirmButton = createButton(tr("Start Meeting"), optionWidget, "confirm");
     connect(confirmButton, &QPushButton::clicked, [this]() {
         auto n = getName();
@@ -118,4 +118,6 @@ void StartMeetingWidget::updateUi() {
             break;
     }
 }
+
+void StartMeetingWidget::showEvent(QShowEvent* e) {}
 }  // namespace module::meet

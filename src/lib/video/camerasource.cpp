@@ -41,9 +41,9 @@ CameraSource::CameraSource()
         , device{nullptr}
         , mode(VideoMode())
         // clang-format off
-    , cctx{nullptr}
+        , cctx(nullptr)
 #if LIBAVCODEC_VERSION_INT < 3747941
-    , cctxOrig{nullptr}
+    , cctxOrig(nullptr)
 #endif
     , videoStreamIndex{-1}
     , _isNone{true}
@@ -73,7 +73,7 @@ CameraSource::CameraSource()
 CameraSource* CameraSource::getInstance() {
     qDebug() << __func__;
     if (!instance) instance = new CameraSource();
-    instance->setupDefault();
+    // instance->setupDefault();
     return instance;
 }
 
@@ -223,7 +223,7 @@ void CameraSource::openDevice() {
     // We need to create a new CameraDevice
     device = CameraDevice::open(deviceName, mode);
     if (!device) {
-        qWarning() << "Failed to open device!";
+        qWarning() << "Failed to open device:" << deviceName;
         emit openFailed();
         return;
     }

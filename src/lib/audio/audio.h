@@ -13,10 +13,9 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-namespace lib::audio {
-
 #include <memory>
 
+namespace lib::audio {
 class IAudioControl;
 class IAudioSettings;
 class Audio {

@@ -87,9 +87,9 @@ void Widget::reloadTheme() {
     QString style = lib::settings::Style::getStylesheet("general.css");
     setStyleSheet(style);
 
-    style = lib::settings::Style::getStylesheet("MeetingBase.css");
-    startMeetWidget->setStyleSheet(style);
-    joinMeetWidget->setStyleSheet(style);
+    auto mStyle = lib::settings::Style::getStylesheet("MeetingBase.css");
+    startMeetWidget->setStyleSheet(mStyle);
+    joinMeetWidget->setStyleSheet(mStyle);
 }
 
 void Widget::doStart() {}
