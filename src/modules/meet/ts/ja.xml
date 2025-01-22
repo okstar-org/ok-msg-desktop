@@ -12,7 +12,7 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="ja" version="2.1">
+<TS version="2.1" language="ja">
     <context>
         <name>MeetingSettingWidget</name>
         <message>
@@ -79,6 +79,22 @@
         <message>
             <source>Share</source>
             <translation>共有</translation>
+        </message>
+        <message>
+            <source>Exit fullscreen</source>
+            <translation>全画面表示を終了</translation>
+        </message>
+        <message>
+            <source>Show fullscreen</source>
+            <translation>全画面表示</translation>
+        </message>
+        <message>
+            <source>Leave meeting</source>
+            <translation>会議を退出</translation>
+        </message>
+        <message>
+            <source>Record</source>
+            <translation>録画</translation>
         </message>
     </context>
     <context>

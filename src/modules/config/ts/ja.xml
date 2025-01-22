@@ -12,9 +12,9 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="ja" version="2.1">
+<TS version="2.1" language="ja">
     <context>
-        <name>module::config::AboutSettings</name>
+        <name>AboutSettings</name>
         <message>
             <source>Version</source>
             <translation>バージョン</translation>
@@ -29,7 +29,7 @@
         </message>
         <message>
             <source>OkMsg is up to date ✓</source>
-            <translation>qToxは最新です✓</translation>
+            <translation>OkMsgは最新の状態です ✓</translation>
         </message>
         <message>
             <source>License</source>
@@ -45,14 +45,14 @@
         </message>
     </context>
     <context>
-        <name>module::config::ConfigWindow</name>
+        <name>ConfigWindow</name>
         <message>
             <source>MainWindow</source>
             <translation>メインウィンドウ</translation>
         </message>
     </context>
     <context>
-        <name>module::config::ConnectForm</name>
+        <name>ConnectForm</name>
         <message>
             <source>Form</source>
             <translation>形</translation>
@@ -77,7 +77,7 @@
         </message>
     </context>
     <context>
-        <name>module::config::GeneralForm</name>
+        <name>GeneralForm</name>
         <message>
             <source>Language:</source>
             <translation>言語：</translation>
@@ -128,7 +128,7 @@
         </message>
     </context>
     <context>
-        <name>module::config::PluginInfoForm</name>
+        <name>PluginInfoForm</name>
         <message>
             <source>Form</source>
             <translation>形</translation>
@@ -151,14 +151,14 @@
         </message>
     </context>
     <context>
-        <name>module::config::PluginItemForm</name>
+        <name>PluginItemForm</name>
         <message>
             <source>Form</source>
             <translation>形</translation>
         </message>
     </context>
     <context>
-        <name>module::config::PluginManagerForm</name>
+        <name>PluginManagerForm</name>
         <message>
             <source>Form</source>
             <translation>形</translation>
@@ -167,8 +167,8 @@
     <context>
         <name>module::config::AboutForm</name>
         <message>
-            <source>You are using the app versiion %1.</source>
-            <translation>OkMsg バージョン %1 を使用しています。</translation>
+            <source>You are using the app version %1.</source>
+            <translation>現在使用しているアプリのバージョンは %1 です。</translation>
         </message>
         <message>
             <source>Commit hash: %1</source>
@@ -179,23 +179,23 @@
             <translation>Qtバージョン:%1</translation>
         </message>
         <message>
-            <source>About form</source>
-            <translation>フォームについて</translation>
+            <source>About</source>
+            <translation>概要</translation>
         </message>
     </context>
     <context>
         <name>module::config::ConfigWindow</name>
         <message>
-            <source>Plugin form</source>
-            <translation>プラグインフォーム</translation>
+            <source>System settings</source>
+            <translation>システム設定</translation>
         </message>
         <message>
-            <source>Settings form</source>
-            <translation>設定フォーム</translation>
+            <source>Management</source>
+            <translation>管理</translation>
         </message>
         <message>
-            <source>About form</source>
-            <translation>フォームについて</translation>
+            <source>About</source>
+            <translation>概要</translation>
         </message>
     </context>
     <context>
@@ -210,13 +210,6 @@
         <message>
             <source>General</source>
             <translation>全般</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::config::SettingsWidget</name>
-        <message>
-            <source>Settings</source>
-            <translation>設定</translation>
         </message>
     </context>
     <context>
@@ -243,6 +236,13 @@
         <message>
             <source>Plugin manager</source>
             <translation>プラグインマネージャー</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::config::SettingsWidget</name>
+        <message>
+            <source>Settings</source>
+            <translation>設定</translation>
         </message>
     </context>
 </TS>

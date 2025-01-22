@@ -10,6 +10,7 @@
 
 import html
 import openpyxl
+from openpyxl.styles import PatternFill
 import os
 import re
 import shutil
@@ -39,6 +40,7 @@ class TranslationManager:
 
     def __init__(self):
         self.trans_info_hash = {}
+        self.trans_source_set = set()
 
     def get_trans_info_hash(self, excel_file_path):
         self.trans_info_hash.clear()
@@ -88,6 +90,95 @@ class TranslationManager:
                 self.trans_info_hash[key] = dest_hash
 
         return True
+
+    def get_trans_source_set(self, ts_path):
+        self.trans_source_set.clear()
+        # 加载 .ts 文件
+        ts_file = Path(ts_path + "zh_CN.xml")
+        if not ts_file.exists():
+            print(f"Failed to open ts file: {ts_path}" + "zh_CN.xml")
+            return
+
+        try:
+            tree = ET.parse(ts_file)
+            root = tree.getroot()
+        except Exception as e:
+            print(f"Failed to parse .ts file: {e}")
+            return
+
+        for context in root.findall('context'):
+            for message in context.findall("message"):
+                # 查找 source 元素
+                source_elem = message.find("source")
+                # 获取 source_text
+                if source_elem is not None and source_elem.text:
+                    self.trans_source_set.add(source_elem.text)
+
+    def update_excel_by_ts_file(self, excel_file_path):
+        # 1. 删除字典中不存在于集合中的键
+        keys_to_delete = [key for key in self.trans_info_hash if key not in self.trans_source_set]
+        for key in keys_to_delete:
+            del self.trans_info_hash[key]
+
+        # 2. 将集合中没有的键添加到字典
+        for key in self.trans_source_set:
+            if key not in self.trans_info_hash:
+                self.trans_info_hash[key] = {}
+
+        # 加载 Excel 文件
+        try:
+            xlsx = openpyxl.load_workbook(excel_file_path)
+        except Exception as e:
+            print(f"ERROR: fail to load xlsx doc: {e}")
+            return False
+
+        sheet_names = xlsx.sheetnames
+        if not sheet_names:
+            print("ERROR: no sheets found in xlsx file")
+            return False
+
+        # 获取第一个工作表
+        current_sheet = xlsx[sheet_names[0]]
+        if current_sheet is None:
+            print("currentSheet is NULL")
+            return False
+
+        # 获取Excel第一列的所有值
+        excel_values = [current_sheet.cell(row=row, column=1).value for row in range(2, current_sheet.max_row + 1)]
+
+        # 红色背景填充
+        red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+
+        modify = False
+
+        # 1. 对比hash中的键和Excel中的第一列
+        for key in list(self.trans_info_hash.keys()):
+            if key not in excel_values:
+                # 如果字典中的key不存在于Excel的第一列，将它添加到末尾
+                new_row = current_sheet.max_row + 1
+                current_sheet.cell(row=new_row, column=1, value=key)
+                modify = True
+
+        # 2. 对比Excel中的值和hash中的键
+        for row in range(2, current_sheet.max_row + 1):
+            excel_value = current_sheet.cell(row=row, column=1).value
+            cell = current_sheet.cell(row=row, column=1)
+
+            # 获取当前单元格的背景色
+            bg_color = cell.fill.start_color.index
+            
+            # 判断Excel中存在的值不在hash_map中，且背景色不是红色
+            if excel_value is not None and excel_value not in self.trans_info_hash:
+                if "FF0000" not in bg_color:  # 检查是否为红色
+                    # 将背景色设置为红色
+                    cell.fill = red_fill
+                    modify = True
+
+        # 保存修改后的Excel文件
+        if modify:
+            xlsx.save(excel_file_path)
+        return True
+
 
     def update_ts_file_by_excel(self, ts_file_path, language):
         # 加载 .ts 文件
@@ -198,6 +289,8 @@ class TranslationManager:
         def func(ts_path):
             # 调用 get_trans_info_hash 和 update_ts_file_by_excel
             self.get_trans_info_hash(ts_path + "translation.xlsx")
+            self.get_trans_source_set(ts_path)
+            self.update_excel_by_ts_file(ts_path + "translation.xlsx")
             self.update_ts_file_by_excel(ts_path + "ja.xml", TranslateTitle.Translate_Japanese.value)
             self.update_ts_file_by_excel(ts_path + "zh_TW.xml", TranslateTitle.Translate_ChineseTw.value)
             self.update_ts_file_by_excel(ts_path + "ko.xml", TranslateTitle.Translate_Korean.value)
@@ -205,9 +298,9 @@ class TranslationManager:
 
         # 定义路径并调用 func
         ts_paths = [
-            "UI/window/login/ts/",
-            "UI/window/main/ts/",
-            "UI/window/config/ts/",
+            "UI/login/ts/",
+            "UI/main/ts/",
+            "modules/config/ts/",
             "modules/platform/ts/",
             "modules/im/ts/",
             "modules/meet/ts/"
@@ -269,9 +362,9 @@ if __name__ == "__main__":
         run_lupdate(src_path, ts_files)
 
 
-    update_ts_files("src/UI/login/")
-    update_ts_files("src/UI/main/")
-    update_ts_files("src/modules/config/")
+    update_ts_files("./src/UI/login/")
+    update_ts_files("./src/UI/main/")
+    update_ts_files("./src/modules/config/")
     update_ts_files("./src/modules/platform/")
     update_ts_files("./src/modules/im/")
     update_ts_files("./src/modules/meet/")

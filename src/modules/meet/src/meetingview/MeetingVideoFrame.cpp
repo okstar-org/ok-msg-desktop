@@ -41,9 +41,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState c
                                      QWidget* parent)
         : QWidget(parent)
         , username(name)
-        , duration(0, 0, 0)
-        ,  // 初始化时间为 00:00:00
-        callDurationTimer(nullptr)
+        , callDurationTimer(nullptr)
         , timeElapsed(nullptr)
         , ctrlState(ctrlState) {
     setAttribute(Qt::WA_StyledBackground);
@@ -399,14 +397,9 @@ void MeetingVideoFrame::updateDuration() {
     if (!timeElapsed) {
         return;
     }
-    // 获取已经流逝的时间（以秒为单位）
-    auto elapsedSeconds = timeElapsed->elapsed() / 1000;
-
-    // 将秒转换为 HH:MM:SS 格式
-    duration = duration.addSecs(elapsedSeconds);
 
     // 更新标签文本
-    duraionLabel->setText(duration.toString("hh:mm:ss"));
+    duraionLabel->setText(QTime::fromMSecsSinceStartOfDay(timeElapsed->elapsed()).toString("hh:mm:ss"));
 }
 
 void MeetingVideoFrame::onParticipantVideoFrame(const std::string& participant,

@@ -12,9 +12,9 @@
   -->
 
 <!DOCTYPE TS>
-<TS language="ja" version="2.1">
+<TS version="2.1" language="ja">
     <context>
-        <name>module::im::module::im::AVForm</name>
+        <name>AVForm</name>
         <message>
             <source>Audio Settings</source>
             <translation>音声の設定</translation>
@@ -83,57 +83,9 @@ which may lead to problems with video calls.</source>
             <source>Rescan devices</source>
             <translation>デバイスを再検索</translation>
         </message>
-        <message>
-            <source>Play a test sound while changing the output volume.</source>
-            <translation>出力音量を変更しながらテストサウンドを再生します。</translation>
-        </message>
-        <message>
-            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
-            <translation>スライダーを使用して、入力デバイスのゲインを%1dBから%2dBの範囲で設定します。</translation>
-        </message>
-        <message>
-            <source>Use slider to set the activation volume for your input device.</source>
-            <translation>スライダーを使用して、入力デバイスのアクティベーション音量を設定します。</translation>
-        </message>
-        <message>
-            <source>Default resolution</source>
-            <translation>デフォルトの解像度</translation>
-        </message>
-        <message>
-            <source>Screen %1</source>
-            <translation>スクリーン %1</translation>
-        </message>
-        <message>
-            <source>Select region</source>
-            <translation>範囲を選択</translation>
-        </message>
-        <message>
-            <source>High (64 kbps)</source>
-            <translation>高 (64 kbps)</translation>
-        </message>
-        <message>
-            <source>Medium (32 kbps)</source>
-            <translation>中 (32 kbps)</translation>
-        </message>
-        <message>
-            <source>Low (16 kbps)</source>
-            <translation>低 (16 kbps)</translation>
-        </message>
-        <message>
-            <source>Very low (8 kbps)</source>
-            <translation>非常に低い (8 kbps)</translation>
-        </message>
-        <message>
-            <source>Disabled</source>
-            <translation>無効</translation>
-        </message>
-        <message>
-            <source>Audio/Video</source>
-            <translation>音声/ビデオ</translation>
-        </message>
     </context>
     <context>
-        <name>module::im::module::im::AboutFriendForm</name>
+        <name>AboutFriendForm</name>
         <message>
             <source>Dialog</source>
             <translation>] ダイアログ</translation>
@@ -151,36 +103,12 @@ which may lead to problems with video calls.</source>
             <translation>メッセージを送信</translation>
         </message>
         <message>
-            <source>Default directory to save files:</source>
-            <translation>ファイルを保存するデフォルトの場所:</translation>
+            <source>Alias:</source>
+            <translation>別名：</translation>
         </message>
         <message>
             <source>Account:</source>
             <translation>銀行口座:</translation>
-        </message>
-        <message>
-            <source>Automatically accept files from contact if set</source>
-            <translation>設定した場合、連絡先からのファイルを自動的に承認します</translation>
-        </message>
-        <message>
-            <source>Auto accept files</source>
-            <translation>ファイルを自動承認</translation>
-        </message>
-        <message>
-            <source>Manual</source>
-            <translation>手動</translation>
-        </message>
-        <message>
-            <source>Audio</source>
-            <translation>音声</translation>
-        </message>
-        <message>
-            <source>Audio + Video</source>
-            <translation>音声とビデオ</translation>
-        </message>
-        <message>
-            <source>Alias:</source>
-            <translation>別名：</translation>
         </message>
         <message>
             <source>Clear</source>
@@ -190,30 +118,9 @@ which may lead to problems with video calls.</source>
             <source>Clear history:</source>
             <translation>履歴のクリア:</translation>
         </message>
-        <message>
-            <source>Auto accept call:</source>
-            <translation>自動承認通話:</translation>
-        </message>
-        <message>
-            <source>Auto accept for this contact is disabled</source>
-            <translation>この連絡先からの自動承認は無効になっています</translation>
-        </message>
-        <message>
-            <source>Choose an auto accept directory</source>
-            <extracomment>popup title</extracomment>
-            <translation>自動承認したファイルの保存場所を選択</translation>
-        </message>
-        <message>
-            <source>Confirmation</source>
-            <translation>確認</translation>
-        </message>
-        <message>
-            <source>Are you sure to remove %1 chat history?</source>
-            <translation>%1チャットの履歴を削除してもよろしいですか?</translation>
-        </message>
     </context>
     <context>
-        <name>module::im::module::im::AboutGroupForm</name>
+        <name>AboutGroupForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -296,7 +203,7 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::AddFriendForm</name>
+        <name>AddFriendForm</name>
         <message>
             <source>Form</source>
             <translation>フォーム</translation>
@@ -305,6 +212,663 @@ which may lead to problems with video calls.</source>
             <source>Search</source>
             <translation>捜索</translation>
         </message>
+    </context>
+    <context>
+        <name>CallDurationForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>00:00:00</source>
+            <translation>00:00:00.000</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatReplyForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+    </context>
+    <context>
+        <name>ChatWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Open profile</source>
+            <translation>プロファイルを開く</translation>
+        </message>
+        <message>
+            <source>Open profile page when clicked</source>
+            <translation>クリックされたらプロファイルページを開く</translation>
+        </message>
+        <message>
+            <source>Your name</source>
+            <translation>名前</translation>
+        </message>
+        <message>
+            <source>Status message input</source>
+            <translation>ステータスメッセージ入力</translation>
+        </message>
+        <message>
+            <source>Set your status message that will be shown to others</source>
+            <translation>他の人に表示されるステータスメッセージを設定してください</translation>
+        </message>
+        <message>
+            <source>Your status</source>
+            <translation>ステータス</translation>
+        </message>
+        <message>
+            <source>Status</source>
+            <translation>ステータス</translation>
+        </message>
+        <message>
+            <source>Set availability status</source>
+            <translation>利用可能なステータスを設定</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>連絡先の検索</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>既存の友達に対する連絡先検索入力</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactSelectDialog</name>
+        <message>
+            <source>Dialog</source>
+            <translation>] ダイアログ</translation>
+        </message>
+    </context>
+    <context>
+        <name>ContactWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Contact search</source>
+            <translation>連絡先の検索</translation>
+        </message>
+        <message>
+            <source>Contact search input for known friends</source>
+            <translation>既存の友達に対する連絡先検索入力</translation>
+        </message>
+    </context>
+    <context>
+        <name>DesktopNotify</name>
+        <message>
+            <source>New message</source>
+            <translation>新しいメッセージがあり</translation>
+        </message>
+        <message>
+            <source>Incoming file transfer</source>
+            <translation>受信ファイル転送</translation>
+        </message>
+        <message>
+            <source>Friend request received</source>
+            <translation>フレンドリクエストを受け取りました</translation>
+        </message>
+        <message>
+            <source>New group message</source>
+            <translation>新しいグループメッセージ</translation>
+        </message>
+        <message>
+            <source>Group invite received</source>
+            <translation>グループ招待の受信</translation>
+        </message>
+    </context>
+    <context>
+        <name>FileTransferWidget</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Filename</source>
+            <translation>ファイル名</translation>
+        </message>
+        <message>
+            <source>10Mb</source>
+            <translation>10Mb</translation>
+        </message>
+        <message>
+            <source>0kb/s</source>
+            <translation>0kb/s</translation>
+        </message>
+        <message>
+            <source>ETA:10:10</source>
+            <translation>完了までの時間: 10:10</translation>
+        </message>
+    </context>
+    <context>
+        <name>FriendForm</name>
+        <message>
+            <source>Frame</source>
+            <translation>フレーム</translation>
+        </message>
+        <message>
+            <source>id</source>
+            <translation>身分証明書</translation>
+        </message>
+        <message>
+            <source>+</source>
+            <translation>+</translation>
+        </message>
+    </context>
+    <context>
+        <name>GeneralSettings</name>
+        <message>
+            <source>Chat</source>
+            <translation>チャット</translation>
+        </message>
+        <message>
+            <source>Base font:</source>
+            <translation>基本のフォント:</translation>
+        </message>
+        <message>
+            <source>px</source>
+            <translation>px</translation>
+        </message>
+        <message>
+            <source>Size:</source>
+            <translation>サイズ:</translation>
+        </message>
+        <message>
+            <source>New text styling preference may not load until OkMsg restarts.</source>
+            <translation>新しいテキストスタイルの設定は、OkMsgが再起動するまで読み込まれない場合があります。</translation>
+        </message>
+        <message>
+            <source>Text Style format:</source>
+            <translation>テキストスタイルの書式:</translation>
+        </message>
+        <message>
+            <source>Select text styling preference.</source>
+            <translation>テキストスタイル設定を選択します。</translation>
+        </message>
+        <message>
+            <source>Plaintext</source>
+            <translation>プレーンテキスト</translation>
+        </message>
+        <message>
+            <source>Show formatting characters</source>
+            <translation>書式付きの文字を表示</translation>
+        </message>
+        <message>
+            <source>Don't show formatting characters</source>
+            <translation>書式付きの文字を表示しない</translation>
+        </message>
+        <message>
+            <source>Use colored nicknames in chats</source>
+            <translation>チャットで色付きのニックネームを使用する</translation>
+        </message>
+        <message>
+            <source>New message</source>
+            <translation>新しいメッセージがあり</translation>
+        </message>
+        <message>
+            <source>Your status is changed to Away after set period of inactivity.</source>
+            <translation>この時間退席すると、ステータスを退席中に変更します。</translation>
+        </message>
+        <message>
+            <source>Auto away after (0 to disable):</source>
+            <translation>この時間が経過すると自動的に退出します (0 は無効):</translation>
+        </message>
+        <message>
+            <source>Set to 0 to disable</source>
+            <translation>0 を指定すると無効になります</translation>
+        </message>
+        <message>
+            <source>Show a notification when you receive a new message and the window is not selected.</source>
+            <comment>tooltip for Notify setting</comment>
+            <translation>新しいメッセージを受信し、ウィンドウが選択されていない場合に通知を表示します。</translation>
+        </message>
+        <message>
+            <source>Notify</source>
+            <translation>知らせる</translation>
+        </message>
+        <message>
+            <source>Onlys notify about new messages in groupchats when mentioned.</source>
+            <comment>toolTip for Group chats only notify when mentioned</comment>
+            <translation>グループチャットで新着メッセージがメンションされたときだけ通知します。</translation>
+        </message>
+        <message>
+            <source>Group chats only notify when mentioned</source>
+            <translation>グループチャットはメンションされた場合にのみ通知されます</translation>
+        </message>
+        <message>
+            <source>Play sound</source>
+            <translation>音を再生</translation>
+        </message>
+        <message>
+            <source>Play sound while Busy</source>
+            <translation>多忙の際に音声を再生</translation>
+        </message>
+        <message>
+            <source>Notify via desktop notifications</source>
+            <translation>デスクトップ通知で通知する</translation>
+        </message>
+        <message>
+            <source>Hide message sender and contents</source>
+            <translation>メッセージの送信者と内容を非表示にする</translation>
+        </message>
+        <message>
+            <source>Privacy</source>
+            <translation>プライバシー</translation>
+        </message>
+        <message>
+            <source>Your friends will be able to see when you are typing.</source>
+            <comment>tooltip for typing notifications setting</comment>
+            <translation>あなたが入力しているときに、友達が見ることができます。</translation>
+        </message>
+        <message>
+            <source>Send typing notifications</source>
+            <translation>入力通知を送信</translation>
+        </message>
+    </context>
+    <context>
+        <name>GroupCreateForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Group name</source>
+            <translation>グループの名前</translation>
+        </message>
+        <message>
+            <source>Confirm</source>
+            <translation>確かですか</translation>
+        </message>
+    </context>
+    <context>
+        <name>IMMainWindow</name>
+        <message>
+            <source>Close</source>
+            <translation>閉める</translation>
+        </message>
+    </context>
+    <context>
+        <name>IdentitySettings</name>
+        <message>
+            <source>My profile</source>
+            <translation>プロファイル</translation>
+        </message>
+        <message>
+            <source>Public Information</source>
+            <translation>公開情報</translation>
+        </message>
+        <message>
+            <source>Nickname:</source>
+            <translation>ニックネーム：</translation>
+        </message>
+        <message>
+            <source>Name input</source>
+            <translation>名前入力</translation>
+        </message>
+        <message>
+            <source>Name visible to contacts</source>
+            <translation>連絡先に表示される名前</translation>
+        </message>
+        <message>
+            <source>Account:</source>
+            <translation>銀行口座:</translation>
+        </message>
+        <message>
+            <source>Location:</source>
+            <translation>場所：</translation>
+        </message>
+        <message>
+            <source>Personal Information</source>
+            <translation>個人情報</translation>
+        </message>
+        <message>
+            <source>My name:</source>
+            <translation>名前:</translation>
+        </message>
+        <message>
+            <source>My phone:</source>
+            <translation>私の電話:</translation>
+        </message>
+        <message>
+            <source>My E-Mail:</source>
+            <translation>私のEメール:</translation>
+        </message>
+        <message>
+            <source>My telephone:</source>
+            <translation>私の電話番号:</translation>
+        </message>
+        <message>
+            <source>Profile</source>
+            <translation>プロファイル</translation>
+        </message>
+        <message>
+            <source>Go back to the login screen</source>
+            <comment>tooltip for logout button</comment>
+            <translation>ログイン画面に戻る</translation>
+        </message>
+        <message>
+            <source>Exit</source>
+            <comment>import profile button</comment>
+            <translation>終了</translation>
+        </message>
+        <message>
+            <source>Logout</source>
+            <comment>import profile button</comment>
+            <translation>ログアウト</translation>
+        </message>
+    </context>
+    <context>
+        <name>LoadHistoryDialog</name>
+        <message>
+            <source>Load History Dialog</source>
+            <translation>履歴の読み込みダイアログ</translation>
+        </message>
+        <message>
+            <source>Load history from:</source>
+            <translation>ロード履歴:</translation>
+        </message>
+    </context>
+    <context>
+        <name>QApplication</name>
+        <message>
+            <source>Ok</source>
+            <translation>OK</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>キャンセル</translation>
+        </message>
+        <message>
+            <source>Yes</source>
+            <translation>はい</translation>
+        </message>
+        <message>
+            <source>No</source>
+            <translation>いいえ</translation>
+        </message>
+    </context>
+    <context>
+        <name>QObject</name>
+        <message>
+            <source>Reformatting text in progress..</source>
+            <translation>テキストの再書式設定が進行中です。</translation>
+        </message>
+        <message>
+            <source>online</source>
+            <comment>contact status</comment>
+            <translation>オンライン</translation>
+        </message>
+        <message>
+            <source>away</source>
+            <comment>contact status</comment>
+            <translation>退席中</translation>
+        </message>
+        <message>
+            <source>busy</source>
+            <comment>contact status</comment>
+            <translation>多忙</translation>
+        </message>
+        <message>
+            <source>offline</source>
+            <comment>contact status</comment>
+            <translation>オフライン</translation>
+        </message>
+        <message>
+            <source>blocked</source>
+            <comment>contact status</comment>
+            <translation>封鎖</translation>
+        </message>
+        <message>
+            <source>Incoming call...</source>
+            <translation>お電話です…</translation>
+        </message>
+    </context>
+    <context>
+        <name>RemoveFriendDialog</name>
+        <message>
+            <source>Remove friend</source>
+            <translation>友達を削除</translation>
+        </message>
+        <message>
+            <source>Remove all chat history with the friend if set</source>
+            <translation>設定した場合、友達とのチャット履歴をすべて削除します</translation>
+        </message>
+        <message>
+            <source>Also remove chat history</source>
+            <translation>チャット履歴も消去</translation>
+        </message>
+    </context>
+    <context>
+        <name>SearchSettingsForm</name>
+        <message>
+            <source>Form</source>
+            <translation>フォーム</translation>
+        </message>
+        <message>
+            <source>Start search:</source>
+            <translation>検索から着手しましょう</translation>
+        </message>
+        <message>
+            <source>from the end</source>
+            <translation>末期から</translation>
+        </message>
+        <message>
+            <source>from the beginning</source>
+            <translation>最初から</translation>
+        </message>
+        <message>
+            <source>after date</source>
+            <translation>デート後</translation>
+        </message>
+        <message>
+            <source>before date</source>
+            <translation>前</translation>
+        </message>
+        <message>
+            <source>00.00.0000</source>
+            <translation>00.00.0000</translation>
+        </message>
+        <message>
+            <source>Case sensitive</source>
+            <translation>敏感な場合</translation>
+        </message>
+        <message>
+            <source>Whole words only</source>
+            <translation>全しかない言葉</translation>
+        </message>
+        <message>
+            <source>Use regular expressions</source>
+            <translation>正規表現を使用する</translation>
+        </message>
+    </context>
+    <context>
+        <name>SetPasswordDialog</name>
+        <message>
+            <source>Set your password</source>
+            <translation>パスワードを設定</translation>
+        </message>
+        <message>
+            <source>Confirm:</source>
+            <translation>確認:</translation>
+        </message>
+        <message>
+            <source>Password:</source>
+            <translation>パスワード:</translation>
+        </message>
+        <message>
+            <source>Confirm password</source>
+            <translation>パスワードを確認</translation>
+        </message>
+        <message>
+            <source>Confirm password input</source>
+            <translation>パスワードの確認入力</translation>
+        </message>
+        <message>
+            <source>Password input</source>
+            <translation>パスワード入力</translation>
+        </message>
+        <message>
+            <source>Password input field, minimum 6 characters long</source>
+            <translation>パスワードの入力欄、最低でも 6 文字</translation>
+        </message>
+        <message>
+            <source>Password strength: %p%</source>
+            <translation>パスワード強度: %p%</translation>
+        </message>
+    </context>
+    <context>
+        <name>StorageSettingsForm</name>
+        <message>
+            <source>Local Storage</source>
+            <translation>ローカルストレージ</translation>
+        </message>
+        <message>
+            <source>Summary:</source>
+            <translation>概要：</translation>
+        </message>
+        <message>
+            <source>400MB</source>
+            <translation>400メガバイト</translation>
+        </message>
+        <message>
+            <source>Set where files will be saved.</source>
+            <translation>ファイルを保存する場所を選択します。</translation>
+        </message>
+        <message>
+            <source>clear all</source>
+            <translation>すべてクリア</translation>
+        </message>
+        <message>
+            <source>Total size limit:</source>
+            <translation>合計サイズ制限:</translation>
+        </message>
+        <message>
+            <source>3GB</source>
+            <translation>3GBの</translation>
+        </message>
+        <message>
+            <source>Media cache limit:</source>
+            <translation>メディアキャッシュの制限:</translation>
+        </message>
+        <message>
+            <source>2GB</source>
+            <translation>2GBの</translation>
+        </message>
+        <message>
+            <source>Clear files older than:</source>
+            <translation>次の日付より古いファイルをクリアします。</translation>
+        </message>
+        <message>
+            <source>1 month</source>
+            <translation>1ヶ月</translation>
+        </message>
+        <message>
+            <source>1866 images</source>
+            <translation>1866件のイメージ</translation>
+        </message>
+        <message>
+            <source>44.4MB</source>
+            <translation>44.4メガバイト</translation>
+        </message>
+        <message>
+            <source>clear</source>
+            <translation>クリア</translation>
+        </message>
+        <message>
+            <source>511 stickers</source>
+            <translation>511枚のステッカー</translation>
+        </message>
+        <message>
+            <source>11.0MB</source>
+            <translation>11.0メガバイト</translation>
+        </message>
+        <message>
+            <source>13 GIF animations</source>
+            <translation>13 GIFアニメーション</translation>
+        </message>
+        <message>
+            <source>2.5MB</source>
+            <translation>2.5メガバイト</translation>
+        </message>
+        <message>
+            <source>Media cache</source>
+            <translation>メディアキャッシュ</translation>
+        </message>
+        <message>
+            <source>405.7MB</source>
+            <translation>405.7メガバイト</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AVForm</name>
+        <message>
+            <source>Play a test sound while changing the output volume.</source>
+            <translation>出力音量を変更しながらテストサウンドを再生します。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the gain of your input device ranging from %1dB to %2dB.</source>
+            <translation>スライダーを使用して、入力デバイスのゲインを%1dBから%2dBの範囲で設定します。</translation>
+        </message>
+        <message>
+            <source>Use slider to set the activation volume for your input device.</source>
+            <translation>スライダーを使用して、入力デバイスのアクティベーション音量を設定します。</translation>
+        </message>
+        <message>
+            <source>Default resolution</source>
+            <translation>デフォルトの解像度</translation>
+        </message>
+        <message>
+            <source>Screen %1</source>
+            <translation>スクリーン %1</translation>
+        </message>
+        <message>
+            <source>Select region</source>
+            <translation>範囲を選択</translation>
+        </message>
+        <message>
+            <source>High (64 kbps)</source>
+            <translation>高 (64 kbps)</translation>
+        </message>
+        <message>
+            <source>Medium (32 kbps)</source>
+            <translation>中 (32 kbps)</translation>
+        </message>
+        <message>
+            <source>Low (16 kbps)</source>
+            <translation>低 (16 kbps)</translation>
+        </message>
+        <message>
+            <source>Very low (8 kbps)</source>
+            <translation>非常に低い (8 kbps)</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>無効</translation>
+        </message>
+        <message>
+            <source>Audio/Video</source>
+            <translation>音声/ビデオ</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AboutFriendForm</name>
+        <message>
+            <source>Confirmation</source>
+            <translation>確認</translation>
+        </message>
+        <message>
+            <source>Are you sure to remove %1 chat history?</source>
+            <translation>%1チャットの履歴を削除してもよろしいですか?</translation>
+        </message>
+    </context>
+    <context>
+        <name>module::im::AddFriendForm</name>
         <message>
             <source>Account/E-Mail/Phone Number</source>
             <translation>口座番号/メールアドレス/携帯電話番号</translation>
@@ -336,22 +900,14 @@ which may lead to problems with video calls.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::CallDurationForm</name>
-        <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>00:00:00</source>
-            <translation>00:00:00.000</translation>
-        </message>
+        <name>module::im::CallDurationForm</name>
         <message>
             <source>Call duration: </source>
             <translation>通話時間:</translation>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatForm</name>
+        <name>module::im::ChatForm</name>
         <message>
             <source>Filename contained illegal characters</source>
             <translation>ファイル名に不正な文字が含まれています</translation>
@@ -372,7 +928,7 @@ so you can save the file on windows.</source>
         </message>
         <message>
             <source>OkMsg wasn't able to open %1</source>
-            <translation>OkMsg は %1 を開けませんでした</translation>
+            <translation>OkMsgは%1を開くことができませんでした。</translation>
         </message>
         <message>
             <source>Bad idea</source>
@@ -389,7 +945,7 @@ so you can save the file on windows.</source>
         </message>
         <message>
             <source>OkMsg wasn't able to save the screenshot</source>
-            <translation>OkMsg はスクリーンショットを保存できませんでした</translation>
+            <translation>OkMsgはスクリーンショットを保存できませんでした。</translation>
         </message>
         <message>
             <source>Copy</source>
@@ -397,7 +953,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatFormHeader</name>
+        <name>module::im::ChatFormHeader</name>
         <message>
             <source>Can't start audio call</source>
             <translation>音声通話を開始できません</translation>
@@ -464,7 +1020,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatInputForm</name>
+        <name>module::im::ChatInputForm</name>
         <message>
             <source>Send message</source>
             <translation>メッセージを送信</translation>
@@ -503,7 +1059,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatLineContent</name>
+        <name>module::im::ChatLineContent</name>
         <message>
             <source>Copy</source>
             <translation>コピー</translation>
@@ -518,7 +1074,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatLog</name>
+        <name>module::im::ChatLog</name>
         <message>
             <source>Clear displayed messages</source>
             <translation>表示されたメッセージを消去</translation>
@@ -537,65 +1093,14 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatReplyForm</name>
-        <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::module::im::ChatTextEdit</name>
+        <name>module::im::ChatTextEdit</name>
         <message>
             <source>Type your message here...</source>
             <translation>ここにメッセージを入力してください…</translation>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::ChatWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>Open profile</source>
-            <translation>プロファイルを開く</translation>
-        </message>
-        <message>
-            <source>Open profile page when clicked</source>
-            <translation>クリックされたらプロファイルページを開く</translation>
-        </message>
-        <message>
-            <source>Your name</source>
-            <translation>名前</translation>
-        </message>
-        <message>
-            <source>Status message input</source>
-            <translation>ステータスメッセージ入力</translation>
-        </message>
-        <message>
-            <source>Set your status message that will be shown to others</source>
-            <translation>他の人に表示されるステータスメッセージを設定してください</translation>
-        </message>
-        <message>
-            <source>Your status</source>
-            <translation>ステータス</translation>
-        </message>
-        <message>
-            <source>Status</source>
-            <translation>ステータス</translation>
-        </message>
-        <message>
-            <source>Set availability status</source>
-            <translation>利用可能なステータスを設定</translation>
-        </message>
-        <message>
-            <source>Contact search</source>
-            <translation>連絡先の検索</translation>
-        </message>
-        <message>
-            <source>Contact search input for known friends</source>
-            <translation>既存の友達に対する連絡先検索入力</translation>
-        </message>
+        <name>module::im::ChatWidget</name>
         <message numerus="yes">
             <source>%n New Group Invite(s)</source>
             <translation>
@@ -623,28 +1128,7 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::module::im::CircleWidget</name>
-        <message>
-            <source>Rename circle</source>
-            <comment>Menu for renaming a circle</comment>
-            <translation>サークル名を変更</translation>
-        </message>
-        <message>
-            <source>Remove circle</source>
-            <comment>Menu for removing a circle</comment>
-            <translation>サークルを削除</translation>
-        </message>
-        <message>
-            <source>Open all in new window</source>
-            <translation>すべてを新しいウィンドウで開く</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::ContactSelectDialog</name>
-        <message>
-            <source>Dialog</source>
-            <translation>] ダイアログ</translation>
-        </message>
         <message>
             <source>Please select contact</source>
             <translation>連絡先を選択してください</translation>
@@ -652,18 +1136,6 @@ so you can save the file on windows.</source>
     </context>
     <context>
         <name>module::im::ContactWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>Contact search</source>
-            <translation>連絡先の検索</translation>
-        </message>
-        <message>
-            <source>Contact search input for known friends</source>
-            <translation>既存の友達に対する連絡先検索入力</translation>
-        </message>
         <message>
             <source>Search Contacts</source>
             <translation>連絡先を検索</translation>
@@ -694,56 +1166,9 @@ so you can save the file on windows.</source>
             <comment>Error while sending friendship request</comment>
             <translation>IMFriendはすでに追加されています</translation>
         </message>
-        <message>
-            <source>/me offers friendship, "%1"</source>
-            <translation>/me 友達にならないか、"%1"</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::DesktopNotify</name>
-        <message>
-            <source>New message</source>
-            <translation>新しいメッセージがあり</translation>
-        </message>
-        <message>
-            <source>Incoming file transfer</source>
-            <translation>受信ファイル転送</translation>
-        </message>
-        <message>
-            <source>Friend request received</source>
-            <translation>フレンドリクエストを受け取りました</translation>
-        </message>
-        <message>
-            <source>New group message</source>
-            <translation>新しいグループメッセージ</translation>
-        </message>
-        <message>
-            <source>Group invite received</source>
-            <translation>グループ招待の受信</translation>
-        </message>
     </context>
     <context>
         <name>module::im::FileTransferWidget</name>
-        <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>Filename</source>
-            <translation>ファイル名</translation>
-        </message>
-        <message>
-            <source>10Mb</source>
-            <translation>10Mb</translation>
-        </message>
-        <message>
-            <source>0kb/s</source>
-            <translation>0kb/s</translation>
-        </message>
-        <message>
-            <source>ETA:10:10</source>
-            <translation>完了までの時間: 10:10</translation>
-        </message>
         <message>
             <source>Location not writable</source>
             <comment>Title of permissions popup</comment>
@@ -804,21 +1229,6 @@ so you can save the file on windows.</source>
         <message>
             <source>Uploads</source>
             <translation>アップロード</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::FriendForm</name>
-        <message>
-            <source>Frame</source>
-            <translation>フレーム</translation>
-        </message>
-        <message>
-            <source>id</source>
-            <translation>身分証明書</translation>
-        </message>
-        <message>
-            <source>+</source>
-            <translation>+</translation>
         </message>
     </context>
     <context>
@@ -910,117 +1320,6 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::GeneralSettings</name>
-        <message>
-            <source>Chat</source>
-            <translation>チャット</translation>
-        </message>
-        <message>
-            <source>Base font:</source>
-            <translation>基本のフォント:</translation>
-        </message>
-        <message>
-            <source>px</source>
-            <translation>px</translation>
-        </message>
-        <message>
-            <source>Size:</source>
-            <translation>サイズ:</translation>
-        </message>
-        <message>
-            <source>New text styling preference may not load until OkMsg restarts.</source>
-            <translation>OkMsg が再起動するまで、新しいテキストスタイル設定は読み込まれない可能性があります。
-            </translation>
-        </message>
-        <message>
-            <source>Text Style format:</source>
-            <translation>テキストスタイルの書式:</translation>
-        </message>
-        <message>
-            <source>Select text styling preference.</source>
-            <translation>テキストスタイル設定を選択します。</translation>
-        </message>
-        <message>
-            <source>Plaintext</source>
-            <translation>プレーンテキスト</translation>
-        </message>
-        <message>
-            <source>Show formatting characters</source>
-            <translation>書式付きの文字を表示</translation>
-        </message>
-        <message>
-            <source>Don't show formatting characters</source>
-            <translation>書式付きの文字を表示しない</translation>
-        </message>
-        <message>
-            <source>Use colored nicknames in chats</source>
-            <translation>チャットで色付きのニックネームを使用する</translation>
-        </message>
-        <message>
-            <source>New message</source>
-            <translation>新しいメッセージがあり</translation>
-        </message>
-        <message>
-            <source>Your status is changed to Away after set period of inactivity.</source>
-            <translation>この時間退席すると、ステータスを退席中に変更します。</translation>
-        </message>
-        <message>
-            <source>Auto away after (0 to disable):</source>
-            <translation>この時間が経過すると自動的に退出します (0 は無効):</translation>
-        </message>
-        <message>
-            <source>Set to 0 to disable</source>
-            <translation>0 を指定すると無効になります</translation>
-        </message>
-        <message>
-            <source>Show a notification when you receive a new message and the window is not selected.</source>
-            <comment>tooltip for Notify setting</comment>
-            <translation>新しいメッセージを受信し、ウィンドウが選択されていない場合に通知を表示します。</translation>
-        </message>
-        <message>
-            <source>Notify</source>
-            <translation>知らせる</translation>
-        </message>
-        <message>
-            <source>Onlys notify about new messages in groupchats when mentioned.</source>
-            <comment>toolTip for Group chats only notify when mentioned</comment>
-            <translation>グループチャットで新着メッセージがメンションされたときだけ通知します。</translation>
-        </message>
-        <message>
-            <source>Group chats only notify when mentioned</source>
-            <translation>グループチャットはメンションされた場合にのみ通知されます</translation>
-        </message>
-        <message>
-            <source>Play sound</source>
-            <translation>音を再生</translation>
-        </message>
-        <message>
-            <source>Play sound while Busy</source>
-            <translation>多忙の際に音声を再生</translation>
-        </message>
-        <message>
-            <source>Notify via desktop notifications</source>
-            <translation>デスクトップ通知で通知する</translation>
-        </message>
-        <message>
-            <source>Hide message sender and contents</source>
-            <translation>メッセージの送信者と内容を非表示にする</translation>
-        </message>
-        <message>
-            <source>Privacy</source>
-            <translation>プライバシー</translation>
-        </message>
-        <message>
-            <source>Your friends will be able to see when you are typing.</source>
-            <comment>tooltip for typing notifications setting</comment>
-            <translation>あなたが入力しているときに、友達が見ることができます。</translation>
-        </message>
-        <message>
-            <source>Send typing notifications</source>
-            <translation>入力通知を送信</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::GenericChatForm</name>
         <message>
             <source>Confirmation</source>
@@ -1037,6 +1336,10 @@ so you can save the file on windows.</source>
         <message>
             <source>Save chat log</source>
             <translation>チャットログを保存</translation>
+        </message>
+        <message>
+            <source>The feature unsupported in the open-source version</source>
+            <translation>オープンソース版ではこの機能はサポートされていません</translation>
         </message>
         <message>
             <source>The community version cannot send files to offline contacts!</source>
@@ -1130,18 +1433,6 @@ so you can save the file on windows.</source>
     <context>
         <name>module::im::GroupCreateForm</name>
         <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>Group name</source>
-            <translation>グループの名前</translation>
-        </message>
-        <message>
-            <source>Confirm</source>
-            <translation>確かですか</translation>
-        </message>
-        <message>
             <source>Create new group</source>
             <translation>新しいグループを作成</translation>
         </message>
@@ -1198,94 +1489,6 @@ so you can save the file on windows.</source>
         </message>
     </context>
     <context>
-        <name>module::im::IMMainWindow</name>
-        <message>
-            <source>Close</source>
-            <translation>閉める</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::IdentitySettings</name>
-        <message>
-            <source>My profile</source>
-            <translation>プロファイル</translation>
-        </message>
-        <message>
-            <source>Public Information</source>
-            <translation>公開情報</translation>
-        </message>
-        <message>
-            <source>Nickname:</source>
-            <translation>ニックネーム：</translation>
-        </message>
-        <message>
-            <source>Name input</source>
-            <translation>名前入力</translation>
-        </message>
-        <message>
-            <source>Name visible to contacts</source>
-            <translation>連絡先に表示される名前</translation>
-        </message>
-        <message>
-            <source>Account:</source>
-            <translation>銀行口座:</translation>
-        </message>
-        <message>
-            <source>Location:</source>
-            <translation>場所：</translation>
-        </message>
-        <message>
-            <source>Personal Information</source>
-            <translation>個人情報</translation>
-        </message>
-        <message>
-            <source>My name:</source>
-            <translation>名前:</translation>
-        </message>
-        <message>
-            <source>My phone:</source>
-            <translation>私の電話:</translation>
-        </message>
-        <message>
-            <source>My E-Mail:</source>
-            <translation>私のEメール:</translation>
-        </message>
-        <message>
-            <source>My telephone:</source>
-            <translation>私の電話番号:</translation>
-        </message>
-        <message>
-            <source>Profile</source>
-            <translation>プロファイル</translation>
-        </message>
-        <message>
-            <source>Go back to the login screen</source>
-            <comment>tooltip for logout button</comment>
-            <translation>ログイン画面に戻る</translation>
-        </message>
-        <message>
-            <source>Exit</source>
-            <comment>import profile button</comment>
-            <translation>終了</translation>
-        </message>
-        <message>
-            <source>Logout</source>
-            <comment>import profile button</comment>
-            <translation>ログアウト</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::LoadHistoryDialog</name>
-        <message>
-            <source>Load History Dialog</source>
-            <translation>履歴の読み込みダイアログ</translation>
-        </message>
-        <message>
-            <source>Load history from:</source>
-            <translation>ロード履歴:</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::MessageSessionListWidget</name>
         <message>
             <source>Today</source>
@@ -1321,6 +1524,18 @@ so you can save the file on windows.</source>
         <message>
             <source>Show details</source>
             <translation>詳細を表示</translation>
+        </message>
+        <message>
+            <source>Calling...</source>
+            <translation>呼び出し中...</translation>
+        </message>
+        <message>
+            <source>The feature unsupported in the open-source version</source>
+            <translation>オープンソース版ではこの機能はサポートされていません</translation>
+        </message>
+        <message>
+            <source>The call cannot be made due participant is offline!</source>
+            <translation>参加者がオフラインのため、通話はできません！</translation>
         </message>
     </context>
     <context>
@@ -1365,13 +1580,6 @@ so you can save the file on windows.</source>
             <translation>
                 <numerusform>未読メッセージ</numerusform>
             </translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::PasswordEdit</name>
-        <message>
-            <source>CAPS-LOCK ENABLED</source>
-            <translation>Caps Lock が有効になっています</translation>
         </message>
     </context>
     <context>
@@ -1477,15 +1685,6 @@ Please use another image.</source>
             <translation>エラー</translation>
         </message>
         <message>
-            <source>Export profile</source>
-            <translation>プロファイルをエクスポート</translation>
-        </message>
-        <message>
-            <source>Tox save file (*.tox)</source>
-            <extracomment>save dialog filter</extracomment>
-            <translation>Tox 保存ファイル (*.tox)</translation>
-        </message>
-        <message>
             <source>Save</source>
             <comment>save qr image</comment>
             <translation>保存</translation>
@@ -1568,92 +1767,7 @@ Please use another image.</source>
         </message>
     </context>
     <context>
-        <name>module::im::QApplication</name>
-        <message>
-            <source>Ok</source>
-            <translation>OK</translation>
-        </message>
-        <message>
-            <source>Cancel</source>
-            <translation>キャンセル</translation>
-        </message>
-        <message>
-            <source>Yes</source>
-            <translation>はい</translation>
-        </message>
-        <message>
-            <source>No</source>
-            <translation>いいえ</translation>
-        </message>
-    </context>
-    <context>
-        <name>module::im::QObject</name>
-        <message>
-            <source>Reformatting text in progress..</source>
-            <translation>テキストの再書式設定が進行中です。</translation>
-        </message>
-        <message>
-            <source>online</source>
-            <comment>contact status</comment>
-            <translation>オンライン</translation>
-        </message>
-        <message>
-            <source>away</source>
-            <comment>contact status</comment>
-            <translation>退席中</translation>
-        </message>
-        <message>
-            <source>busy</source>
-            <comment>contact status</comment>
-            <translation>多忙</translation>
-        </message>
-        <message>
-            <source>offline</source>
-            <comment>contact status</comment>
-            <translation>オフライン</translation>
-        </message>
-        <message>
-            <source>blocked</source>
-            <comment>contact status</comment>
-            <translation>封鎖</translation>
-        </message>
-        <message>
-            <source>Error</source>
-            <translation>エラー</translation>
-        </message>
-        <message>
-            <source>Couldn't open your chat logs, they will be exit.</source>
-            <translation>チャットログを開くことができませんでした、彼らは終了します。</translation>
-        </message>
-        <message>
-            <source>None</source>
-            <comment>No camera device set</comment>
-            <translation>なし</translation>
-        </message>
-        <message>
-            <source>Desktop</source>
-            <comment>Desktop as a camera input for screen sharing</comment>
-            <translation>デスクトップ</translation>
-        </message>
-        <message>
-            <source>Incoming call...</source>
-            <translation>お電話です…</translation>
-        </message>
-    </context>
-    <context>
         <name>module::im::RemoveFriendDialog</name>
-        <message>
-            <source>Remove friend</source>
-            <translation>友達を削除</translation>
-        </message>
-        <message>
-            <source>Remove all chat history with the friend if set</source>
-            <translation>設定した場合、友達とのチャット履歴をすべて削除します</translation>
-        </message>
-        <message>
-            <source>Also remove chat history</source>
-            <translation>チャット履歴も消去</translation>
-        </message>
         <message>
             <source>Are you sure you want to remove %1 from your contacts list?</source>
             <translation>%1 を連絡先リストから削除してもよろしいですか?</translation>
@@ -1707,46 +1821,6 @@ Please use another image.</source>
     <context>
         <name>module::im::SearchSettingsForm</name>
         <message>
-            <source>Form</source>
-            <translation>フォーム</translation>
-        </message>
-        <message>
-            <source>Start search:</source>
-            <translation>検索から着手しましょう</translation>
-        </message>
-        <message>
-            <source>from the end</source>
-            <translation>末期から</translation>
-        </message>
-        <message>
-            <source>from the beginning</source>
-            <translation>最初から</translation>
-        </message>
-        <message>
-            <source>after date</source>
-            <translation>デート後</translation>
-        </message>
-        <message>
-            <source>before date</source>
-            <translation>前</translation>
-        </message>
-        <message>
-            <source>00.00.0000</source>
-            <translation>00.00.0000</translation>
-        </message>
-        <message>
-            <source>Case sensitive</source>
-            <translation>敏感な場合</translation>
-        </message>
-        <message>
-            <source>Whole words only</source>
-            <translation>全しかない言葉</translation>
-        </message>
-        <message>
-            <source>Use regular expressions</source>
-            <translation>正規表現を使用する</translation>
-        </message>
-        <message>
             <source>Select Date Dialog</source>
             <translation>選択伊達ダイアログ</translation>
         </message>
@@ -1757,38 +1831,6 @@ Please use another image.</source>
     </context>
     <context>
         <name>module::im::SetPasswordDialog</name>
-        <message>
-            <source>Set your password</source>
-            <translation>パスワードを設定</translation>
-        </message>
-        <message>
-            <source>Confirm:</source>
-            <translation>確認:</translation>
-        </message>
-        <message>
-            <source>Password:</source>
-            <translation>パスワード:</translation>
-        </message>
-        <message>
-            <source>Confirm password</source>
-            <translation>パスワードを確認</translation>
-        </message>
-        <message>
-            <source>Confirm password input</source>
-            <translation>パスワードの確認入力</translation>
-        </message>
-        <message>
-            <source>Password input</source>
-            <translation>パスワード入力</translation>
-        </message>
-        <message>
-            <source>Password input field, minimum 6 characters long</source>
-            <translation>パスワードの入力欄、最低でも 6 文字</translation>
-        </message>
-        <message>
-            <source>Password strength: %p%</source>
-            <translation>パスワード強度: %p%</translation>
-        </message>
         <message>
             <source>The password is too short</source>
             <translation>パスワードが短すぎます</translation>
@@ -1807,86 +1849,6 @@ Please use another image.</source>
     </context>
     <context>
         <name>module::im::StorageSettingsForm</name>
-        <message>
-            <source>Local Storage</source>
-            <translation>ローカルストレージ</translation>
-        </message>
-        <message>
-            <source>Summary:</source>
-            <translation>概要：</translation>
-        </message>
-        <message>
-            <source>400MB</source>
-            <translation>400メガバイト</translation>
-        </message>
-        <message>
-            <source>Set where files will be saved.</source>
-            <translation>ファイルを保存する場所を選択します。</translation>
-        </message>
-        <message>
-            <source>clear all</source>
-            <translation>すべてクリア</translation>
-        </message>
-        <message>
-            <source>Total size limit:</source>
-            <translation>合計サイズ制限:</translation>
-        </message>
-        <message>
-            <source>3GB</source>
-            <translation>3GBの</translation>
-        </message>
-        <message>
-            <source>Media cache limit:</source>
-            <translation>メディアキャッシュの制限:</translation>
-        </message>
-        <message>
-            <source>2GB</source>
-            <translation>2GBの</translation>
-        </message>
-        <message>
-            <source>Clear files older than:</source>
-            <translation>次の日付より古いファイルをクリアします。</translation>
-        </message>
-        <message>
-            <source>1 month</source>
-            <translation>1ヶ月</translation>
-        </message>
-        <message>
-            <source>1866 images</source>
-            <translation>1866件のイメージ</translation>
-        </message>
-        <message>
-            <source>44.4MB</source>
-            <translation>44.4メガバイト</translation>
-        </message>
-        <message>
-            <source>clear</source>
-            <translation>クリア</translation>
-        </message>
-        <message>
-            <source>511 stickers</source>
-            <translation>511枚のステッカー</translation>
-        </message>
-        <message>
-            <source>11.0MB</source>
-            <translation>11.0メガバイト</translation>
-        </message>
-        <message>
-            <source>13 GIF animations</source>
-            <translation>13 GIFアニメーション</translation>
-        </message>
-        <message>
-            <source>2.5MB</source>
-            <translation>2.5メガバイト</translation>
-        </message>
-        <message>
-            <source>Media cache</source>
-            <translation>メディアキャッシュ</translation>
-        </message>
-        <message>
-            <source>405.7MB</source>
-            <translation>405.7メガバイト</translation>
-        </message>
         <message>
             <source>Choose an auto accept directory</source>
             <comment>popup title</comment>
@@ -1916,21 +1878,14 @@ Please use another image.</source>
             <translation>toxcore の開始に失敗しました。このウィンドウを閉じるとプログラムは強制終了します。</translation>
         </message>
         <message>
-            <source>The core failed to start with your proxy settings. So cannot to run; please modify your settings and restart.</source>
-            <comment>popup text</comment>
-            <translation>プロキシ設定でコアを起動できませんでした。だから走ることはできません。設定を変更して再起動してください。</translation>
-        </message>
-        <message>
             <source>Executable file</source>
             <comment>popup title</comment>
             <translation>実行可能なファイル</translation>
         </message>
         <message>
-            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your
-                computer. Are you sure want to open this file?
-            </source>
+            <source>You have asked OkMsg to open an executable file. Executable files can potentially damage your computer. Are you sure want to open this file?</source>
             <comment>popup text</comment>
-            <translation>qToxに実行可能ファイルを開くように依頼しました。実行可能ファイルは、コンピューターに損傷を与える可能性があります。このファイルを開いてもよろしいですか?</translation>
+            <translation>あなたはOkMsgに実行可能ファイルを開くように依頼しました。実行可能ファイルはコンピュータに損害を与える可能性があります。このファイルを開いてもよろしいですか？</translation>
         </message>
         <message>
             <source>Couldn't request friendship</source>

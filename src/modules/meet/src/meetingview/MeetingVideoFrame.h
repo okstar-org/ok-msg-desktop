@@ -101,7 +101,6 @@ private:
     QAction* layoutAction = nullptr;
     QAction* fullScreenAction = nullptr;
 
-    QTime duration;
     QTimer* callDurationTimer;
     QElapsedTimer* timeElapsed;
 
