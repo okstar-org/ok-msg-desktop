@@ -119,9 +119,9 @@ add_executable(runTests
 
 # 链接gtest和gtest_main库
 target_link_libraries(runTests
-		PRIVATE X11
 		PRIVATE gtest
 		PRIVATE gtest_main
+		${PLATFORM_LIBS}
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${Qt5Gui_LIBRARIES}
 		PRIVATE ${Qt5Svg_LIBRARIES}
