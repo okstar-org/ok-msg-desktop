@@ -75,25 +75,28 @@ set(${PROJECT_NAME}_SOURCES
 
 
 if (WIN32)
-	set(${PROJECT_NAME}_SOURCES
-			${${PROJECT_NAME}_SOURCES} system/windows/sys_info.cpp
-			system/windows/autorun_win.cpp)
+	list(APPEND ${PROJECT_NAME}_SOURCES
+			system/windows/sys_info.cpp
+			system/windows/autorun_win.cpp
+	)
+	FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/windows/*.cpp)
 elseif (LINUX)
-	set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+	list(APPEND ${PROJECT_NAME}_SOURCES
 			system/linux/sys_info.cpp
 			system/linux/autorun_xdg.cpp
 			system/linux/x11_display.h
 			system/linux/x11_display.cpp
 	)
 	list(APPEND PLATFORM_LIBS PRIVATE X11)
+	FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/linux/*.cpp)
 elseif (APPLE)
-	set(${PROJECT_NAME}_SOURCES
-			${${PROJECT_NAME}_SOURCES} system/macos/sys_info.cpp
+	list(APPEND ${PROJECT_NAME}_SOURCES
+			system/macos/sys_info.cpp
 			system/macos/autorun_osx.cpp)
+	FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/macos/*.cpp)
 endif ()
 
-add_library(${PROJECT_NAME} STATIC
-		${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(
 		${PROJECT_NAME}
@@ -108,10 +111,8 @@ if (WIN32)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
 
-
-FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/*.cpp)
+# Google Test
 message(STATUS "Test files: ${${PROJECT_NAME}_TEST_RESOURCES}")
-
 add_executable(runTests
 		${${PROJECT_NAME}_TEST_RESOURCES}
 		${${PROJECT_NAME}_SOURCES}
