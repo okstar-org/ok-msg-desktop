@@ -9,22 +9,20 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-#ifndef AVFOUNDATION_H
-#define AVFOUNDATION_H
 
-#include <QPair>
-#include <QString>
-#include <QVector>
-#include "lib/video/videomode.h"
+#ifndef PLATFORM_X11_DISPLAY_H
+#define PLATFORM_X11_DISPLAY_H
 
-#ifndef Q_OS_MACX
-#error "This file is only meant to be compiled for Mac OS X targets"
-#endif
+typedef struct _XDisplay Display;
 
-namespace avfoundation {
-const QString CAPTURE_SCREEN{"Capture screen"};
-QVector<lib::video::VideoMode> getDeviceModes(QString devName);
-QVector<QPair<QString, QString>> getDeviceList();
-}  // namespace avfoundation
+namespace ok::base {
+class X11Display {
+public:
+    static int Count();
+    Display* lock();
+    void unlock();
+};
 
-#endif  // AVFOUNDATION_H
+}  // namespace ok::base
+
+#endif  // PLATFORM_X11_DISPLAY_H

@@ -42,8 +42,7 @@ if (PLATFORM_EXTENSIONS)
 	elseif (${X11_EXT})
 		set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
 				src/platform/capslock_x11.cpp
-				src/platform/timer_x11.cpp
-				src/platform/x11_display.cpp)
+				src/platform/timer_x11.cpp)
 	elseif (${APPLE_EXT})
 		set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
 				src/platform/capslock_osx.cpp

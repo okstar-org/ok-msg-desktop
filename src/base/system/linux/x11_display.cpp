@@ -10,12 +10,16 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "src/platform/x11_display.h"
-#include <QtCore/qsystemdetection.h>
+#include "x11_display.h"
 #include <X11/Xlib.h>
 #include <QMutex>
+#include <iostream>
 
-namespace Platform {
+#if !(defined(X_H))
+#error "This file is only meant to be compiled for X Window display system!"
+#endif
+
+namespace ok::base {
 
 struct X11DisplayPrivate {
     Display* display;
@@ -34,11 +38,25 @@ struct X11DisplayPrivate {
     }
 };
 
+int X11Display::Count() {
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) {
+        std::cerr << "Cannot open display\n";
+        return -1;
+    }
+    int screenCount = ScreenCount(display);
+    XCloseDisplay(display);
+    return screenCount;
+}
+
 Display* X11Display::lock() {
     X11DisplayPrivate& singleInstance = X11DisplayPrivate::getSingleInstance();
     singleInstance.mutex.lock();
     return singleInstance.display;
 }
 
-void X11Display::unlock() { X11DisplayPrivate::getSingleInstance().mutex.unlock(); }
+void X11Display::unlock() {
+    X11DisplayPrivate::getSingleInstance().mutex.unlock();
+}
+
 }  // namespace Platform

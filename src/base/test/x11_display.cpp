@@ -10,22 +10,18 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifdef QTOX_PLATFORM_EXT
+//
+// Created by gaojie on 25-1-23.
+//
+#include "system/linux/x11_display.h"
+#include <gtest/gtest.h>
+#include <iostream>
 
-#ifndef PLATFORM_X11_DISPLAY_H
-#define PLATFORM_X11_DISPLAY_H
-
-typedef struct _XDisplay Display;
-
-namespace Platform {
-
-namespace X11Display {
-Display* lock();
-void unlock();
-}  // namespace X11Display
-
-}  // namespace Platform
-
-#endif  // PLATFORM_X11_DISPLAY_H
-
-#endif  // QTOX_PLATFORM_EXT
+// Test for X11Display
+TEST(X11Display_Count_Test, BasicAssertions) {
+    // Get display screen count
+    auto dc = ok::base::X11Display::Count();
+    // Expect greater equal zero.
+    std::cout << "Display count:" << dc << std::endl;
+    EXPECT_GE(dc, 0);
+}

@@ -31,6 +31,7 @@ extern "C" {
 #include "camera/directshow.h"
 #endif
 #if USING_V4L
+#include "base/system/linux/x11_display.h"
 #include "camera/v4l2.h"
 #endif
 #ifdef Q_OS_OSX
@@ -343,8 +344,6 @@ QVector<QPair<QString, QString>> CameraDevice::getRawDeviceListGeneric() {
 QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
     QVector<QPair<QString, QString>> devices;
 
-    devices.append({"none", QObject::tr("None", "No camera device set")});
-
     if (!getDefaultInputFormat()) return devices;
 
     if (!iformat)
@@ -366,17 +365,14 @@ QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
 
     if (idesktopFormat) {
         if (idesktopFormat->name == QString("x11grab")) {
-            QString dev = "x11grab#";
-            QByteArray display = qgetenv("DISPLAY");
-
-            if (display.isNull())
-                dev += ":0";
-            else
-                dev += display.constData();
-
-            devices.push_back(QPair<QString, QString>{
-                    dev, QObject::tr("Desktop", "Desktop as a camera input for screen sharing")});
+            // 获取屏幕数量
+            auto count = ok::base::X11Display::Count();
+            for (size_t i = 0; i < count; ++i) {
+                QString dev = "x11grab#:" + QString::number(i);
+                devices.push_back(QPair<QString, QString>{dev, QString("Desktop %1").arg(i)});
+            }
         }
+
         if (idesktopFormat->name == QString("gdigrab"))
             devices.push_back(QPair<QString, QString>{
                     "gdigrab#desktop",
@@ -515,6 +511,7 @@ bool CameraDevice::getDefaultInputFormat() {
 #if USING_V4L
     idesktopFormat = av_find_input_format("x11grab");
 #endif
+
 #ifdef Q_OS_WIN
     idesktopFormat = av_find_input_format("gdigrab");
 #endif
