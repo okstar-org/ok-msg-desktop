@@ -175,6 +175,7 @@ void MeetingOptionWidget::initDeviceInfo() {
         if (a.first == "none" || item_set.contains(a.second)) {
             continue;
         }
+        item_set.insert(a.second);
         auto act = new QAction(a.second, videoMenu);
         act->setData(a.first);
         act->setCheckable(true);
