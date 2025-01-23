@@ -31,7 +31,11 @@
 namespace module::meet {
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
-        : QWidget(parent), ctrlState{true, false, true}, camera(nullptr) {
+        : QWidget(parent)
+        , ctrlState{true, false, true}
+        , camera(nullptr)
+        , selectedAudio(nullptr)
+        , selectedVideo(nullptr) {
     auto profile = ok::Application::Instance()->getProfile();
 
     avatarLabel = new RoundedPixmapLabel(this);
@@ -160,9 +164,14 @@ void MeetingOptionWidget::initDeviceInfo() {
                 continue;
             }
         }
-
         auto act = new QAction(a, this);
         act->setCheckable(true);
+
+        // 如果存在以选择音频设备，则勾选当前的
+        if (selectedAudio && act->text() == selectedAudio->text()) {
+            act->setChecked(true);
+        }
+
         audioMenu->addAction(act);
         aGroup->addAction(act);
     }
@@ -176,15 +185,15 @@ void MeetingOptionWidget::initDeviceInfo() {
     for (auto& a : vlist) {
         if (a.first == "none") continue;
         qDebug() << "video device:" << a;
-        for (auto act0 : videoMenu->actions()) {
-            if (act0->text() == a.second) {
-                continue;
-            }
-        }
 
         auto act = new QAction(a.second, this);
         act->setData(a.first);
         act->setCheckable(true);
+        // 如果存在以选择视频设备，则勾选当前的
+        if (selectedVideo && act->text() == selectedVideo->text()) {
+            act->setChecked(true);
+        }
+
         videoMenu->addAction(act);
         vGroup->addAction(act);
     }

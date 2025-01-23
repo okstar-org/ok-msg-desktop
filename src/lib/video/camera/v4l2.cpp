@@ -176,7 +176,7 @@ QVector<QPair<QString, QString>> v4l2::getDeviceList() {
             deviceFiles += QString("/dev/") + e->d_name;
     closedir(dir);
 
-    for (QString file : deviceFiles) {
+    for (auto& file : deviceFiles) {
         const std::string filePath = file.toStdString();
         int fd = open(filePath.c_str(), O_RDWR);
         if (fd < 0) {
@@ -193,7 +193,7 @@ QVector<QPair<QString, QString>> v4l2::getDeviceList() {
         close(fd);
     }
 
-    for (auto item : devices) {
+    for (const auto& item : devices) {
         qDebug() << "v4l2 device:" << item.first << "=>" << item.second;
     }
     return devices;
