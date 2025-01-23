@@ -16,6 +16,9 @@ FetchContent_MakeAvailable(googletest)
 # 启用测试
 enable_testing()
 
+if(WIN32)
+	add_definitions(-DGTEST_HAS_PTHREAD=0)
+endif()
 
 include_directories(../plugins/include)
 include_directories(${CMAKE_BINARY_DIR})

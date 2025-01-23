@@ -14,10 +14,10 @@
 #define IAUDIOSINK_H
 
 #include <cassert>
-
 #include <QObject>
 
 #include "src/base/interface.h"
+
 namespace lib::audio {
 /**
  * @brief The IAudioSink class represents an interface to devices that can play audio.

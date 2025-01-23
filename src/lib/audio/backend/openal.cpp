@@ -12,6 +12,8 @@
 
 #include "openal.h"
 
+#include <cassert>
+
 #include <QDebug>
 #include <QFile>
 #include <QMutexLocker>
@@ -20,7 +22,9 @@
 #include <QWaitCondition>
 #include <QtMath>
 
-#include <cassert>
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #include "audio.h"
 #include "lib/storage/settings/OkSettings.h"
 

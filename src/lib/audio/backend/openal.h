@@ -23,20 +23,16 @@
 #include <cassert>
 #include <cmath>
 
-#include <AL/al.h>
-#include <AL/alc.h>
-
 #include "alsink.h"
 #include "alsource.h"
 #include "base/compatiblerecursivemutex.h"
 #include "src/lib/audio/iaudiocontrol.h"
 
-namespace lib::audio {
+class ALCdevice;
+class ALCcontext;
+typedef int ALCsizei;
 
-#ifndef ALC_ALL_DEVICES_SPECIFIER
-// compatibility with older versions of OpenAL
-#include <AL/alext.h>
-#endif
+namespace lib::audio {
 
 class OpenAL : public IAudioControl {
     Q_OBJECT

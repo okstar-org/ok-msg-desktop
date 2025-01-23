@@ -21,9 +21,7 @@
 #include "src/lib/audio/iaudiosource.h"
 
 namespace lib::audio {
-
 class OpenAL;
-
 class AlSource : public IAudioSource {
     Q_OBJECT
 public:

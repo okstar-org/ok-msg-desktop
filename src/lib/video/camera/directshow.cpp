@@ -143,8 +143,8 @@ static IBaseFilter* getDevFilter(QString devName) {
     return devFilter;
 }
 
-QVector<VideoMode> DirectShow::getDeviceModes(QString devName) {
-    QVector<VideoMode> modes;
+QVector<lib::video::VideoMode> DirectShow::getDeviceModes(QString devName) {
+    QVector<lib::video::VideoMode> modes;
 
     IBaseFilter* devFilter = getDevFilter(devName);
     if (!devFilter) return modes;
@@ -183,7 +183,7 @@ QVector<VideoMode> DirectShow::getDeviceModes(QString devName) {
 
             for (int i = 0; i < n; ++i) {
                 AM_MEDIA_TYPE* type = nullptr;
-                VideoMode mode;
+                lib::video::VideoMode mode;
                 if (config->GetStreamCaps(i, &type, (BYTE*)vcaps) != S_OK) goto nextformat;
 
                 if (!IsEqualGUID(type->formattype, FORMAT_VideoInfo) &&

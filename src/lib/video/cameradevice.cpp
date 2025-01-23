@@ -29,6 +29,7 @@ extern "C" {
 
 #ifdef Q_OS_WIN
 #include "camera/directshow.h"
+#include <windows.h>
 #endif
 #if USING_V4L
 #include "base/system/linux/x11_display.h"
@@ -364,6 +365,7 @@ QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
         devices += getRawDeviceListGeneric();
 
     if (idesktopFormat) {
+#ifdef Q_OS_LINUX
         if (idesktopFormat->name == QString("x11grab")) {
             // 获取屏幕数量
             auto count = ok::base::X11Display::Count();
@@ -372,11 +374,14 @@ QVector<QPair<QString, QString>> CameraDevice::getDeviceList() {
                 devices.push_back(QPair<QString, QString>{dev, QString("Desktop %1").arg(i)});
             }
         }
-
+#endif  // Q_OS_LINUX
+       
+ #ifdef Q_OS_WIN
         if (idesktopFormat->name == QString("gdigrab"))
-            devices.push_back(QPair<QString, QString>{
-                    "gdigrab#desktop",
-                    QObject::tr("Desktop", "Desktop as a camera input for screen sharing")});
+             devices.push_back(QPair<QString, QString>{
+                        "gdigrab#desktop",
+                        QObject::tr("Desktop", "Desktop as a camera input for screen sharing")});
+#endif  // Q_OS_WIN
     }
 
     for (auto& device : devices) {
