@@ -22,8 +22,10 @@
 class QPushButton;
 class QSlider;
 class QHBoxLayout;
+class QStackedLayout;
 
 class RoundedPixmapLabel;
+class CameraVideoOutputWidget;
 
 namespace lib::ui {
 class PopupMenuComboBox;
@@ -52,9 +54,19 @@ public:
         return ctrlState;
     }
 
+signals:
+    // 状态改变事件
+    void stateChanged();
+
+public slots:
+    void audioSelected(QAction* action);
+    void videoSelected(QAction* action);
+
+    void doOpenVideo();
+    void doCloseVideo();
+
 protected:
     void showEvent(QShowEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
 
 private:
     void initDeviceInfo();
@@ -73,28 +85,16 @@ private:
     lib::ortc::CtrlState ctrlState;
 
     // 音频设备
-    QMenu* audioMenu;
-    QActionGroup* aGroup;
-    QAction* selectedAudio;
+    QMenu* audioMenu = nullptr;
+    QActionGroup* aGroup = nullptr;
 
     // 视频设备
-    QMenu* videoMenu;
-    QAction* selectedVideo;
-    QActionGroup* vGroup;
+    QMenu* videoMenu = nullptr;
+    QActionGroup* vGroup = nullptr;
 
-    lib::video::CameraSource* camera;
-    std::shared_ptr<lib::video::VideoFrame> lastFrame;
-
-signals:
-    // 状态改变事件
-    void stateChanged();
-
-public slots:
-    void audioSelected(QAction* action);
-    void videoSelected(QAction* action);
-
-    void doOpenVideo();
-    void doCloseVideo();
+    QStackedLayout* videoOutLayout = nullptr;
+    CameraVideoOutputWidget* cameraOutput = nullptr;
+    
 };
 
 }  // namespace module::meet
