@@ -17,6 +17,7 @@
 #include <QPointer>
 
 #include "Defines.h"
+#include "base/compatiblerecursivemutex.h"
 #include "lib/ortc/ok_rtc.h"
 
 class QPushButton;
@@ -25,7 +26,6 @@ class QHBoxLayout;
 class QStackedLayout;
 
 class RoundedPixmapLabel;
-class CameraVideoOutputWidget;
 
 namespace lib::ui {
 class PopupMenuComboBox;
@@ -37,7 +37,7 @@ class VideoFrame;
 }  // namespace lib::video
 
 namespace module::meet {
-
+class CameraVideoOutputWidget;
 /**
  * 选项配置控件
  */
@@ -66,7 +66,8 @@ public slots:
     void doCloseVideo();
 
 protected:
-    void showEvent(QShowEvent* event) override;
+    void showEvent(QShowEvent* e) override;
+    void hideEvent(QHideEvent* e) override;
 
 private:
     void initDeviceInfo();
@@ -87,14 +88,16 @@ private:
     // 音频设备
     QMenu* audioMenu = nullptr;
     QActionGroup* aGroup = nullptr;
+    QString selectedAudio;
 
     // 视频设备
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
+    QString selectedVideo;
 
     QStackedLayout* videoOutLayout = nullptr;
     CameraVideoOutputWidget* cameraOutput = nullptr;
-    
+    CompatibleRecursiveMutex mutex;
 };
 
 }  // namespace module::meet

@@ -18,9 +18,9 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QSlider>
+#include <QStackedLayout>
 #include <QToolButton>
 #include <QVBoxLayout>
-#include <QstackedLayout>
 
 #include "base/RoundedPixmapLabel.h"
 #include "lib/audio/backend/openal.h"
@@ -29,15 +29,16 @@
 #include "lib/video/camerasource.h"
 #include "src/application.h"
 
+namespace module::meet {
+
 class CameraVideoOutputWidget : public QWidget {
 public:
-    CameraVideoOutputWidget(QWidget* parent) : QWidget (parent){
-    } 
+    explicit CameraVideoOutputWidget(QWidget* parent) : QWidget(parent) {}
 
     void render(const QString& device);
     void stopRender();
 
-    protected:
+protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
@@ -45,10 +46,8 @@ private:
     std::shared_ptr<lib::video::VideoFrame> lastFrame;
 };
 
-namespace module::meet {
-
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
-        : QWidget(parent), ctrlState{true, false, true}{
+        : QWidget(parent), ctrlState{true, false, true} {
     auto profile = ok::Application::Instance()->getProfile();
 
     avatarLabel = new RoundedPixmapLabel(this);
@@ -140,15 +139,21 @@ void MeetingOptionWidget::retranslateUi() {
 
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
     QTimer::singleShot(100, this, [this]() {
-        // 延迟执行获取设备信息
+        // 延迟执行获取设备信息，避免界面延迟！
         this->initDeviceInfo();
     });
+}
+
+void MeetingOptionWidget::hideEvent(QHideEvent* e) {
+    doCloseVideo();
 }
 
 /**
  * 获取设备信息
  */
 void MeetingOptionWidget::initDeviceInfo() {
+    QMutexLocker locker(&mutex);
+
     // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
     auto oa = std::make_unique<lib::audio::OpenAL>();
@@ -162,22 +167,30 @@ void MeetingOptionWidget::initDeviceInfo() {
         item_set.insert(a);
         auto act = new QAction(a, audioMenu);
         act->setCheckable(true);
+        // 如果存在以选择音频设备，则勾选当前的
+        if (act->text() == selectedAudio) {
+            act->setChecked(true);
+        }
 
         audioMenu->addAction(act);
         aGroup->addAction(act);
     }
 
     videoMenu->clear();
-    item_set.clear();
+    //    item_set.clear();
     auto vlist = lib::video::CameraDevice::getDeviceList();
     for (auto& a : vlist) {
         qDebug() << "video device:" << a;
-        if (a.first == "none" || item_set.contains(a.second)) {
-            continue;
-        }
+        //        if (a.first == "none" || item_set.contains(a.second)) {
+        //            continue;
+        //        }
         auto act = new QAction(a.second, videoMenu);
         act->setData(a.first);
         act->setCheckable(true);
+        // 如果存在以选择视频设备，则勾选当前的
+        if (act->text() == selectedVideo) {
+            act->setChecked(true);
+        }
 
         videoMenu->addAction(act);
         vGroup->addAction(act);
@@ -220,21 +233,26 @@ void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool spea
 }
 
 void MeetingOptionWidget::audioSelected(QAction* action) {
-    // todo: 保存选择
+    QMutexLocker locker(&mutex);
 
+    if (action->isChecked()) {
+        selectedAudio = action->text();
+    }
 }
 
 void MeetingOptionWidget::videoSelected(QAction* action) {
-    // todo: 保存选择
-    if (ctrlState.enableCam)
-    {
-        doOpenVideo();
+    //    if (ctrlState.enableCam)
+    //    {
+    //        doOpenVideo();
+    //    }
+    QMutexLocker locker(&mutex);
+    if (action->isChecked()) {
+        selectedVideo = action->text();
     }
 }
 
 void MeetingOptionWidget::doOpenVideo() {
-
-    QAction * action = vGroup->checkedAction();
+    QAction* action = vGroup->checkedAction();
     if (!action) {
         videoOutLayout->setCurrentWidget(avatarLabel);
         return;
@@ -250,23 +268,16 @@ void MeetingOptionWidget::doCloseVideo() {
     cameraOutput->stopRender();
 }
 
-}  // namespace module::meet
-
 void CameraVideoOutputWidget::render(const QString& device) {
-
-    if (!_camera)
-    {
-        
+    if (!_camera) {
         _camera = lib::video::CameraSource::getInstance();
         connect(_camera, &lib::video::CameraSource::frameAvailable, this,
                 [this](std::shared_ptr<lib::video::VideoFrame> frame) {
                     lastFrame = frame;
                     update();
                 });
-        
-    }
-    else
-    {
+
+    } else {
         _camera->unsubscribe();
     }
     // todo: 既然是单例，怎么保证多个订阅方选不同设备
@@ -298,3 +309,5 @@ void CameraVideoOutputWidget::paintEvent(QPaintEvent* event) {
         // avatarLabel->setVisible(false);
     }
 }
+
+}  // namespace module::meet
