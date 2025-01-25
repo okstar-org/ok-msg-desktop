@@ -42,7 +42,7 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    lib::video::CameraSource* _camera = nullptr;
+    std::unique_ptr <lib::video::CameraSource> _camera;
     std::shared_ptr<lib::video::VideoFrame> lastFrame;
 };
 
@@ -270,8 +270,8 @@ void MeetingOptionWidget::doCloseVideo() {
 
 void CameraVideoOutputWidget::render(const QString& device) {
     if (!_camera) {
-        _camera = lib::video::CameraSource::getInstance();
-        connect(_camera, &lib::video::CameraSource::frameAvailable, this,
+        _camera = lib::video::CameraSource::CreateInstance();
+        connect(_camera.get(), &lib::video::CameraSource::frameAvailable, this,
                 [this](std::shared_ptr<lib::video::VideoFrame> frame) {
                     lastFrame = frame;
                     update();

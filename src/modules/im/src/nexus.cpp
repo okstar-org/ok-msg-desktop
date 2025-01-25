@@ -236,7 +236,6 @@ void Nexus::cleanup() {
 
     profile->quit();
 
-    lib::video::CameraSource::destroyInstance();
     Settings::destroyInstance();
 
     qDebug() << __func__ << ".";

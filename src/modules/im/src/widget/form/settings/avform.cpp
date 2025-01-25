@@ -130,8 +130,9 @@ void AVForm::hideEvent(QHideEvent* event) {
     }
 
     videoDeviceList.clear();
-    camera->destroyInstance();
-    camera = nullptr;
+    // camera->destroyInstance();
+    // camera = nullptr;
+    camera.reset();
 
     GenericForm::hideEvent(event);
 }
@@ -141,7 +142,7 @@ void AVForm::showEvent(QShowEvent* event) {
         return;
     }
 
-    camera = lib::video::CameraSource::getInstance();
+    camera = lib::video::CameraSource::CreateInstance();
     getAudioOutDevices();
     getAudioInDevices();
 
@@ -615,7 +616,7 @@ VideoSurface* AVForm::createVideoSurface() {
     camVideoSurface = std::make_unique<VideoSurface>(QPixmap());
     camVideoSurface->setObjectName(QStringLiteral("CamVideoSurface"));
     camVideoSurface->setMinimumSize(QSize(160, 120));
-    camVideoSurface->setSource(camera);
+    camVideoSurface->setSource(camera.get());
     return camVideoSurface.get();
 }
 

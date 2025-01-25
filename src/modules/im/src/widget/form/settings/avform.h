@@ -104,7 +104,7 @@ private:
     std::unique_ptr<lib::audio::IAudioSink> audioSink;
     std::unique_ptr<lib::audio::IAudioSource> audioSrc;
     std::unique_ptr<VideoSurface> camVideoSurface;
-    lib::video::CameraSource* camera;
+    std::unique_ptr<lib::video::CameraSource> camera;
     QVector<QPair<QString, QString>> videoDeviceList;
     QVector<lib::video::VideoMode> videoModes;
     uint alSource;

@@ -29,11 +29,6 @@ extern "C" {
 #include "videoframe.h"
 namespace lib::video {
 
-/**
- * @class CameraSource
- * @brief This class is a wrapper to share a camera's captured video frames
- */
-CameraSource* CameraSource::instance = nullptr;
 
 CameraSource::CameraSource()
         : deviceThread{new QThread}
@@ -68,23 +63,13 @@ CameraSource::CameraSource()
 // clang-format on
 
 /**
- * @brief Returns the singleton instance.
+ * @brief Creates the instance.
  */
-CameraSource* CameraSource::getInstance() {
+std::unique_ptr<CameraSource> CameraSource::CreateInstance() {
     qDebug() << __func__;
-    if (!instance) instance = new CameraSource();
-    // instance->setupDefault();
-    return instance;
+    return std::make_unique<CameraSource>();
 }
 
-void CameraSource::destroyInstance() {
-    qDebug() << __func__;
-
-    if (instance) {
-        delete instance;
-        instance = nullptr;
-    }
-}
 
 /**
  * @brief Setup default device

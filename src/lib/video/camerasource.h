@@ -29,10 +29,13 @@ namespace lib::video {
 
 class CameraSource : public VideoSource {
     Q_OBJECT
-
 public:
-    static CameraSource* getInstance();
+    static std::unique_ptr<CameraSource> CreateInstance();
     static void destroyInstance();
+
+    explicit CameraSource();
+    ~CameraSource() override;
+
     void setupDefault();
     bool isNone() const;
 
@@ -48,8 +51,7 @@ signals:
     void openFailed();
 
 private:
-    CameraSource();
-    ~CameraSource();
+
     void stream();
 
 private slots:
@@ -74,7 +76,6 @@ private:
     std::atomic_bool _isNone;
     std::atomic_int subscriptions;
 
-    static CameraSource* instance;
 };
 }  // namespace lib::video
 #endif  // CAMERA_H
