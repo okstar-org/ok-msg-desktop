@@ -261,6 +261,7 @@ void MeetingOptionWidget::doOpenVideo() {
     qDebug() << "select video device:" << action->text();
     cameraOutput->render(action->data().toString());
     videoOutLayout->setCurrentWidget(cameraOutput);
+
 }
 
 void MeetingOptionWidget::doCloseVideo() {
@@ -292,6 +293,7 @@ void CameraVideoOutputWidget::stopRender() {
         // todo: 而且涉及到摄像头的分辨率等问题，看怎么设计的
         _camera->unsubscribe();
         //_camera->destroyInstance();
+        _camera.reset();
     }
 }
 

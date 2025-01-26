@@ -30,7 +30,6 @@ namespace lib::video {
 class CameraDevice {
 public:
     static CameraDevice* open(QString devName, VideoMode mode = VideoMode());
-    void open();
     bool close();
 
     static QVector<QPair<QString, QString>> getDeviceList();
@@ -55,9 +54,8 @@ public:
     AVFormatContext* context;
 
 private:
-    std::atomic_int refcount;
-    static QHash<QString, CameraDevice*> openDevices;
-    static QMutex openDeviceLock, iformatLock;
+    QHash<QString, CameraDevice*> openDevices;
+    QMutex openDeviceLock, iformatLock;
 };
 }  // namespace lib::video
 #endif  // CAMERADEVICE_H

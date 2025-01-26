@@ -70,7 +70,9 @@ static AvFindInputFormatRet idesktopFormat{nullptr};
 static AvFindInputFormatRet iformat{nullptr};
 
 CameraDevice::CameraDevice(const QString& devName, AVFormatContext* context)
-        : devName{devName}, context{context}, refcount{0} {}
+        : devName{devName}, context{context}
+        // , refcount{0}
+{}
 
 CameraDevice* CameraDevice::open(QString devName, AVDictionary** options) {
     openDeviceLock.lock();
@@ -248,14 +250,6 @@ CameraDevice* CameraDevice::open(QString devName, VideoMode mode) {
 }
 
 /**
- * @brief Opens the device again. Never fails
- */
-void CameraDevice::open() {
-    qDebug() << "Open " << devName;
-    ++refcount;
-}
-
-/**
  * @brief Closes the device. Never fails.
  * @note If returns true, "this" becomes invalid.
  * @return True, if device finally deleted (closed last reference),
@@ -263,7 +257,6 @@ void CameraDevice::open() {
  */
 bool CameraDevice::close() {
     qDebug() << "Close " << devName;
-    if (--refcount > 0) return false;
 
     openDeviceLock.lock();
     openDevices.remove(devName);

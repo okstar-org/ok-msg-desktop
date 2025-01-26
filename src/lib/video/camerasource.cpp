@@ -205,7 +205,7 @@ void CameraSource::openDevice() {
     //        return;
     //    }
 
-    // We need to create a new CameraDevice
+    // We need to create a new CameraDevice(Enable camera light)
     device = CameraDevice::open(deviceName, mode);
     if (!device) {
         qWarning() << "Failed to open device:" << deviceName;
@@ -322,10 +322,12 @@ void CameraSource::closeDevice() {
     avcodec_close(cctxOrig);
     cctxOrig = nullptr;
 #endif
-    if (device) {
-        device->close();
-        device = nullptr;
+    if (!device) {
+        qDebug() <<"The device already was closed";
+        return ;
     }
+    device->close();
+    device = nullptr;
 }
 
 /**
