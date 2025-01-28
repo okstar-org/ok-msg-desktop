@@ -105,7 +105,7 @@ private:
     std::unique_ptr<lib::audio::IAudioSource> audioSrc;
     std::unique_ptr<VideoSurface> camVideoSurface;
     std::unique_ptr<lib::video::CameraSource> camera;
-    QVector<QPair<QString, QString>> videoDeviceList;
+    QVector<lib::video::VideoDevice> videoDeviceList;
     QVector<lib::video::VideoMode> videoModes;
     uint alSource;
     // arbitrary number of steps to give slider a good "feel"

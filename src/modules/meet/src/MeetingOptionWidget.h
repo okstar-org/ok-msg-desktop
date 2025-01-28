@@ -16,8 +16,10 @@
 #include <QMenu>
 #include <QPointer>
 
+
 #include "Defines.h"
 #include "base/compatiblerecursivemutex.h"
+#include "lib/video/videomode.h"
 #include "lib/ortc/ok_rtc.h"
 
 class QPushButton;
@@ -94,6 +96,7 @@ private:
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
     QString selectedVideo;
+    QVector<lib::video::VideoDevice> vDeviceList;
 
     QStackedLayout* videoOutLayout = nullptr;
     CameraVideoOutputWidget* cameraOutput = nullptr;

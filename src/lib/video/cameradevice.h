@@ -29,12 +29,14 @@ namespace lib::video {
 
 class CameraDevice {
 public:
-    static CameraDevice* open(QString devName, VideoMode mode = VideoMode());
+    explicit CameraDevice(const VideoDevice &dev);
+    bool open(VideoMode mode);
     bool close();
 
-    static QVector<QPair<QString, QString>> getDeviceList();
+    static QVector<VideoDevice> getDeviceList();
 
-    static QVector<VideoMode> getVideoModes(QString devName);
+    QVector<VideoMode> getVideoModes();
+
     static QString getPixelFormatString(uint32_t pixel_format);
     static bool betterPixelFormat(uint32_t a, uint32_t b);
 
@@ -42,20 +44,23 @@ public:
 
     static bool isScreen(const QString& devName);
 
+    static const AVInputFormat* getDefaultInputFormat(VideoType type);
+
 private:
-    CameraDevice(const QString& devName, AVFormatContext* context);
-    static CameraDevice* open(QString devName, AVDictionary** options);
-    static bool getDefaultInputFormat();
-    static QVector<QPair<QString, QString>> getRawDeviceListGeneric();
+
+    AVFormatContext* open(VideoDevice dev, AVDictionary** options);
+
+    QVector<QPair<QString, QString>> getRawDeviceListGeneric();
     static QVector<VideoMode> getScreenModes();
 
-public:
-    const QString devName;
-    AVFormatContext* context;
 
-private:
-    QHash<QString, CameraDevice*> openDevices;
-    QMutex openDeviceLock, iformatLock;
+    VideoDevice videoDevice;
+    AVInputFormat* format;
+
+    // QHash<QString, CameraDevice*> openDevices;
+   static QMutex openDeviceLock, iformatLock;
+public:
+    AVFormatContext* context;
 };
 }  // namespace lib::video
 #endif  // CAMERADEVICE_H

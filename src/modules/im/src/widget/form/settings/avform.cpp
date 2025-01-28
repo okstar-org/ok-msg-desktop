@@ -138,11 +138,17 @@ void AVForm::hideEvent(QHideEvent* event) {
 }
 
 void AVForm::showEvent(QShowEvent* event) {
+    auto ds = lib::video::CameraDevice::getDeviceList();
+    if(ds.empty()){
+        return;
+    }
+
     if (camera) {
         return;
     }
 
-    camera = lib::video::CameraSource::CreateInstance();
+
+    camera = lib::video::CameraSource::CreateInstance(ds.at(0));
     getAudioOutDevices();
     getAudioInDevices();
 
@@ -193,7 +199,7 @@ void AVForm::on_videoModescomboBox_currentIndexChanged(int index) {
     int devIndex = videoDevCombobox->currentIndex();
     assert(0 <= devIndex && devIndex < videoDeviceList.size());
 
-    QString devName = videoDeviceList[devIndex].first;
+    QString devName = videoDeviceList[devIndex].name;
     auto mode = videoModes[index];
     if (lib::video::CameraDevice::isScreen(devName) && mode == lib::video::VideoMode()) {
         if (videoSettings->getScreenGrabbed()) {
@@ -393,8 +399,11 @@ void AVForm::updateVideoModes(int curIndex) {
         qWarning() << "Invalid index:" << curIndex;
         return;
     }
-    QString devName = videoDeviceList[curIndex].first;
-    QVector<lib::video::VideoMode> allVideoModes = lib::video::CameraDevice::getVideoModes(devName);
+
+    auto dev = videoDeviceList[curIndex];
+    auto devName = dev.name;
+
+    QVector<lib::video::VideoMode> allVideoModes = camera->getVideoModes();
 
     qDebug("available Modes:");
     bool isScreen = lib::video::CameraDevice::isScreen(devName);
@@ -441,8 +450,8 @@ void AVForm::on_videoDevCombobox_currentIndexChanged(int index) {
     assert(0 <= index && index < videoDeviceList.size());
 
     videoSettings->setScreenGrabbed(false);
-    QString dev = videoDeviceList[index].first;
-    videoSettings->setVideoDev(dev);
+    auto dev = videoDeviceList[index];
+    videoSettings->setVideoDev(dev.name);
     bool previouslyBlocked = videoModescomboBox->blockSignals(true);
     updateVideoModes(index);
     videoModescomboBox->blockSignals(previouslyBlocked);
@@ -457,11 +466,11 @@ void AVForm::on_videoDevCombobox_currentIndexChanged(int index) {
         mode = videoModes[modeIndex];
     }
 
-    camera->setupDevice(dev, mode);
-    if (dev == "none") {
+    camera->setupDevice(dev.name, mode);
+    // if (dev == "none") {
         // TODO: Use injected `coreAv` currently injected `nullptr`
         //        Core::getInstance()->getAv()->sendNoVideo();
-    }
+    // }
 }
 
 void AVForm::on_audioQualityComboBox_currentIndexChanged(int index) {
@@ -475,9 +484,9 @@ void AVForm::getVideoDevices() {
     // prevent currentIndexChanged to be fired while adding items
     videoDevCombobox->blockSignals(true);
     videoDevCombobox->clear();
-    for (QPair<QString, QString> device : videoDeviceList) {
-        videoDevCombobox->addItem(device.second);
-        if (device.first == settingsInDev) videoDevIndex = videoDevCombobox->count() - 1;
+    for (auto& device : videoDeviceList) {
+        videoDevCombobox->addItem(device.name);
+        if (device.url == settingsInDev) videoDevIndex = videoDevCombobox->count() - 1;
     }
     videoDevCombobox->setCurrentIndex(videoDevIndex);
     videoDevCombobox->blockSignals(false);

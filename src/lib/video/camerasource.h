@@ -30,51 +30,45 @@ namespace lib::video {
 class CameraSource : public VideoSource {
     Q_OBJECT
 public:
-    static std::unique_ptr<CameraSource> CreateInstance();
+    static std::unique_ptr<CameraSource> CreateInstance(VideoDevice dev);
     static void destroyInstance();
 
-    explicit CameraSource();
+    explicit CameraSource(const VideoDevice &dev);
     ~CameraSource() override;
 
+    QVector<VideoMode> getVideoModes();
+
+
     void setupDefault();
-    bool isNone() const;
 
     // VideoSource interface
-    virtual void subscribe() override;
-    virtual void unsubscribe() override;
-
-public slots:
-    void setupDevice(const QString& deviceName_, const VideoMode& mode);
-
-signals:
-    void deviceOpened();
-    void openFailed();
+    void subscribe() override;
+    void unsubscribe() override;
 
 private:
-
     void stream();
-
-private slots:
-    void openDevice();
-    void closeDevice();
-
-private:
     QFuture<void> streamFuture;
     QThread* deviceThread;
 
-    QString deviceName;
+    VideoDevice dev;
     CameraDevice* device;
     VideoMode mode;
     AVCodecContext* cctx;
-    // TODO: Remove when ffmpeg version will be bumped to the 3.1.0
-    AVCodecContext* cctxOrig;
+
     int videoStreamIndex;
 
     QReadWriteLock deviceMutex;
     QReadWriteLock streamMutex;
 
-    std::atomic_bool _isNone;
-    std::atomic_int subscriptions;
+signals:
+    void deviceOpened();
+    void openFailed();
+
+
+public slots:
+    void openDevice();
+    void closeDevice();
+    void setupDevice(const QString& deviceName_, const VideoMode& mode);
 
 };
 }  // namespace lib::video

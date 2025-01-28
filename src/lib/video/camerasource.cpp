@@ -27,22 +27,19 @@ extern "C" {
 #include "camerasource.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "videoframe.h"
+
+
 namespace lib::video {
 
 
-CameraSource::CameraSource()
+CameraSource::CameraSource(const VideoDevice &dev)
         : deviceThread{new QThread}
-        , deviceName{"none"}
-        , device{nullptr}
+        , dev(dev)
+        , device(new CameraDevice(dev))
         , mode(VideoMode())
         // clang-format off
         , cctx(nullptr)
-#if LIBAVCODEC_VERSION_INT < 3747941
-    , cctxOrig(nullptr)
-#endif
-    , videoStreamIndex{-1}
-    , _isNone{true}
-    , subscriptions{0}
+        , videoStreamIndex{-1}
 {
     qDebug() << __func__;
 
@@ -51,12 +48,6 @@ CameraSource::CameraSource()
     deviceThread->start();
     moveToThread(deviceThread);
 
-    subscriptions = 0;
-
-// TODO(sudden6): remove code when minimum ffmpeg version >= 4.0
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(58, 9, 100)
-    av_register_all();
-#endif
     avdevice_register_all();
 }
 
@@ -65,9 +56,9 @@ CameraSource::CameraSource()
 /**
  * @brief Creates the instance.
  */
-std::unique_ptr<CameraSource> CameraSource::CreateInstance() {
-    qDebug() << __func__;
-    return std::make_unique<CameraSource>();
+std::unique_ptr<CameraSource> CameraSource::CreateInstance(VideoDevice dev) {
+    qDebug() << __func__ << dev.name;
+    return std::make_unique<CameraSource>(dev);
 }
 
 
@@ -95,38 +86,34 @@ void CameraSource::setupDefault() {
  * @note If a device is already open, the source will seamlessly switch to the new device.
  */
 void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode) {
-    qDebug() << "Setup device:" << deviceName_;
-    if (QThread::currentThread() != deviceThread) {
-        QMetaObject::invokeMethod(this, "setupDevice", Q_ARG(const QString&, deviceName_),
-                                  Q_ARG(const VideoMode&, Mode));
-        return;
-    }
+    // qDebug() << "Setup device:" << deviceName_;
+    // if (QThread::currentThread() != deviceThread) {
+        // QMetaObject::invokeMethod(this, "setupDevice", Q_ARG(const QString&, deviceName_),
+                                  // Q_ARG(const VideoMode&, Mode));
+        // return;
+    // }
 
-    QWriteLocker locker{&deviceMutex};
+    // QWriteLocker locker{&deviceMutex};
 
-    if (deviceName_ == deviceName && Mode == mode) {
-        return;
-    }
+    // if (deviceName_ == deviceName && Mode == mode) {
+        // return;
+    // }
 
-    if (subscriptions) {
-        // To force close, ignoring optimization
-        int subs = subscriptions;
-        subscriptions = 0;
-        closeDevice();
-        subscriptions = subs;
-    }
+    // if (subscriptions) {
+    //     // To force close, ignoring optimization
+    //     int subs = subscriptions;
+    //     subscriptions = 0;
+    //     closeDevice();
+    //     subscriptions = subs;
+    // }
 
-    deviceName = deviceName_;
-    _isNone = (deviceName == "none");
-    mode = Mode;
+    // deviceName = deviceName_;
+    // _isNone = (deviceName == "none");
+    // mode = Mode;
 
-    if (subscriptions && !_isNone) {
-        openDevice();
-    }
-}
-
-bool CameraSource::isNone() const {
-    return _isNone;
+    // if (subscriptions && !_isNone) {
+        // openDevice();
+    // }
 }
 
 CameraSource::~CameraSource() {
@@ -138,25 +125,15 @@ CameraSource::~CameraSource() {
     deviceThread->wait();
     delete deviceThread;
 
-    if (_isNone) {
-        return;
-    }
-
     // Free all remaining VideoFrame
     VideoFrame::untrackFrames(id, true);
 
     if (cctx) {
         avcodec_free_context(&cctx);
     }
-#if LIBAVCODEC_VERSION_INT < 3747941
-    if (cctxOrig) {
-        avcodec_close(cctxOrig);
-    }
-#endif
 
     if (device) {
-        for (int i = 0; i < subscriptions; ++i) device->close();
-
+        device->close();
         device = nullptr;
     }
 
@@ -166,20 +143,25 @@ CameraSource::~CameraSource() {
     while (streamFuture.isRunning()) QThread::yieldCurrentThread();
 }
 
+QVector<VideoMode> CameraSource::getVideoModes()
+{
+    return device->getVideoModes();
+}
+
 void CameraSource::subscribe() {
     QWriteLocker locker{&deviceMutex};
 
-    ++subscriptions;
+    // ++subscriptions;
     openDevice();
 }
 
 void CameraSource::unsubscribe() {
     QWriteLocker locker{&deviceMutex};
 
-    --subscriptions;
-    if (subscriptions == 0) {
-        closeDevice();
-    }
+    // --subscriptions;
+    // if (subscriptions == 0) {
+        // closeDevice();
+    // }
 }
 
 /**
@@ -193,11 +175,10 @@ void CameraSource::openDevice() {
     }
 
     QWriteLocker locker{&streamMutex};
-    if (subscriptions == 0) {
-        return;
-    }
 
-    qDebug() << "Opening device" << deviceName << "subscriptions:" << subscriptions;
+
+    auto deviceName = dev.name;
+    qDebug() << "Opening device" << deviceName;
 
     //    if (device) {
     //        device->open();
@@ -206,27 +187,16 @@ void CameraSource::openDevice() {
     //    }
 
     // We need to create a new CameraDevice(Enable camera light)
-    device = CameraDevice::open(deviceName, mode);
-    if (!device) {
+    bool opened = device->open(mode);
+    if (!opened) {
         qWarning() << "Failed to open device:" << deviceName;
         emit openFailed();
         return;
     }
 
-    // We need to open the device as many time as we already have subscribers,
-    // otherwise the device could get closed while we still have subscribers
-    for (int i = 0; i < subscriptions; ++i) {
-        device->open();
-    }
-
     // Find the first video stream, if any
     for (unsigned i = 0; i < device->context->nb_streams; ++i) {
-        AVMediaType type;
-#if LIBAVCODEC_VERSION_INT < 3747941
-        type = device->context->streams[i]->codec->codec_type;
-#else
-        type = device->context->streams[i]->codecpar->codec_type;
-#endif
+        AVMediaType type = device->context->streams[i]->codecpar->codec_type;
         if (type == AVMEDIA_TYPE_VIDEO) {
             videoStreamIndex = i;
             break;
@@ -239,15 +209,10 @@ void CameraSource::openDevice() {
         return;
     }
 
-    AVCodecID codecId;
-#if LIBAVCODEC_VERSION_INT < 3747941
-    cctxOrig = device->context->streams[videoStreamIndex]->codec;
-    codecId = cctxOrig->codec_id;
-#else
+
     // Get the stream's codec's parameters and find a matching decoder
     AVCodecParameters* cparams = device->context->streams[videoStreamIndex]->codecpar;
-    codecId = cparams->codec_id;
-#endif
+    AVCodecID codecId = cparams->codec_id;
 
     const AVCodec* codec = avcodec_find_decoder(codecId);
     if (!codec) {
@@ -257,16 +222,7 @@ void CameraSource::openDevice() {
         return;
     }
 
-#if LIBAVCODEC_VERSION_INT < 3747941
-    // Copy context, since we apparently aren't allowed to use the original
-    cctx = avcodec_alloc_context3(codec);
-    if (avcodec_copy_context(cctx, cctxOrig) != 0) {
-        qWarning() << "Can't copy context";
-        emit openFailed();
-        return;
-    }
-    cctx->refcounted_frames = 1;
-#else
+
     // Create a context for our codec, using the existing parameters
     cctx = avcodec_alloc_context3(codec);
     if (avcodec_parameters_to_context(cctx, cparams) < 0) {
@@ -274,7 +230,6 @@ void CameraSource::openDevice() {
         emit openFailed();
         return;
     }
-#endif
 
     // Open codec
     if (avcodec_open2(cctx, codec, nullptr) < 0) {
@@ -306,11 +261,9 @@ void CameraSource::closeDevice() {
     }
 
     QWriteLocker locker{&streamMutex};
-    if (subscriptions != 0) {
-        return;
-    }
 
-    qDebug() << "Closing device" << deviceName << "subscriptions:" << subscriptions;
+
+    qDebug() << "Closing device" << dev.name;
 
     // Free all remaining VideoFrame
     VideoFrame::untrackFrames(id, true);
@@ -318,10 +271,7 @@ void CameraSource::closeDevice() {
     // Free our resources and close the device
     videoStreamIndex = -1;
     avcodec_free_context(&cctx);
-#if LIBAVCODEC_VERSION_INT < 3747941
-    avcodec_close(cctxOrig);
-    cctxOrig = nullptr;
-#endif
+
     if (!device) {
         qDebug() <<"The device already was closed";
         return ;
@@ -341,26 +291,6 @@ void CameraSource::stream() {
             return;
         }
 
-#if LIBAVCODEC_VERSION_INT < 3747941
-        AVFrame* frame = av_frame_alloc();
-        if (!frame) {
-            return;
-        }
-
-        // Only keep packets from the right stream;
-        if (packet.stream_index == videoStreamIndex) {
-            // Decode video frame
-            int frameFinished;
-            avcodec_decode_video2(cctx, frame, &frameFinished, &packet);
-            if (!frameFinished) {
-                return;
-            }
-
-            VideoFrame* vframe = new VideoFrame(id, frame);
-            emit frameAvailable(vframe->trackFrame());
-        }
-#else
-
         // Forward packets to the decoder and grab the decoded frame
         bool isVideo = packet.stream_index == videoStreamIndex;
         bool readyToRecive = isVideo && !avcodec_send_packet(cctx, &packet);
@@ -374,7 +304,6 @@ void CameraSource::stream() {
                 av_frame_free(&frame);
             }
         }
-#endif
 
         av_packet_unref(&packet);
     };

@@ -13,13 +13,28 @@
 #ifndef VIDEOMODE_H
 #define VIDEOMODE_H
 
+#include <QString>
 #include <QRect>
 #include <cstdint>
+
 namespace lib::video {
 
+enum class VideoType {
+    //摄像头
+    Camera,
+    //桌面
+    Desktop,
+    //文件
+    File,
+    //流
+    Stream
+};
+
 struct VideoMode {
-    int width, height;
-    int x, y;
+    int width;
+    int height;
+    int x;
+    int y;
     float FPS = -1.0f;
     uint32_t pixel_format = 0;
 
@@ -34,5 +49,13 @@ struct VideoMode {
     uint32_t norm(const VideoMode& other) const;
     uint32_t tolerance() const;
 };
+
+
+struct VideoDevice{
+    VideoType type;
+    QString name;
+    QString url;
+};
+
 }  // namespace lib::video
 #endif  // VIDEOMODE_H
