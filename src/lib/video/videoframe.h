@@ -174,5 +174,13 @@ private:
 
 std::unique_ptr<lib::video::VideoFrame> convert(VideoFrame::IDType id,
                                                 std::unique_ptr<lib::video::vpx_image_t> vpxframe);
+
+class FrameHandler {
+public:
+    virtual void onCompleted() = 0;
+    virtual void onFrame(std::shared_ptr<VideoFrame>) = 0;
+};
+
+
 }  // namespace lib::video
 #endif  // VIDEOFRAME_H

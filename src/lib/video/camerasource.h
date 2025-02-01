@@ -15,7 +15,7 @@
 
 #include <QFuture>
 #include <QHash>
-#include <QReadWriteLock>
+#include <QRecursiveMutex>
 #include <QString>
 #include <QVector>
 #include <atomic>
@@ -23,11 +23,11 @@
 #include "lib/video/videosource.h"
 
 class CameraDevice;
-struct AVCodecContext;
+
 
 namespace lib::video {
 
-class CameraSource : public VideoSource {
+class CameraSource : public VideoSource, public FrameHandler {
     Q_OBJECT
 public:
     static std::unique_ptr<CameraSource> CreateInstance(VideoDevice dev);
@@ -44,21 +44,19 @@ public:
     // VideoSource interface
     void subscribe() override;
     void unsubscribe() override;
+protected:
+    void onCompleted() override;
+    void onFrame(std::shared_ptr<VideoFrame>) override;
 
 private:
-    void stream();
-    QFuture<void> streamFuture;
+
+    QRecursiveMutex mutex;
     QThread* deviceThread;
+    QFuture<void> streamFuture;
 
     VideoDevice dev;
-    CameraDevice* device;
     VideoMode mode;
-    AVCodecContext* cctx;
-
-    int videoStreamIndex;
-
-    QReadWriteLock deviceMutex;
-    QReadWriteLock streamMutex;
+    CameraDevice* device;
 
 signals:
     void deviceOpened();

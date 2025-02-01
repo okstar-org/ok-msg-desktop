@@ -14,12 +14,17 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QScreen>
+#include <format>
 extern "C" {
 #include <libavdevice/avdevice.h>
 #include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libswscale/swscale.h>
 }
+
 #include "cameradevice.h"
 #include "lib/storage/settings/OkSettings.h"
+#include "videoframe.h"
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
 #define USING_V4L 1
@@ -41,42 +46,171 @@ extern "C" {
 
 namespace lib::video {
 
-// no longer needed when avformat version < 59 is no longer supported
-// using AvFindInputFormatRet = AVInputFormat*;
-
 /**
  * @class CameraDevice
  *
  */
 
-CameraDevice::CameraDevice(const VideoDevice &dev)
+CameraDevice::CameraDevice(const VideoDevice &dev, FrameHandler* h)
         : videoDevice(dev)
-{}
+        , videoStreamIndex(-1)
+        , id(0)
+        , options(nullptr)
+        , context(nullptr)
+        , cctx(nullptr)
+        , handler(h)
+        , run(false)
+{
+    qDebug() << __func__;
+    avdevice_register_all();
+}
 
-AVFormatContext* CameraDevice::open(VideoDevice dev, AVDictionary** options) {
-    // QMutexLocker locker(&openDeviceLock);
+CameraDevice::~CameraDevice()
+{
+    qDebug() << __func__;
+}
+
+
+void CameraDevice::stop()
+{
+    // QMutexLocker locker{&openDeviceLock};
+    run = false;
+}
+
+void CameraDevice::stream() {
+    qDebug() << __func__;
+
+    run = true;
+
+    forever {
+        // Exit if context is no longer valid
+        if(!run){
+            // qWarning() << __func__ << "was Stoped!";
+            break;
+        }
+
+        readFrame();
+    }
+    qDebug() << __func__ << "was Finished!";
+    if(handler){
+        handler->onCompleted();
+    }
+}
+
+
+void CameraDevice::readFrame()
+{
+    QMutexLocker locker{&openDeviceLock};
+
+    if (!context) {
+        qWarning() << __func__ << "Exited.";
+        return;
+    }
+
+    AVPacket packet;
+    if (av_read_frame(context, &packet) != 0) {
+        return;
+    }
+
+    // Forward packets to the decoder and grab the decoded frame
+    bool isVideo = packet.stream_index == videoStreamIndex;
+    bool readyToRecive = isVideo && !avcodec_send_packet(cctx, &packet);
+
+    if (readyToRecive) {
+        AVFrame* frame = av_frame_alloc();
+        if(!frame)
+            return;
+
+        if (!avcodec_receive_frame(cctx, frame)) {
+            // VideoFrame* vframe = new VideoFrame(++id, frame);
+            // emit frameAvailable(vframe->trackFrame());
+            if(handler)
+                handler->onFrame(std::make_unique<VideoFrame>(++id, frame));
+        }else{
+            av_frame_free(&frame);
+        }
+    }
+
+    av_packet_unref(&packet);
+}
+
+bool CameraDevice::open(VideoDevice dev, AVDictionary** options, std::string &error) {
+    QMutexLocker locker(&openDeviceLock);
 
     auto format = getDefaultInputFormat(dev.type);
-
-    AVFormatContext* fctx = nullptr;
-    int ret = avformat_open_input(&fctx, dev.url.toStdString().c_str(), format, options);
+    int ret = avformat_open_input(&context, dev.url.toStdString().c_str(), format, options);
     if (ret < 0) {
-        char error_message[AV_ERROR_MAX_STRING_SIZE];
-        av_strerror(ret, error_message, AV_ERROR_MAX_STRING_SIZE);
-        qWarning() <<  "Error opening input file: %s" << error_message;
-        return nullptr;
+        char msg[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(ret, msg, AV_ERROR_MAX_STRING_SIZE);
+        qWarning() <<  "Error opening device:" << msg;
+        error = msg;
+        return false;
     }
 
 
-    int aduration = fctx->max_analyze_duration = 0;
-    if (avformat_find_stream_info(fctx, nullptr) < 0) {
-        qWarning() << "Unable to find stream info.";
-        avformat_close_input(&fctx);
-        return nullptr;
+    int aduration = context->max_analyze_duration = 0;
+    if (avformat_find_stream_info(context, nullptr) < 0) {
+        avformat_close_input(&context);
+        avformat_free_context(context);
+        error = "Unable to find stream info!";
+        qWarning() << error.c_str();
+        return false;
     }
 
-    fctx->max_analyze_duration = aduration;
-    return fctx;
+    context->max_analyze_duration = aduration;
+
+
+    // Find the first video stream, if any
+    for (unsigned i = 0; i < context->nb_streams; ++i) {
+        AVMediaType type = context->streams[i]->codecpar->codec_type;
+        if (type == AVMEDIA_TYPE_VIDEO) {
+            videoStreamIndex = i;
+            break;
+        }
+    }
+
+    if (videoStreamIndex == -1) {
+        error = "Video stream not found!";
+        qWarning() << error.c_str();
+        // emit openFailed();
+        return false;
+    }
+
+
+    // Get the stream's codec's parameters and find a matching decoder
+    AVCodecParameters* cparams = context->streams[videoStreamIndex]->codecpar;
+    AVCodecID codecId = cparams->codec_id;
+    qDebug() << "Codec id is:" << codecId;
+    const AVCodec* codec = avcodec_find_decoder(codecId);
+    if (!codec) {
+        auto msg = QString("Codec not found for:%1").arg(avcodec_get_name(codecId));
+        qWarning() << msg;
+        error = msg.toStdString();
+        // device->close();
+        // emit openFailed();
+        return false;
+    }
+
+
+    // Create a context for our codec, using the existing parameters
+    cctx = avcodec_alloc_context3(codec);
+    if (avcodec_parameters_to_context(cctx, cparams) < 0) {
+        error = "Can't create AV context from parameters";
+        qWarning() << error.c_str();
+        // emit openFailed();
+        return false;
+    }
+
+    // Open codec
+    if (avcodec_open2(cctx, codec, nullptr) < 0) {
+        error= "Can't open codec";
+        qWarning() << error.c_str();
+        avcodec_free_context(&cctx);
+        // emit openFailed();
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -99,17 +233,14 @@ bool CameraDevice::open(VideoMode mode) {
     if (mode.height == 0) {
         mode.height = 480;
     }
-
-    //设置参数
-    AVDictionary* options = NULL;
-
+    options = nullptr;
     //设置视频大小
     const std::string videoSize = QStringLiteral("%1x%2").arg(mode.width).arg(mode.height).toStdString();
     qDebug() << "videoSize: " << QString::fromStdString(videoSize);
     av_dict_set(&options, "video_size", videoSize.c_str(), 0);
 
     //采样率
-    const std::string framerate = QString{}.setNum(FPS).toStdString();
+    const std::string framerate = std::format("{}", FPS);
     qDebug() << "framerate: " << QString::fromStdString(framerate);
     av_dict_set(&options, "framerate", framerate.c_str(), 0);
 
@@ -183,12 +314,13 @@ bool CameraDevice::open(VideoMode mode) {
 //     }
 
     // CameraDevice* dev0 = new CameraDevice();
-    context = open(videoDevice, &options);
-    if (options) {
-        av_dict_free(&options);
+    std::string msg;
+    bool opened = open(videoDevice, &options, msg);
+    if(!opened){
+        qWarning() << "Device opened failed: " << msg.c_str();
     }
-
-    return context;
+    //
+    return opened;
 }
 
 /**
@@ -198,15 +330,25 @@ bool CameraDevice::open(VideoMode mode) {
  * false otherwise (if other references exist).
  */
 bool CameraDevice::close() {
-    qDebug() << "Close " << videoDevice.name;
+    qDebug() << __func__ << videoDevice.name;
 
-    // openDeviceLock.lock();
-    // openDevices.remove(devName);
-    // openDeviceLock.unlock();
+    QMutexLocker locker(&openDeviceLock);
+
+    handler = nullptr;
+
     avformat_close_input(&context);
+    context = nullptr;
+
+    avcodec_free_context(&cctx);
+    cctx = nullptr;
+
+    av_dict_free(&options);
+    options = nullptr;
+
+
     qDebug() << "Device: " << videoDevice.name << " closed.";
 
-    delete this;
+    // delete this;
     return true;
 }
 
@@ -215,62 +357,62 @@ bool CameraDevice::close() {
  * @note Uses avdevice_list_devices
  * @return Raw device list
  */
-QVector<QPair<QString, QString>> CameraDevice::getRawDeviceListGeneric() {
-    QVector<QPair<QString, QString>> devices;
+// QVector<QPair<QString, QString>> CameraDevice::getRawDeviceListGeneric() {
+//     QVector<QPair<QString, QString>> devices;
 
-            // if (!getDefaultInputFormat()) return devices;
+//             // if (!getDefaultInputFormat()) return devices;
 
-            // Alloc an input device context
-    AVFormatContext* s;
-    if (!(s = avformat_alloc_context())) return devices;
+//             // Alloc an input device context
+//     AVFormatContext* s;
+//     if (!(s = avformat_alloc_context())) return devices;
 
-    if (!format->priv_class || !AV_IS_INPUT_DEVICE(format->priv_class->category)) {
-        avformat_free_context(s);
-        return devices;
-    }
+//     if (!format->priv_class || !AV_IS_INPUT_DEVICE(format->priv_class->category)) {
+//         avformat_free_context(s);
+//         return devices;
+//     }
 
-    s->iformat = format;
-    if (s->iformat->priv_data_size > 0) {
-        s->priv_data = av_mallocz(s->iformat->priv_data_size);
-        if (!s->priv_data) {
-            avformat_free_context(s);
-            return devices;
-        }
-        if (s->iformat->priv_class) {
-            *(const AVClass**)s->priv_data = s->iformat->priv_class;
-            av_opt_set_defaults(s->priv_data);
-        }
-    } else {
-        s->priv_data = nullptr;
-    }
+//     s->iformat = format;
+//     if (s->iformat->priv_data_size > 0) {
+//         s->priv_data = av_mallocz(s->iformat->priv_data_size);
+//         if (!s->priv_data) {
+//             avformat_free_context(s);
+//             return devices;
+//         }
+//         if (s->iformat->priv_class) {
+//             *(const AVClass**)s->priv_data = s->iformat->priv_class;
+//             av_opt_set_defaults(s->priv_data);
+//         }
+//     } else {
+//         s->priv_data = nullptr;
+//     }
 
-            // List the devices for this context
-    AVDeviceInfoList* devlist = nullptr;
-    AVDictionary* tmp = nullptr;
-    av_dict_copy(&tmp, nullptr, 0);
-    if (av_opt_set_dict2(s, &tmp, AV_OPT_SEARCH_CHILDREN) < 0) {
-        av_dict_free(&tmp);
-        avformat_free_context(s);
-        return devices;
-    }
-    avdevice_list_devices(s, &devlist);
-    av_dict_free(&tmp);
-    avformat_free_context(s);
-    if (!devlist) {
-        qWarning() << "avdevice_list_devices failed";
-        return devices;
-    }
+//             // List the devices for this context
+//     AVDeviceInfoList* devlist = nullptr;
+//     AVDictionary* tmp = nullptr;
+//     av_dict_copy(&tmp, nullptr, 0);
+//     if (av_opt_set_dict2(s, &tmp, AV_OPT_SEARCH_CHILDREN) < 0) {
+//         av_dict_free(&tmp);
+//         avformat_free_context(s);
+//         return devices;
+//     }
+//     avdevice_list_devices(s, &devlist);
+//     av_dict_free(&tmp);
+//     avformat_free_context(s);
+//     if (!devlist) {
+//         qWarning() << "avdevice_list_devices failed";
+//         return devices;
+//     }
 
-            // Convert the list to a QVector
-    devices.resize(devlist->nb_devices);
-    for (int i = 0; i < devlist->nb_devices; ++i) {
-        AVDeviceInfo* dev = devlist->devices[i];
-        devices[i].first = dev->device_name;
-        devices[i].second = dev->device_description;
-    }
-    avdevice_free_list_devices(&devlist);
-    return devices;
-}
+//             // Convert the list to a QVector
+//     devices.resize(devlist->nb_devices);
+//     for (int i = 0; i < devlist->nb_devices; ++i) {
+//         AVDeviceInfo* dev = devlist->devices[i];
+//         devices[i].first = dev->device_name;
+//         devices[i].second = dev->device_description;
+//     }
+//     avdevice_free_list_devices(&devlist);
+//     return devices;
+// }
 
 /**
  * @brief Get device list with desciption

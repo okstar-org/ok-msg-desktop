@@ -519,22 +519,31 @@ AVFrame* VideoFrame::generateAVFrame(const QSize& dimensions, const int pixelFor
     int resizeAlgo = sourceDimensions.width() > dimensions.width() ? SWS_BILINEAR : SWS_BICUBIC;
 
     SwsContext* swsCtx = sws_getContext(
-            sourceDimensions.width(), sourceDimensions.height(),
-            static_cast<AVPixelFormat>(sourcePixelFormat), dimensions.width(), dimensions.height(),
-            static_cast<AVPixelFormat>(pixelFormat), resizeAlgo, nullptr, nullptr, nullptr);
+            sourceDimensions.width(),
+            sourceDimensions.height(),
+            static_cast<AVPixelFormat>(sourcePixelFormat),
+            dimensions.width(),
+            dimensions.height(),
+            static_cast<AVPixelFormat>(pixelFormat),
+            resizeAlgo,
+            nullptr,
+            nullptr,
+            nullptr);
 
     if (!swsCtx) {
         av_freep(&ret->data[0]);
-#if LIBAVCODEC_VERSION_INT < 3747941
-        av_frame_unref(ret);
-#endif
         av_frame_free(&ret);
         return nullptr;
     }
 
     AVFrame* source = frameBuffer[sourceFrameKey];
 
-    sws_scale(swsCtx, source->data, source->linesize, 0, sourceDimensions.height(), ret->data,
+    sws_scale(swsCtx,
+              source->data,
+              source->linesize,
+              0,
+              sourceDimensions.height(),
+              ret->data,
               ret->linesize);
     sws_freeContext(swsCtx);
 
@@ -598,21 +607,16 @@ void VideoFrame::deleteFrameBuffer() {
 
     for (const auto& frameIterator : frameBuffer) {
         AVFrame* frame = frameIterator.second;
-
         // Treat source frame and derived frames separately
         if (sourceFrameKey == frameIterator.first) {
             if (freeSourceFrame) {
                 av_freep(&frame->data[0]);
             }
-#if LIBAVCODEC_VERSION_INT < 3747941
-            av_frame_unref(frame);
-#endif
+            // av_frame_unref(frame);
             av_frame_free(&frame);
         } else {
             av_freep(&frame->data[0]);
-#if LIBAVCODEC_VERSION_INT < 3747941
-            av_frame_unref(frame);
-#endif
+            // av_frame_unref(frame);
             av_frame_free(&frame);
         }
     }

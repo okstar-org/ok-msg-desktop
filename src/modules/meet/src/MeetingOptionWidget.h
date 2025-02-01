@@ -101,6 +101,7 @@ private:
     QStackedLayout* videoOutLayout = nullptr;
     CameraVideoOutputWidget* cameraOutput = nullptr;
     CompatibleRecursiveMutex mutex;
+
 };
 
 }  // namespace module::meet

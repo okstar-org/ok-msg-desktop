@@ -18,18 +18,24 @@
 #include <QString>
 #include <QVector>
 #include <atomic>
+#include <base/compatiblerecursivemutex.h>
+#include "videoframe.h"
 #include "videomode.h"
 
-struct AVFormatContext;
-struct AVInputFormat;
 struct AVDeviceInfoList;
 struct AVDictionary;
+struct AVFormatContext;
+struct AVInputFormat;
+struct AVCodecContext;
 
 namespace lib::video {
 
+
 class CameraDevice {
 public:
-    explicit CameraDevice(const VideoDevice &dev);
+    explicit CameraDevice(const VideoDevice &dev, FrameHandler* h);
+    ~CameraDevice();
+
     bool open(VideoMode mode);
     bool close();
 
@@ -46,21 +52,32 @@ public:
 
     static const AVInputFormat* getDefaultInputFormat(VideoType type);
 
+    void stream();
+    void stop();
+
+
 private:
+    void readFrame();
 
-    AVFormatContext* open(VideoDevice dev, AVDictionary** options);
+    bool open(VideoDevice dev, AVDictionary** options, std::string &error);
 
-    QVector<QPair<QString, QString>> getRawDeviceListGeneric();
+
+    // QVector<QPair<QString, QString>> getRawDeviceListGeneric();
     static QVector<VideoMode> getScreenModes();
 
+    mutable CompatibleRecursiveMutex openDeviceLock;
 
     VideoDevice videoDevice;
-    AVInputFormat* format;
+    int videoStreamIndex;
+    VideoFrame::IDType id;
 
-    // QHash<QString, CameraDevice*> openDevices;
-   static QMutex openDeviceLock, iformatLock;
-public:
+    AVDictionary* options;
+    // AVInputFormat* format;
     AVFormatContext* context;
+    AVCodecContext* cctx;
+
+    FrameHandler *handler;
+    std::atomic<bool> run;
 };
 }  // namespace lib::video
 #endif  // CAMERADEVICE_H

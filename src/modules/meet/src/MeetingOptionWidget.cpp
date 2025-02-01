@@ -28,6 +28,7 @@
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
 #include "lib/video/cameradevice.h"
 #include "lib/video/camerasource.h"
+#include "lib/video/videoframe.h"
 #include "src/application.h"
 
 namespace module::meet {
@@ -41,10 +42,11 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-
+uint64_t count = 0;
 private:
-    std::unique_ptr <lib::video::CameraSource> _camera;
+    std::unique_ptr<lib::video::CameraSource> _camera;
     std::shared_ptr<lib::video::VideoFrame> lastFrame;
+    bool is_stop = false;
 };
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
@@ -76,6 +78,8 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
         updateAudioVideoIcon(false, true, false);
         if(ctrlState.enableCam){
             doOpenVideo();
+        }else{
+            doCloseVideo();
         }
     });
 
@@ -114,7 +118,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
     mainLayout->addLayout(videoOutLayout, 1);
     mainLayout->addLayout(footerLayout);
 
-    // 初始化设备控件
+            // 初始化设备控件
     audioMenu = new QMenu(this);
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
@@ -128,6 +132,13 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
     cameraSetting->setMenu(videoMenu);
     connect(vGroup, &QActionGroup::triggered, this, &MeetingOptionWidget::videoSelected);
 
+    ctrlState = {true, false, true};
+    updateAudioVideoIcon(true, true, true);
+
+    QTimer::singleShot(100, this, [this]() {
+        // 延迟执行获取设备信息，避免界面延迟！
+        this->initDeviceInfo();
+    });
 
 }
 
@@ -141,19 +152,15 @@ void MeetingOptionWidget::retranslateUi() {
 }
 
 void MeetingOptionWidget::showEvent(QShowEvent* event) {
-    // 默认关闭视频
-    ctrlState = {true, false, true};
-    updateAudioVideoIcon(true, true, true);
 
-    QTimer::singleShot(100, this, [this]() {
-        // 延迟执行获取设备信息，避免界面延迟！
-        this->initDeviceInfo();
-    });
+
+
+
 }
 
 void MeetingOptionWidget::hideEvent(QHideEvent* e) {
     updateAudioVideoIcon(true, true, true);
-    doCloseVideo();
+    // doCloseVideo();
 }
 
 /**
@@ -162,7 +169,7 @@ void MeetingOptionWidget::hideEvent(QHideEvent* e) {
 void MeetingOptionWidget::initDeviceInfo() {
     QMutexLocker locker(&mutex);
 
-    // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
+            // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
     auto oa = std::make_unique<lib::audio::OpenAL>();
     auto alist = oa->inDeviceNames();
@@ -200,7 +207,7 @@ void MeetingOptionWidget::initDeviceInfo() {
         vGroup->addAction(act);
     }
 
-    // todo: 应该存在什么缓存机制，保存用户选择的视频，初始化选择
+            // todo: 应该存在什么缓存机制，保存用户选择的视频，初始化选择
     if (!audioMenu->isEmpty()) {
         audioMenu->actions().first()->setChecked(true);
     }
@@ -243,13 +250,17 @@ void MeetingOptionWidget::audioSelected(QAction* action) {
 }
 
 void MeetingOptionWidget::videoSelected(QAction* action) {
-    //    if (ctrlState.enableCam)
-    //    {
-    //        doOpenVideo();
-    //    }
+
     QMutexLocker locker(&mutex);
     if (action->isChecked()) {
         selectedVideo = action->text();
+    }
+
+    if (ctrlState.enableCam)
+    {
+        doOpenVideo();
+    }else{
+        doCloseVideo();
     }
 }
 
@@ -285,18 +296,21 @@ void MeetingOptionWidget::doCloseVideo() {
 }
 
 void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
-    if (!_camera) {
+    is_stop = false;
+    if(!_camera){
         _camera = lib::video::CameraSource::CreateInstance(device);
         connect(_camera.get(), &lib::video::CameraSource::frameAvailable, this,
                 [this](std::shared_ptr<lib::video::VideoFrame> frame) {
-                    lastFrame = frame;
+                    lastFrame = std::move(frame);
                     update();
                 });
-
-    } else {
-        _camera->unsubscribe();
+        connect(_camera.get(), &lib::video::CameraSource::sourceStopped, this, [&](){
+            //Avoid dirty data affecting the next frame rendering
+            lastFrame.reset();
+            //destroy camera
+            _camera.reset();
+        });
     }
-
     // todo: 既然是单例，怎么保证多个订阅方选不同设备
     // lib::video::VideoMode mode{200, 400, 0, 0, 30};
     _camera->openDevice();
@@ -304,12 +318,17 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
 }
 
 void CameraVideoOutputWidget::stopRender() {
+    is_stop = true;
     if (_camera) {
+
+        disconnect(_camera.get());
         // todo: 既然上面获取_camera是单例，其他如果用到了，是否存在释放问题，这里暂不释放
         // todo: 而且涉及到摄像头的分辨率等问题，看怎么设计的
         _camera->unsubscribe();
-        //_camera->destroyInstance();
-        _camera.reset();
+        _camera->closeDevice();
+
+        // lastFrame.reset();
+        update();
     }
 }
 
@@ -317,13 +336,15 @@ void CameraVideoOutputWidget::paintEvent(QPaintEvent* event) {
     auto boundingRect = this->rect();
     QPainter painter(this);
     painter.fillRect(painter.viewport(), Qt::black);
+
     if (lastFrame) {
-        QImage frame = lastFrame->toQImage(rect().size());
-        if (frame.isNull()) {
-            lastFrame.reset();
-            return;
+
+        auto img = lastFrame->toQImage(rect().size());
+        if (!img.isNull()) {
+            painter.drawImage(boundingRect, img, img.rect(), Qt::NoFormatConversion);
         }
-        painter.drawImage(boundingRect, frame, frame.rect(), Qt::NoFormatConversion);
+
+        // return;
         // avatarLabel->setVisible(false);
     }
 }
