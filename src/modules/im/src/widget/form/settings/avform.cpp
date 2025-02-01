@@ -174,7 +174,8 @@ void AVForm::open(const QString& devName, const lib::video::VideoMode& mode) {
     QRect rect = mode.toRect();
     videoSettings->setCamVideoRes(rect);
     videoSettings->setCamVideoFPS(static_cast<float>(mode.FPS));
-    camera->setupDevice(devName, mode);
+    camera->setup(mode);
+    camera->openDevice();
 }
 
 void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
@@ -320,15 +321,11 @@ void AVForm::fillCameraModesComboBox() {
 
     for (int i = 0; i < videoModes.size(); ++i) {
         lib::video::VideoMode mode = videoModes[i];
+        qDebug() << mode.toString().c_str();
 
         QString str;
-        std::string pixelFormat =
-                lib::video::CameraDevice::getPixelFormatString(mode.pixel_format).toStdString();
-        qDebug("width: %d, height: %d, FPS: %f, pixel format: %s\n", mode.width, mode.height,
-               mode.FPS, pixelFormat.c_str());
-
         if (mode.height && mode.width) {
-            str += QString("%1p").arg(mode.height);
+            str += QString("%1x%2p").arg(mode.width).arg(mode.height);
         } else {
             str += tr("Default resolution");
         }

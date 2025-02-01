@@ -299,6 +299,11 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
     is_stop = false;
     if(!_camera){
         _camera = lib::video::CameraSource::CreateInstance(device);
+        auto modes = _camera->getVideoModes();
+        for(auto &m : modes){
+            qDebug() << "mode" << m.toString().c_str();
+        }
+
         connect(_camera.get(), &lib::video::CameraSource::frameAvailable, this,
                 [this](std::shared_ptr<lib::video::VideoFrame> frame) {
                     lastFrame = std::move(frame);

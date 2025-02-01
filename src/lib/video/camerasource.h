@@ -40,6 +40,7 @@ public:
 
 
     void setupDefault();
+    void setup(const VideoMode& mode);
 
     // VideoSource interface
     void subscribe() override;

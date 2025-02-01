@@ -39,6 +39,9 @@ CameraSource::CameraSource(const VideoDevice &dev)
 {
     qDebug() << __func__;
 
+    // Crate camera device
+    device = new CameraDevice(dev, this);
+
     qRegisterMetaType<VideoMode>("VideoMode");
     deviceThread->setObjectName("Device thread");
     deviceThread->start();
@@ -92,6 +95,11 @@ void CameraSource::setupDefault() {
     setupDevice(deviceName, mode);
 }
 
+void CameraSource::setup(const VideoMode &vm)
+{
+    mode = vm;
+}
+
 void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode) {
 
 }
@@ -139,9 +147,11 @@ void CameraSource::openDevice() {
     auto deviceName = dev.name;
     qDebug() << "Opening device" << deviceName;
 
+    if(!device){
+        // Crate camera device
+        device = new CameraDevice(dev, this);
+    }
 
-    // Crate camera device
-    device = new CameraDevice(dev, this);
     // We need to create a new CameraDevice(Enable camera light)
     bool opened = device->open(mode);
     if (!opened) {

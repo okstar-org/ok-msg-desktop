@@ -11,6 +11,8 @@
  */
 
 #include "videomode.h"
+
+#include "cameradevice.h"
 namespace lib::video {
 
 /**
@@ -49,9 +51,15 @@ uint32_t VideoMode::norm(const VideoMode& other) const {
 // 容忍
 uint32_t VideoMode::tolerance() const {
     constexpr uint32_t minTolerance = 300;  // keep wider tolerance for low res cameras
-    constexpr uint32_t toleranceFactor =
-            10;  // video mode must be within 10% to be "close enough" to ideal
+    constexpr uint32_t toleranceFactor = 10;  // video mode must be within 10% to be "close enough" to ideal
     return std::max((width + height) / toleranceFactor, minTolerance);
+}
+
+std::string VideoMode::toString()
+{
+    return std::format("w:{} h:{}, x:{} y:{} FPS:{} format:{}",
+                       width, height, x, y, FPS,
+                       CameraDevice::getPixelFormatString(pixel_format).toStdString());
 }
 
 /**

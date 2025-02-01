@@ -13,9 +13,11 @@
 #ifndef VIDEOMODE_H
 #define VIDEOMODE_H
 
+#include <cstdint>
+#include <format>
 #include <QString>
 #include <QRect>
-#include <cstdint>
+
 
 namespace lib::video {
 
@@ -48,6 +50,8 @@ struct VideoMode {
     bool operator==(const VideoMode& other) const;
     uint32_t norm(const VideoMode& other) const;
     uint32_t tolerance() const;
+
+    std::string toString();
 };
 
 

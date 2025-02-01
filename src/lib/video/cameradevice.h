@@ -41,7 +41,7 @@ public:
 
     static QVector<VideoDevice> getDeviceList();
 
-    QVector<VideoMode> getVideoModes();
+    QVector<VideoMode> getVideoModes() const;
 
     static QString getPixelFormatString(uint32_t pixel_format);
     static bool betterPixelFormat(uint32_t a, uint32_t b);

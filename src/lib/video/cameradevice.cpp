@@ -542,13 +542,15 @@ QVector<VideoMode> CameraDevice::getScreenModes() {
  * @param devName Device name to get nodes from.
  * @return Vector of available modes for the device.
  */
-QVector<VideoMode> CameraDevice::getVideoModes() {
+QVector<VideoMode> CameraDevice::getVideoModes() const {
 
     auto devName = videoDevice.name;
     auto iformat = getDefaultInputFormat(videoDevice.type);
     if(!iformat){
         return {};
     }
+
+    qDebug() << "format name is" << iformat->name;
 
     //如果是屏幕
     if (isScreen(videoDevice.url))
@@ -560,7 +562,7 @@ QVector<VideoMode> CameraDevice::getVideoModes() {
 #endif
 #if USING_V4L
     if (iformat->name == QString("video4linux2,v4l2"))
-        return v4l2::getDeviceModes(devName);
+        return v4l2::getDeviceModes(videoDevice.url);
 #endif
 #ifdef Q_OS_OSX
     if (iformat->name == QString("avfoundation"))
