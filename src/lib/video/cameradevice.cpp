@@ -134,15 +134,17 @@ void CameraDevice::readFrame()
     av_packet_unref(&packet);
 }
 
-bool CameraDevice::open(VideoDevice dev, AVDictionary** options, std::string &error) {
+bool CameraDevice::open(const VideoDevice& dev, AVDictionary** options, std::string &error) {
     QMutexLocker locker(&openDeviceLock);
+
+    qDebug() << __func__ << std::format("device:{} url:{}", dev.name.toStdString(), dev.url.toStdString()).c_str();
 
     auto format = getDefaultInputFormat(dev.type);
     int ret = avformat_open_input(&context, dev.url.toStdString().c_str(), format, options);
     if (ret < 0) {
         char msg[AV_ERROR_MAX_STRING_SIZE];
         av_strerror(ret, msg, AV_ERROR_MAX_STRING_SIZE);
-        qWarning() <<  "Error opening device:" << msg;
+        qWarning() <<  "Error opening device:" << dev.url << msg;
         error = msg;
         return false;
     }
@@ -442,7 +444,7 @@ QVector<VideoDevice> CameraDevice::getDeviceList() {
         if(iformat->name == QString("x11grab")){
             auto count = ok::base::X11Display::Count();
             for (size_t c = 0; c < count; ++c) {
-                QString dev = "x11grab#:" + QString::number(c);
+                QString dev = ":" + QString::number(c);
                 QString name = QString("Desktop %1").arg(c);
                 devices.push_back(VideoDevice{.type = type, .name = name, .url=dev});
             }

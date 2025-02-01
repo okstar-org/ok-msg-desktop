@@ -59,7 +59,7 @@ public:
 private:
     void readFrame();
 
-    bool open(VideoDevice dev, AVDictionary** options, std::string &error);
+    bool open(const VideoDevice& dev, AVDictionary** options, std::string &error);
 
 
     // QVector<QPair<QString, QString>> getRawDeviceListGeneric();
