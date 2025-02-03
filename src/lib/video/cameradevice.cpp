@@ -553,7 +553,7 @@ QVector<VideoMode> CameraDevice::getVideoModes() const {
     qDebug() << "format name is" << iformat->name;
 
     //如果是屏幕
-    if (isScreen(videoDevice.url))
+    if (isScreen(iformat->name))
         return getScreenModes();
 
 #ifdef Q_OS_WIN

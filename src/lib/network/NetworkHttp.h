@@ -12,21 +12,18 @@
 
 #pragma once
 
-#include <QByteArray>
-#include <QFile>
-#include <QJsonObject>
-
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include <QMap>
 #include <memory>
-
 #include <base/basic_types.h>
 #include <base/timer.h>
 
 class QNetworkAccessManager;
 class QNetworkRequest;
 class QNetworkReply;
+class QFile;
 
 namespace lib::network {
 

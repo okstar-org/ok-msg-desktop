@@ -13,16 +13,19 @@
 #pragma once
 
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
 #include <QObject>
 #include <QString>
-#include <string>
+#include <QList>
 
 #include "BaseService.h"
 #include "base/r.h"
-#include "lib/network/NetworkHttp.h"
 
-#include <QJsonArray>
-#include <QList>
+namespace lib::network {
+class NetworkHttp;
+}
 
 namespace lib::backend {
 

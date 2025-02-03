@@ -11,28 +11,28 @@
  */
 
 #pragma once
-#include <QObject>
-#include <memory>
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
+#include <QObject>
 #include <QString>
-#include <QUrl>
 
 #include <base/basic_types.h>
 
-namespace utils {
+namespace lib::network {
+
+class NetworkHttp;
 
 class ImageLoader : public QObject {
     Q_OBJECT
 
 public:
-    ImageLoader(QObject* parent = nullptr);
-    ~ImageLoader();
+    explicit ImageLoader(QObject* parent = nullptr);
+    ~ImageLoader() override;
 
-    void load(const QString& url, ok::base::Fn<void(const QByteArray&)> fn);
+    bool load(const QString& url, const ok::base::Fn<void(QByteArray body, QString name)>& fn);
 
 private:
+
+    NetworkHttp* http;
+
 };
-}  // namespace utils
+}  // namespace lib::network

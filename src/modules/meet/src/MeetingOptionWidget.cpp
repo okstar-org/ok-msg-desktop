@@ -42,11 +42,11 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-uint64_t count = 0;
+
 private:
     std::unique_ptr<lib::video::CameraSource> _camera;
     std::shared_ptr<lib::video::VideoFrame> lastFrame;
-    bool is_stop = false;
+    QVector<lib::video::VideoMode> modes;
 };
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
@@ -296,10 +296,11 @@ void MeetingOptionWidget::doCloseVideo() {
 }
 
 void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
-    is_stop = false;
+
     if(!_camera){
         _camera = lib::video::CameraSource::CreateInstance(device);
-        auto modes = _camera->getVideoModes();
+        modes = _camera->getVideoModes();
+
         for(auto &m : modes){
             qDebug() << "mode" << m.toString().c_str();
         }
@@ -323,7 +324,7 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
 }
 
 void CameraVideoOutputWidget::stopRender() {
-    is_stop = true;
+
     if (_camera) {
 
         disconnect(_camera.get());

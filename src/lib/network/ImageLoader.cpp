@@ -12,32 +12,23 @@
 
 #include "ImageLoader.h"
 
-#include <memory>
+#include "NetworkHttp.h"
 
+#include <memory>
 #include <QObject>
 #include <QString>
 #include <QUrl>
 
-#include <QEventLoop>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
+namespace lib::network {
 
-namespace utils {
-
-ImageLoader::ImageLoader(QObject* parent) : QObject(parent) {}
-
-ImageLoader::~ImageLoader() {}
-
-void ImageLoader::load(const QString& url, ok::base::Fn<void(const QByteArray&)> fn) {
-    QNetworkAccessManager manager;
-    QEventLoop loop;
-
-    QNetworkReply* reply = manager.get(QNetworkRequest(url));
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    fn(reply->readAll());
+ImageLoader::ImageLoader(QObject* parent) : QObject(parent) {
+    http = new NetworkHttp(this);
 }
 
-}  // namespace utils
+ImageLoader::~ImageLoader() = default;
+
+bool ImageLoader::load(const QString& url, const ok::base::Fn<void(QByteArray body, QString name)>& fn) {
+   return http->get(QUrl(url), fn);
+}
+
+}  // namespace lib::network

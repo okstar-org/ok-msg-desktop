@@ -16,11 +16,15 @@
 #include <QWidget>
 #include "base/timer.h"
 #include "lib/backend/OkCloudService.h"
-#include "lib/network/NetworkHttp.h"
 #include "lib/plugin/PluginInfo.h"
+
 
 namespace Ui {
 class PluginItemForm;
+}
+
+namespace lib::network{
+class ImageLoader;
 }
 
 namespace module::config {
@@ -30,19 +34,20 @@ class PluginItemForm : public QWidget {
 public:
     explicit PluginItemForm(int row, lib::backend::PluginInfo& pluginInfo,
                             QWidget* parent = nullptr);
-    ~PluginItemForm();
+    ~PluginItemForm() override;
     void downLogo();
     void setLogo(const QPixmap& pixmap);
     bool isSetLogo();
 
 protected:
-    void showEvent(QShowEvent*);
+    void showEvent(QShowEvent*) override;
 
 private:
     Ui::PluginItemForm* ui;
     lib::backend::PluginInfo info;
     int row;
-    std::unique_ptr<lib::network::NetworkHttp> http;
+    // std::unique_ptr<lib::network::NetworkHttp> ;
+    lib::network::ImageLoader* imageLoader;
 
 signals:
     void loadLogo();

@@ -98,6 +98,7 @@ private:
     QString selectedVideo;
     QVector<lib::video::VideoDevice> vDeviceList;
 
+
     QStackedLayout* videoOutLayout = nullptr;
     CameraVideoOutputWidget* cameraOutput = nullptr;
     CompatibleRecursiveMutex mutex;

@@ -11,10 +11,9 @@
  */
 
 #include "PluginItemForm.h"
-#include <QTimer>
 #include "base/files.h"
 #include "base/images.h"
-#include "lib/network/NetworkHttp.h"
+#include "lib/network/ImageLoader.h"
 #include "ui_PluginItemForm.h"
 
 namespace module::config {
@@ -25,8 +24,9 @@ PluginItemForm::PluginItemForm(int row_, lib::backend::PluginInfo& pluginInfo, Q
     ui->name->setText(pluginInfo.name);
     ui->version->setText(pluginInfo.version);
 
-    http = std::make_unique<lib::network::NetworkHttp>();
+    // http = std::make_unique<lib::network::NetworkHttp>();
     connect(this, &PluginItemForm::logoDownloaded, this, &PluginItemForm::onLogoDownloaded);
+    imageLoader = new lib::network::ImageLoader(this);
 }
 
 PluginItemForm::~PluginItemForm() {
@@ -37,8 +37,7 @@ PluginItemForm::~PluginItemForm() {
 
 void PluginItemForm::downLogo() {
     if (isSetLogo()) return;
-    http->get(info.logoUrl, [&](QByteArray img, const QString& fileName) {
-        Q_UNUSED(fileName);
+    imageLoader->load(info.logoUrl, [&](QByteArray img, QString fileName) {
         qDebug() << "download image:" << fileName << img.size();
         emit logoDownloaded(fileName, img);
     });
@@ -65,4 +64,4 @@ void PluginItemForm::onLogoDownloaded(const QString& fileName, QByteArray& img) 
         setLogo(pixmap);
     }
 }
-}  // namespace ok::plugin
+}  // namespace module::config
