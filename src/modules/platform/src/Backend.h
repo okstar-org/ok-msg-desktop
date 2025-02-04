@@ -15,8 +15,9 @@
 //
 #pragma once
 
-#include <base/jsons.h>
 #include <QObject>
+#include "base/jsons.h"
+#include "lib/network/NetworkHttp.h"
 #include "lib/backend/BaseService.h"
 
 namespace module::platform {

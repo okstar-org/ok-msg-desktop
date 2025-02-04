@@ -14,7 +14,8 @@
 
 #include <QObject>
 
-#include <lib/backend/BaseService.h>
+#include "BaseService.h"
+#include "lib/network/NetworkHttp.h"
 #include "base/jsons.h"
 
 namespace lib::backend {

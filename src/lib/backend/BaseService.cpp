@@ -28,4 +28,14 @@ BaseService::BaseService(const QString& baseUrl, QObject* parent)  //
 
 BaseService::~BaseService() {}
 
+void BaseService::setHeader(const QString& k, const QString& v)
+{
+    http->setHeader(k, v);
+}
+
+void BaseService::setLanguage(const QString &lang)
+{
+    http->setLanguage(lang);
+}
+
 }  // namespace lib::backend

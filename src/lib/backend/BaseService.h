@@ -20,7 +20,7 @@
 #include <QString>
 #include <QList>
 
-#include "BaseService.h"
+#include "base/basic_types.h"
 #include "base/r.h"
 
 namespace lib::network {
@@ -179,13 +179,13 @@ public:
 
     [[maybe_unused]] inline const QString& baseUrl() const { return _baseUrl; }
 
-    inline void setHeader(QString k, QString v) { http->setHeader(k, v); }
+    void setHeader(const QString &k, const QString &v);
 
-    inline void setLanguage(const QString& lang) { http->setLanguage(lang); }
+    void setLanguage(const QString& lang) ;
 
 protected:
     QString _baseUrl;
-    std::unique_ptr<lib::network::NetworkHttp> http;
+    std::unique_ptr<network::NetworkHttp> http;
 };
 
-}  // namespace ok::backend
+}  // namespace lib::backend

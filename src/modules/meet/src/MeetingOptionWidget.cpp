@@ -299,11 +299,6 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
 
     if(!_camera){
         _camera = lib::video::CameraSource::CreateInstance(device);
-        modes = _camera->getVideoModes();
-
-        for(auto &m : modes){
-            qDebug() << "mode" << m.toString().c_str();
-        }
 
         connect(_camera.get(), &lib::video::CameraSource::frameAvailable, this,
                 [this](std::shared_ptr<lib::video::VideoFrame> frame) {
@@ -319,6 +314,12 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
     }
     // todo: 既然是单例，怎么保证多个订阅方选不同设备
     // lib::video::VideoMode mode{200, 400, 0, 0, 30};
+
+    modes = _camera->getVideoModes();
+    for(auto &m : modes){
+        qDebug() << "mode:" << m.toString().c_str();
+    }
+    _camera->setup(modes.front());
     _camera->openDevice();
     // _camera->subscribe();
 }
