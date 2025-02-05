@@ -33,8 +33,8 @@ namespace lib::video {
 
 
 CameraSource::CameraSource(const VideoDevice &dev)
-        : deviceThread{new QThread}
-        , dev(dev)
+        // : deviceThread{new QThread}
+        : dev(dev)
         , mode(VideoMode())
 {
     qDebug() << __func__;
@@ -43,9 +43,12 @@ CameraSource::CameraSource(const VideoDevice &dev)
     device = new CameraDevice(dev, this);
 
     qRegisterMetaType<VideoMode>("VideoMode");
-    deviceThread->setObjectName("Device thread");
-    deviceThread->start();
-    moveToThread(deviceThread);
+    qRegisterMetaType<std::shared_ptr<lib::video::OVideoFrame>>(
+            "std::shared_ptr<lib::video::OVideoFrame>");
+
+    // deviceThread->setObjectName("Device thread");
+    // deviceThread->start();
+    // moveToThread(deviceThread);
 }
 
 
@@ -53,12 +56,16 @@ CameraSource::CameraSource(const VideoDevice &dev)
 CameraSource::~CameraSource() {
     qDebug() << __func__;
 
+    closeDevice();
+
+    // deviceThread->exit(0);
+    // deviceThread->wait();
 
     // QMutexLocker locker{&mutex};
 
     // qDebug() << "untrackFrames" << id;
     // Free all remaining VideoFrame
-    VideoFrame::untrackFrames(id, true);
+    // VideoFrame::untrackFrames(id, true);
 
             // if (cctx) {
             //     avcodec_free_context(&cctx);
@@ -127,8 +134,9 @@ void CameraSource::onCompleted()
     emit sourceStopped();
 }
 
-void CameraSource::onFrame(std::shared_ptr<VideoFrame> vf)
+void CameraSource::onFrame(std::shared_ptr<OVideoFrame> vf)
 {
+    qDebug() << __func__ << "frame:" << vf->sourceID;
     emit frameAvailable(vf);
 }
 
@@ -137,10 +145,10 @@ void CameraSource::onFrame(std::shared_ptr<VideoFrame> vf)
  * @note Callers must own the biglock.
  */
 void CameraSource::openDevice() {
-    if (QThread::currentThread() != deviceThread) {
-        QMetaObject::invokeMethod(this, "openDevice");
-        return;
-    }
+    // if (QThread::currentThread() != deviceThread) {
+        // QMetaObject::invokeMethod(this, "openDevice");
+        // return;
+    // }
 
     QMutexLocker locker{&mutex};
 
@@ -206,14 +214,16 @@ void CameraSource::openDevice() {
     //     return;
     // }
 
-    if (streamFuture.isRunning())
-        qDebug() << "The stream thread is already running! Keeping the current one open.";
-    else
-        streamFuture = QtConcurrent::run([this] { device->stream(); });
+    // if (streamFuture.isRunning())
+        // qDebug() << "The stream thread is already running! Keeping the current one open.";
+    // else
+        // streamFuture = QtConcurrent::run([this] { device->stream(); });
 
     // Synchronize with our stream thread
-    while (!streamFuture.isRunning()) QThread::yieldCurrentThread();
-
+    // while (!streamFuture.isRunning()) QThread::yieldCurrentThread();
+    deviceThread = std::make_unique<std::jthread>([&](){
+        device->stream();
+    });
 
     emit deviceOpened();
 }
@@ -223,10 +233,10 @@ void CameraSource::openDevice() {
  * @note Callers must own the biglock.
  */
 void CameraSource::closeDevice() {
-    if (QThread::currentThread() != deviceThread) {
-        QMetaObject::invokeMethod(this, "closeDevice");
-        return;
-    }
+    // if (QThread::currentThread() != deviceThread) {
+    //     QMetaObject::invokeMethod(this, "closeDevice");
+    //     return;
+    // }
 
     QMutexLocker locker{&mutex};
 
@@ -240,6 +250,7 @@ void CameraSource::closeDevice() {
     if (device) {
         device->stop();
     }
+    deviceThread.reset();
     // qDebug() << "Stop the device thread";
     // deviceThread->exit(0);
     // deviceThread->wait();
@@ -247,10 +258,10 @@ void CameraSource::closeDevice() {
     // qDebug() << __func__ << "finished.";
 
     // Synchronize with our stream thread
-    while (streamFuture.isRunning()){
-        streamFuture.waitForFinished();
-        // QThread::yieldCurrentThread();
-    }
+    // while (streamFuture.isRunning()){
+    //     streamFuture.waitForFinished();
+    //     // QThread::yieldCurrentThread();
+    // }
 
     // device = nullptr;
     // Synchronize with our stream thread

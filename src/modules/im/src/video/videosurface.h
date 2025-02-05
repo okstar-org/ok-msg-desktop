@@ -47,7 +47,7 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private slots:
-    void onNewFrameAvailable(const std::shared_ptr<lib::video::VideoFrame>& newFrame);
+    void onNewFrameAvailable(const std::shared_ptr<lib::video::OVideoFrame>& newFrame);
     void onSourceStopped();
 
 private:
@@ -57,7 +57,7 @@ private:
 
     QRect boundingRect;
     lib::video::VideoSource* source;
-    std::shared_ptr<lib::video::VideoFrame> lastFrame;
+    std::shared_ptr<lib::video::OVideoFrame> lastFrame;
     std::atomic_bool frameLock;
     uint8_t hasSubscribed;
     QPixmap avatar;

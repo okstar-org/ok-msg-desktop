@@ -19,6 +19,7 @@
 #include <QRect>
 #include <QSize>
 
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
@@ -28,6 +29,10 @@
 struct AVFrame;
 
 namespace lib::video {
+
+        // Declare type aliases
+using IDType = std::uint_fast64_t;
+using AtomicIDType = std::atomic_uint_fast64_t;
 
 /**\brief Image Descriptor */
 typedef struct vpx_image {
@@ -58,11 +63,26 @@ public:
     const uint8_t* v;
 };
 
+
+struct OVideoFrame {
+    IDType frameID;
+    IDType sourceID;
+    QImage image;
+
+    QSize getSize() const{
+        return image.size();
+    }
+
+    const QImage& getImage() const {
+        return image;
+    }
+
+};
+
+
 class VideoFrame {
 public:
-    // Declare type aliases
-    using IDType = std::uint_fast64_t;
-    using AtomicIDType = std::atomic_uint_fast64_t;
+
 
 public:
     VideoFrame(IDType sourceID, AVFrame* sourceFrame, QRect dimensions, int pixFmt,
@@ -77,13 +97,16 @@ public:
     VideoFrame(const VideoFrame& other) = delete;
     VideoFrame(VideoFrame&& other) = delete;
 
+    static void untrackFrames(const IDType& sourceID, bool releaseFrames = false);
+    static std::unique_ptr<VideoFrame> convert0(IDType id, std::unique_ptr<vpx_image_t> vpxframe);
+    static std::unique_ptr<OVideoFrame> convert(IDType id, std::unique_ptr<vpx_image_t> vpxframe);
+
     const VideoFrame& operator=(const VideoFrame& other) = delete;
     const VideoFrame& operator=(VideoFrame&& other) = delete;
 
     bool isValid();
 
     std::shared_ptr<VideoFrame> trackFrame();
-    static void untrackFrames(const IDType& sourceID, bool releaseFrames = false);
 
     void releaseFrame();
 
@@ -164,7 +187,7 @@ private:
 
     static std::unordered_map<IDType, QMutex> mutexMap;
     static std::unordered_map<IDType,
-                              std::unordered_map<IDType, std::weak_ptr<lib::video::VideoFrame>>>
+                              std::unordered_map<IDType, std::weak_ptr<VideoFrame>>>
             refsMap;
 
     // Concurrency
@@ -172,13 +195,13 @@ private:
     static QReadWriteLock refsLock;
 };
 
-std::unique_ptr<lib::video::VideoFrame> convert(VideoFrame::IDType id,
-                                                std::unique_ptr<lib::video::vpx_image_t> vpxframe);
+
+
 
 class FrameHandler {
 public:
     virtual void onCompleted() = 0;
-    virtual void onFrame(std::shared_ptr<VideoFrame>) = 0;
+    virtual void onFrame(std::shared_ptr<OVideoFrame>) = 0;
 };
 
 

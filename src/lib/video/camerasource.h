@@ -19,6 +19,7 @@
 #include <QString>
 #include <QVector>
 #include <atomic>
+#include <thread>
 #include "lib/video/videomode.h"
 #include "lib/video/videosource.h"
 
@@ -47,17 +48,19 @@ public:
     void unsubscribe() override;
 protected:
     void onCompleted() override;
-    void onFrame(std::shared_ptr<VideoFrame>) override;
+    void onFrame(std::shared_ptr<OVideoFrame> frm) override;
 
 private:
 
     QRecursiveMutex mutex;
-    QThread* deviceThread;
-    QFuture<void> streamFuture;
+    // QThread* deviceThread;
+    // QFuture<void> streamFuture;
 
     VideoDevice dev;
     VideoMode mode;
     CameraDevice* device;
+
+    std::unique_ptr<std::jthread> deviceThread;
 
 signals:
     void deviceOpened();

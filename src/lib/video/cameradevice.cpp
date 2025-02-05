@@ -122,10 +122,14 @@ void CameraDevice::readFrame()
             return;
 
         if (!avcodec_receive_frame(cctx, frame)) {
-            // VideoFrame* vframe = new VideoFrame(++id, frame);
-            // emit frameAvailable(vframe->trackFrame());
-            if(handler)
-                handler->onFrame(std::make_unique<VideoFrame>(++id, frame));
+            if(handler){
+                auto vf = std::make_unique<VideoFrame>(++id, frame);
+                auto ovf = std::make_shared<OVideoFrame>(
+                        vf->getFrameID(),
+                        vf->getSourceID(),
+                        vf->toQImage(vf->getSourceDimensions().size()));
+                handler->onFrame(ovf);
+            }
         }else{
             av_frame_free(&frame);
         }
@@ -543,10 +547,10 @@ QVector<VideoMode> CameraDevice::getScreenModes() {
  * @return Vector of available modes for the device.
  */
 QVector<VideoMode> CameraDevice::getVideoModes() const {
-
     auto devName = videoDevice.name;
     auto iformat = getDefaultInputFormat(videoDevice.type);
     if(!iformat){
+        qWarning() << "Ubale to get input format of device:" << videoDevice.name;
         return {};
     }
 

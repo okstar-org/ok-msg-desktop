@@ -50,7 +50,7 @@ signals:
      * @brief Emitted when new frame available to use.
      * @param frame New frame.
      */
-    void frameAvailable(std::shared_ptr<lib::video::VideoFrame> frame);
+    void frameAvailable(std::shared_ptr<lib::video::OVideoFrame> frame);
     /**
      * @brief Emitted when the source is stopped for an indefinite amount of time, but might restart
      * sending frames again later

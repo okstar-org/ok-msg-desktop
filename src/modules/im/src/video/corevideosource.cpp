@@ -22,8 +22,8 @@ namespace module::im {
  * only CoreAV can push images to it.
  */
 CoreVideoSource::CoreVideoSource() : subscribers{0}, deleteOnClose{false}, stopped{false} {
-    qRegisterMetaType<std::shared_ptr<lib::video::VideoFrame>>(
-            "std::shared_ptr<lib::video::VideoFrame>");
+    qRegisterMetaType<std::shared_ptr<lib::video::OVideoFrame>>(
+            "std::shared_ptr<lib::video::OVideoFrame>");
 }
 
 /**
@@ -37,8 +37,8 @@ void CoreVideoSource::pushFrame(std::unique_ptr<lib::video::vpx_image_t> vpxfram
     }
 
     QMutexLocker locker(&biglock);
-    auto vframe = convert(id, std::move(vpxframe));
-    emit frameAvailable(std::shared_ptr<lib::video::VideoFrame>(vframe.release()));
+    auto vframe = lib::video::VideoFrame::convert(id, std::move(vpxframe));
+    emit frameAvailable(std::shared_ptr<lib::video::OVideoFrame>(vframe.release()));
 }
 
 void CoreVideoSource::subscribe() {

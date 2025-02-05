@@ -123,12 +123,11 @@ void VideoSurface::unsubscribe() {
     source->unsubscribe();
 }
 
-void VideoSurface::onNewFrameAvailable(const std::shared_ptr<lib::video::VideoFrame>& newFrame) {
-    QSize newSize;
+void VideoSurface::onNewFrameAvailable(const std::shared_ptr<lib::video::OVideoFrame>& newFrame) {
 
     lock();
     lastFrame = newFrame;
-    newSize = lastFrame->getSourceDimensions().size();
+    QSize newSize = lastFrame->getSize();
     unlock();
 
     float newRatio = getSizeRatio(newSize);
@@ -155,9 +154,11 @@ void VideoSurface::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.fillRect(painter.viewport(), Qt::black);
     if (lastFrame) {
-        QImage frame = lastFrame->toQImage(rect().size());
-        if (frame.isNull()) lastFrame.reset();
-        painter.drawImage(boundingRect, frame, frame.rect(), Qt::NoFormatConversion);
+        // QImage frame = lastFrame->toQImage(rect().size());
+        // if (frame.isNull()) lastFrame.reset();
+        // auto& img = lastFrame->image;
+
+        painter.drawImage(boundingRect, lastFrame->getImage(), rect(), Qt::NoFormatConversion);
     } else {
         painter.fillRect(boundingRect, Qt::white);
         QPixmap drawnAvatar = avatar;

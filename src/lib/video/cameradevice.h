@@ -69,7 +69,7 @@ private:
 
     VideoDevice videoDevice;
     int videoStreamIndex;
-    VideoFrame::IDType id;
+    AtomicIDType id;
 
     AVDictionary* options;
     // AVInputFormat* format;

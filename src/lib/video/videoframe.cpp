@@ -18,15 +18,14 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
+
 namespace lib::video {
 
 // Initialize static fields
-VideoFrame::AtomicIDType VideoFrame::frameIDs{0};
+AtomicIDType VideoFrame::frameIDs{0};
 
-std::unordered_map<VideoFrame::IDType, QMutex> VideoFrame::mutexMap{};
-std::unordered_map<VideoFrame::IDType,
-                   std::unordered_map<VideoFrame::IDType, std::weak_ptr<VideoFrame>>>
-        VideoFrame::refsMap{};
+std::unordered_map<IDType, QMutex> VideoFrame::mutexMap{};
+std::unordered_map<IDType, std::unordered_map<IDType, std::weak_ptr<VideoFrame>>> VideoFrame::refsMap{};
 
 QReadWriteLock VideoFrame::refsLock{};
 
@@ -95,6 +94,7 @@ VideoFrame::VideoFrame(IDType sourceID, AVFrame* sourceFrame, bool freeSourceFra
  * @brief Destructor for VideoFrame.
  */
 VideoFrame::~VideoFrame() {
+
     // Release frame
     frameLock.lockForWrite();
 
@@ -175,7 +175,7 @@ std::shared_ptr<VideoFrame> VideoFrame::trackFrame() {
  * @param releaseFrames true to release the frames as necessary, false otherwise. Defaults to
  * false.
  */
-void VideoFrame::untrackFrames(const VideoFrame::IDType& sourceID, bool releaseFrames) {
+void VideoFrame::untrackFrames(const IDType& sourceID, bool releaseFrames) {
     refsLock.lockForWrite();
 
     if (refsMap.count(sourceID) == 0) {
@@ -209,6 +209,8 @@ void VideoFrame::untrackFrames(const VideoFrame::IDType& sourceID, bool releaseF
     refsLock.unlock();
 }
 
+
+
 /**
  * @brief Releases all frames managed by this VideoFrame and invalidates it.
  */
@@ -233,7 +235,8 @@ void VideoFrame::releaseFrame() {
  * @return a pointer to a AVFrame with the given parameters or nullptr if the VideoFrame is no
  * longer valid.
  */
-const AVFrame* VideoFrame::getAVFrame(QSize frameSize, const int pixelFormat,
+const AVFrame* VideoFrame::getAVFrame(QSize frameSize,
+                                      const int pixelFormat,
                                       const bool requireAligned) {
     if (!frameSize.isValid()) {
         frameSize = sourceDimensions.size();
@@ -268,10 +271,15 @@ QImage VideoFrame::toQImage(QSize frameSize) {
     }
 
     // Converter function (constructs QImage out of AVFrame*)
-    const std::function<QImage(AVFrame* const)> converter = [&](AVFrame* const frame) {
-        return QImage{*(frame->data), frameSize.width(), frameSize.height(), *(frame->linesize),
-                      QImage::Format_RGB888};
-    };
+    const std::function<QImage(AVFrame* const)> converter =
+            [&](AVFrame* const frame) {
+                return QImage{
+                              *(frame->data),
+                                frameSize.width(),
+                                frameSize.height(),
+                                *(frame->linesize),
+                                QImage::Format_RGB888
+                                        };};
 
     // Returns an empty constructed QImage in case of invalid generation
     return toGenericObject(frameSize, AV_PIX_FMT_RGB24, false, converter, QImage{});
@@ -313,7 +321,7 @@ ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize) {
  *
  * @return an integer representing the ID of this frame.
  */
-VideoFrame::IDType VideoFrame::getFrameID() const {
+IDType VideoFrame::getFrameID() const {
     return frameID;
 }
 
@@ -322,7 +330,7 @@ VideoFrame::IDType VideoFrame::getFrameID() const {
  *
  * @return an integer representing the ID of the VideoSource which created this frame.
  */
-VideoFrame::IDType VideoFrame::getSourceID() const {
+IDType VideoFrame::getSourceID() const {
     return sourceID;
 }
 
@@ -714,7 +722,18 @@ ToxYUVFrame::operator bool() const {
     return isValid();
 }
 
-std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_image_t> vpxframe) {
+std::unique_ptr<OVideoFrame> VideoFrame::convert(IDType id, std::unique_ptr<vpx_image_t> vpxframe)
+{
+    auto vf =  VideoFrame::convert0(id, std::move(vpxframe));
+
+    auto ovf = std::make_unique<OVideoFrame>(vf->getFrameID(),
+                                             vf->getSourceID(),
+                                             vf->toQImage(vf->getSourceDimensions().size()));
+
+    return (ovf);
+}
+
+std::unique_ptr<VideoFrame> VideoFrame::convert0(IDType id, std::unique_ptr<vpx_image_t> vpxframe) {
     auto width = vpxframe->d_w;
     auto height = vpxframe->d_h;
 
@@ -750,4 +769,5 @@ std::unique_ptr<VideoFrame> convert(VideoFrame::IDType id, std::unique_ptr<vpx_i
 
     return std::make_unique<VideoFrame>(id, avframe, true);
 }
+
 }  // namespace lib::video
