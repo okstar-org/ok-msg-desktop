@@ -53,28 +53,15 @@ CameraSource::CameraSource(const VideoDevice &dev)
 CameraSource::~CameraSource() {
 
     closeDevice();
+    delete device;
     qDebug() << __func__ << "Destroyed.";
-
-    // deviceThread->exit(0);
-    // deviceThread->wait();
-
-    // QMutexLocker locker{&mutex};
-
-    // qDebug() << "untrackFrames" << id;
-    // Free all remaining VideoFrame
-    // VideoFrame::untrackFrames(id, true);
-
-            // if (cctx) {
-            //     avcodec_free_context(&cctx);
-            // }
-            // locker.unlock();
 }
 
 
 /**
  * @brief Creates the instance.
  */
-std::unique_ptr<CameraSource> CameraSource::CreateInstance(VideoDevice dev) {
+std::unique_ptr<CameraSource> CameraSource::CreateInstance(const VideoDevice &dev) {
     qDebug() << __func__ << dev.name;
     return std::make_unique<CameraSource>(dev);
 }
@@ -101,7 +88,20 @@ void CameraSource::setupDefault() {
 
 void CameraSource::setup(const VideoMode &vm)
 {
+    QMutexLocker locker{&mutex};
     mode = vm;
+
+    bool isOpened = device->isOpened();
+
+    auto y = device->setVideoMode(mode);
+    if(!y){
+        return;
+    }
+
+    if(isOpened){
+        closeDevice();
+        openDevice();
+    }
 }
 
 void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode) {
@@ -110,22 +110,15 @@ void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode
 
 QVector<VideoMode> CameraSource::getVideoModes()
 {
+    QMutexLocker locker{&mutex};
     return device->getVideoModes();
-}
-
-void CameraSource::subscribe() {
-
-}
-
-void CameraSource::unsubscribe() {
-
 }
 
 void CameraSource::onCompleted()
 {
     if (device) {
         device->close();
-        delete device;
+
         emit sourceStopped();
     }
 }
@@ -142,8 +135,8 @@ void CameraSource::onFrame(std::shared_ptr<OVideoFrame> vf)
  */
 void CameraSource::openDevice() {
 
-    if(deviceThread){
-        qWarning() << "Opened device!";
+    if(device->isOpened()){
+        qWarning() << "Was opened!";
         return;
     }
 
@@ -153,7 +146,7 @@ void CameraSource::openDevice() {
     qDebug() << "Opening device" << deviceName;
 
     // We need to create a new CameraDevice(Enable camera light)
-    bool opened = device->open(mode);
+    bool opened = device->open();
     if (!opened) {
         qWarning() << "Failed to open device:" << deviceName;
         emit openFailed();
@@ -161,9 +154,11 @@ void CameraSource::openDevice() {
     }
 
     //Make device thread
-    deviceThread = std::make_unique<std::jthread>([&](){
-        device->stream();
-    });
+    if(!deviceThread){
+        deviceThread = std::make_unique<std::jthread>([&](){
+            device->stream();
+        });
+    }
 
     // Device is opened
     emit deviceOpened();
@@ -175,8 +170,8 @@ void CameraSource::openDevice() {
  */
 void CameraSource::closeDevice() {
 
-    if(!deviceThread){
-        qWarning() << "Is not opened!";
+    if(!device->isOpened()){
+        qWarning() << "Was closed!";
         return;
     }
 

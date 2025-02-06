@@ -18,7 +18,6 @@
 #include <QString>
 
 #include "genericsettings.h"
-#include "lib/video/videomode.h"
 #include "ui_avform.h"
 
 #include <memory>
@@ -28,6 +27,8 @@
 namespace lib::video {
 class CameraSource;
 class IVideoSettings;
+class VideoMode;
+class VideoDevice;
 }  // namespace lib::video
 
 namespace lib::audio {
@@ -53,16 +54,16 @@ public:
 private:
     void getAudioInDevices();
     void getAudioOutDevices();
-    void getVideoDevices();
+    lib::video::VideoSource* initVideoDevices();
 
     static int getModeSize(lib::video::VideoMode mode);
     void selectBestModes(QVector<lib::video::VideoMode>& allVideoModes);
-    void fillCameraModesComboBox();
-    void fillScreenModesComboBox();
+    void fillCameraModesComboBox(const QVector<lib::video::VideoMode> &);
+    void fillScreenModesComboBox(const QVector<lib::video::VideoMode> &);
     void fillAudioQualityComboBox();
     int searchPreferredIndex();
 
-    VideoSurface* createVideoSurface();
+    VideoSurface* createVideoSurface(const lib::video::VideoSource* const source);
 
     void retranslateUi();
 
@@ -76,7 +77,7 @@ private slots:
     void on_audioThresholdSlider_valueChanged(int sliderSteps);
     void on_audioQualityComboBox_currentIndexChanged(int index);
 
-    // camera
+            // camera
     void on_videoDevCombobox_currentIndexChanged(int index);
     void on_videoModescomboBox_currentIndexChanged(int index);
 
@@ -84,12 +85,12 @@ private slots:
     void setVolume(float value);
 
 protected:
-    void updateVideoModes(int curIndex);
+    lib::video::CameraSource* initVideoModes(int curIndex);
 
 private:
     void hideEvent(QHideEvent* event) final override;
     void showEvent(QShowEvent* event) final override;
-    void open(const QString& devName, const lib::video::VideoMode& mode);
+    void open(const lib::video::VideoMode& mode);
     int getStepsFromValue(qreal val, qreal valMin, qreal valMax);
     qreal getValueFromSteps(int steps, qreal valMin, qreal valMax);
     void trackNewScreenGeometry(QScreen* qScreen);

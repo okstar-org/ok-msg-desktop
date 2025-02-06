@@ -18,6 +18,7 @@
 #include <QString>
 #include <QVector>
 #include <atomic>
+
 #include <base/compatiblerecursivemutex.h>
 #include "videoframe.h"
 #include "videomode.h"
@@ -36,7 +37,13 @@ public:
     explicit CameraDevice(const VideoDevice &dev, FrameHandler* h);
     ~CameraDevice();
 
-    bool open(VideoMode mode);
+    /**
+     * @brief Dynamic sets video mode
+     * @param mode
+     * @return
+     */
+    bool setVideoMode(const VideoMode& mode);
+    bool open();
     bool close();
 
     static QVector<VideoDevice> getDeviceList();
@@ -54,7 +61,7 @@ public:
 
     void stream();
     void stop();
-
+    bool isOpened();
 
 private:
     void readFrame();
@@ -68,6 +75,7 @@ private:
     mutable CompatibleRecursiveMutex openDeviceLock;
 
     VideoDevice videoDevice;
+    VideoMode mode;
     int videoStreamIndex;
     AtomicIDType id;
 

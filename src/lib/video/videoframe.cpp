@@ -281,13 +281,6 @@ QImage VideoFrame::toQImage(QSize frameSize) {
 /**
  * @brief Converts this VideoFrame to a ToxAVFrame that shares this VideoFrame's buffer.
  *
- * The given ToxAVFrame will be frame aligned under a pixel format of planar YUV with a chroma
- * subsampling format of 4:2:0 (i.e. AV_PIX_FMT_YUV420P).
- *
- * @param frameSize the given frame size of ToxAVFrame to generate. Defaults to source frame size
- * if frameSize is invalid.
- * @return a ToxAVFrame structure that represents this VideoFrame, sharing it's buffers or an
- * empty structure if this VideoFrame is no longer valid.
  */
 ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize) {
     if (!frameSize.isValid()) {
@@ -299,7 +292,6 @@ ToxYUVFrame VideoFrame::toToxYUVFrame(QSize frameSize) {
         ToxYUVFrame ret{static_cast<std::uint16_t>(frameSize.width()),
                         static_cast<std::uint16_t>(frameSize.height()), frame->data[0],
                         frame->data[1], frame->data[2]};
-
         return ret;
     };
 

@@ -41,24 +41,6 @@ void CoreVideoSource::pushFrame(std::unique_ptr<lib::video::vpx_image_t> vpxfram
     emit frameAvailable(std::shared_ptr<lib::video::OVideoFrame>(vframe.release()));
 }
 
-void CoreVideoSource::subscribe() {
-    QMutexLocker locker(&biglock);
-    ++subscribers;
-}
-
-void CoreVideoSource::unsubscribe() {
-    biglock.lock();
-    if (--subscribers == 0) {
-        if (deleteOnClose) {
-            biglock.unlock();
-            // DANGEROUS: No member access after this point, that's why we manually unlock
-            delete this;
-            return;
-        }
-    }
-    biglock.unlock();
-}
-
 /**
  * @brief Setup delete on close
  * @param If true, self-delete after the last suscriber is gone

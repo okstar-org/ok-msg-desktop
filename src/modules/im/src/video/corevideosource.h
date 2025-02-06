@@ -25,10 +25,6 @@ class CoreVideoSource : public lib::video::VideoSource {
 public:
     CoreVideoSource();
 
-    // VideoSource interface
-    virtual void subscribe() override;
-    virtual void unsubscribe() override;
-
 private:
     void pushFrame(std::unique_ptr<lib::video::vpx_image_t> frame);
     void setDeleteOnClose(bool newstate);

@@ -141,7 +141,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     cameraSetting->setMenu(videoMenu);
     connect(vGroup, &QActionGroup::triggered, this, &MeetingOptionWidget::videoSelected);
 
-    ctrlState = {true, false, true};
+    ctrlState = {false, false, true};
     updateAudioVideoIcon(true, true, true);
 
     QTimer::singleShot(100, this, [this]() {
@@ -292,7 +292,7 @@ void MeetingOptionWidget::doOpenVideo() {
         return;
     }
 
-    auto dev = vDeviceList.at(std::distance(vDeviceList.begin(), it));
+    auto& dev = vDeviceList.at(std::distance(vDeviceList.begin(), it));
     selectedVideo = dev.name;
     cameraOutput->render(dev);
     videoOutLayout->setCurrentWidget(cameraOutput);
@@ -344,7 +344,7 @@ void CameraVideoOutputWidget::stopRender() {
     }
 
     disconnect(_camera.get());
-    _camera->unsubscribe();
+
     _camera->closeDevice();
     _camera.reset();
 

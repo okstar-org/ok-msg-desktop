@@ -55,11 +55,11 @@ uint32_t VideoMode::tolerance() const {
     return std::max((width + height) / toleranceFactor, minTolerance);
 }
 
-std::string VideoMode::toString()
+QString VideoMode::toString() const
 {
-    return std::format("w:{} h:{}, x:{} y:{} FPS:{} format:{}",
-                       width, height, x, y, FPS,
-                       CameraDevice::getPixelFormatString(pixel_format).toStdString());
+    return QString("{w:%1 h:%2, x:%3 y:%4, FPS:%5, format:%6}")//
+            .arg(width).arg( height).arg(x).arg(y).arg(FPS)//
+            .arg(CameraDevice::getPixelFormatString(pixel_format));
 }
 
 /**

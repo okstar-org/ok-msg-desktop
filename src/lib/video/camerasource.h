@@ -20,6 +20,7 @@
 #include <QVector>
 #include <atomic>
 #include <thread>
+#include <base/compatiblerecursivemutex.h>
 #include "lib/video/videomode.h"
 #include "lib/video/videosource.h"
 
@@ -31,7 +32,7 @@ namespace lib::video {
 class CameraSource : public VideoSource, public FrameHandler {
     Q_OBJECT
 public:
-    static std::unique_ptr<CameraSource> CreateInstance(VideoDevice dev);
+    static std::unique_ptr<CameraSource> CreateInstance(const VideoDevice &dev);
     static void destroyInstance();
 
     explicit CameraSource(const VideoDevice &dev);
@@ -43,16 +44,13 @@ public:
     void setupDefault();
     void setup(const VideoMode& mode);
 
-    // VideoSource interface
-    void subscribe() override;
-    void unsubscribe() override;
 protected:
     void onCompleted() override;
     void onFrame(std::shared_ptr<OVideoFrame> frm) override;
 
 private:
 
-    QRecursiveMutex mutex;
+    CompatibleRecursiveMutex mutex;
 
     VideoDevice dev;
     VideoMode mode;

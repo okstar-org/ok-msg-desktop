@@ -33,15 +33,6 @@ public:
     VideoSource() : id(sourceIDs++) {}
 
     virtual ~VideoSource() = default;
-    /**
-     * @brief If subscribe sucessfully opens the source, it will start emitting frameAvailable
-     * signals.
-     */
-    virtual void subscribe() = 0;
-    /**
-     * @brief Stop emitting frameAvailable signals, and free associated resources if necessary.
-     */
-    virtual void unsubscribe() = 0;
 
     /// ID of this VideoSource
     const IDType id;

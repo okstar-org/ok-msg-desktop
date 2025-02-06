@@ -38,7 +38,6 @@ VideoSurface::VideoSurface(const QPixmap& avatar, QWidget* parent, bool expandin
         : QWidget{parent}
         , source{nullptr}
         , frameLock{false}
-        , hasSubscribed{0}
         , avatar{avatar}
         , ratio{1.0f}
         , expanding{expanding} {
@@ -65,10 +64,10 @@ bool VideoSurface::isExpanding() const {
  *
  * Unsubscribe from old source and subscribe to new.
  */
-void VideoSurface::setSource(lib::video::VideoSource* src) {
+void VideoSurface::setSource(const lib::video::VideoSource* src) {
     if (source == src) return;
 
-    unsubscribe();
+            // unsubscribe();
     source = src;
     subscribe();
 }
@@ -93,19 +92,19 @@ QPixmap VideoSurface::getAvatar() const {
 }
 
 void VideoSurface::subscribe() {
-    if (source && hasSubscribed++ == 0) {
-        source->subscribe();
-        connect(source, &lib::video::VideoSource::frameAvailable, this,
-                &VideoSurface::onNewFrameAvailable);
-        connect(source, &lib::video::VideoSource::sourceStopped, this,
-                &VideoSurface::onSourceStopped);
+    if (!source) {
+        return;
     }
+
+    connect(source, &lib::video::VideoSource::frameAvailable, this,
+            &VideoSurface::onNewFrameAvailable);
+    connect(source, &lib::video::VideoSource::sourceStopped, this,
+            &VideoSurface::onSourceStopped);
+
 }
 
 void VideoSurface::unsubscribe() {
-    if (!source || hasSubscribed == 0) return;
-
-    if (--hasSubscribed != 0) return;
+    if (!source) return;
 
     lock();
     lastFrame.reset();
@@ -120,7 +119,7 @@ void VideoSurface::unsubscribe() {
                &VideoSurface::onNewFrameAvailable);
     disconnect(source, &lib::video::VideoSource::sourceStopped, this,
                &VideoSurface::onSourceStopped);
-    source->unsubscribe();
+
 }
 
 void VideoSurface::onNewFrameAvailable(const std::shared_ptr<lib::video::OVideoFrame>& newFrame) {
@@ -157,8 +156,8 @@ void VideoSurface::paintEvent(QPaintEvent*) {
         // QImage frame = lastFrame->toQImage(rect().size());
         // if (frame.isNull()) lastFrame.reset();
         // auto& img = lastFrame->image;
-
-        painter.drawImage(boundingRect, lastFrame->getImage(), rect(), Qt::NoFormatConversion);
+        // auto rec = rect();
+        painter.drawImage(boundingRect, lastFrame->getImage(), lastFrame->getImage().rect(), Qt::NoFormatConversion);
     } else {
         painter.fillRect(boundingRect, Qt::white);
         QPixmap drawnAvatar = avatar;

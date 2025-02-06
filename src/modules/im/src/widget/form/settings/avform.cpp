@@ -18,6 +18,7 @@
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QShowEvent>
+#include <QVector>
 
 #include "lib/audio/audio.h"
 #include "lib/audio/iaudiosettings.h"
@@ -28,12 +29,13 @@
 #include "lib/video/cameradevice.h"
 #include "lib/video/camerasource.h"
 #include "lib/video/ivideosettings.h"
+#include "lib/video/videomode.h"
+#include "src/video/videosurface.h"
 #include "src/Bus.h"
 #include "src/application.h"
 #include "src/core/coreav.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
-#include "src/video/videosurface.h"
 #include "src/widget/tool/screenshotgrabber.h"
 
 #ifndef ALC_ALL_DEVICES_SPECIFIER
@@ -130,33 +132,15 @@ void AVForm::hideEvent(QHideEvent* event) {
     }
 
     videoDeviceList.clear();
-    // camera->destroyInstance();
-    // camera = nullptr;
     camera.reset();
-
     GenericForm::hideEvent(event);
 }
 
 void AVForm::showEvent(QShowEvent* event) {
-    auto ds = lib::video::CameraDevice::getDeviceList();
-    if(ds.empty()){
-        return;
-    }
-
-    if (camera) {
-        return;
-    }
 
 
-    camera = lib::video::CameraSource::CreateInstance(ds.at(0));
     getAudioOutDevices();
     getAudioInDevices();
-
-    getVideoDevices();
-
-    auto surface = createVideoSurface();
-    gridLayout->addWidget(surface, 0, 0, 1, 1);
-
     if (audioSrc == nullptr) {
         audioSrc = audio->makeSource();
         connect(audioSrc.get(), &lib::audio::IAudioSource::volumeAvailable, this,
@@ -167,15 +151,25 @@ void AVForm::showEvent(QShowEvent* event) {
         audioSink = audio->makeSink();
     }
 
+    auto source = initVideoDevices();
+    auto surface = createVideoSurface(source);
+    gridLayout->addWidget(surface, 0, 0, 1, 1);
+
+
     GenericForm::showEvent(event);
 }
 
-void AVForm::open(const QString& devName, const lib::video::VideoMode& mode) {
+void AVForm::open(const lib::video::VideoMode& mode) {
+    // qDebug() << __func__ << qstring(mode.toString());
+
     QRect rect = mode.toRect();
     videoSettings->setCamVideoRes(rect);
     videoSettings->setCamVideoFPS(static_cast<float>(mode.FPS));
+
     camera->setup(mode);
     camera->openDevice();
+    if(camVideoSurface)
+        camVideoSurface->setSource(camera.get());
 }
 
 void AVForm::trackNewScreenGeometry(QScreen* qScreen) {
@@ -187,7 +181,7 @@ void AVForm::onProfileChanged(Profile* profile) {}
 void AVForm::rescanDevices() {
     getAudioInDevices();
     getAudioOutDevices();
-    getVideoDevices();
+    initVideoDevices();
 }
 
 void AVForm::setVolume(float value) {
@@ -205,7 +199,7 @@ void AVForm::on_videoModescomboBox_currentIndexChanged(int index) {
     if (lib::video::CameraDevice::isScreen(devName) && mode == lib::video::VideoMode()) {
         if (videoSettings->getScreenGrabbed()) {
             lib::video::VideoMode mode(videoSettings->getScreenRegion());
-            open(devName, mode);
+            open(mode);
             return;
         }
 
@@ -221,7 +215,7 @@ void AVForm::on_videoModescomboBox_currentIndexChanged(int index) {
             videoSettings->setScreenRegion(mode.toRect());
             videoSettings->setScreenGrabbed(true);
 
-            open(devName, mode);
+            open(mode);
         };
 
         // note: grabber is self-managed and will destroy itself when done
@@ -234,7 +228,7 @@ void AVForm::on_videoModescomboBox_currentIndexChanged(int index) {
     }
 
     videoSettings->setScreenGrabbed(false);
-    open(devName, mode);
+    open(mode);
 }
 
 void AVForm::selectBestModes(QVector<lib::video::VideoMode>& allVideoModes) {
@@ -314,18 +308,20 @@ void AVForm::selectBestModes(QVector<lib::video::VideoMode>& allVideoModes) {
     allVideoModes = newVideoModes;
 }
 
-void AVForm::fillCameraModesComboBox() {
-    qDebug() << "selected Modes";
+void AVForm::fillCameraModesComboBox( const QVector<lib::video::VideoMode> &modes) {
+    qDebug() << __func__ ;
+
+    videoModes = modes;
+
     bool previouslyBlocked = videoModescomboBox->blockSignals(true);
     videoModescomboBox->clear();
 
     for (int i = 0; i < videoModes.size(); ++i) {
-        lib::video::VideoMode mode = videoModes[i];
-        qDebug() << mode.toString().c_str();
-
+        auto mode = videoModes[i];
+        // qDebug() << mode.toString().c_str();
         QString str;
         if (mode.height && mode.width) {
-            str += QString("%1x%2p").arg(mode.width).arg(mode.height);
+            str += QString("%1x%2 FPS:%3").arg(mode.width).arg(mode.height).arg(mode.FPS);
         } else {
             str += tr("Default resolution");
         }
@@ -338,22 +334,10 @@ void AVForm::fillCameraModesComboBox() {
     videoModescomboBox->blockSignals(previouslyBlocked);
 }
 
-int AVForm::searchPreferredIndex() {
-    QRect prefRes = videoSettings->getCamVideoRes();
-    float prefFPS = videoSettings->getCamVideoFPS();
 
-    for (int i = 0; i < videoModes.size(); ++i) {
-        lib::video::VideoMode mode = videoModes[i];
-        if (mode.width == prefRes.width() && mode.height == prefRes.height() &&
-            (qAbs(mode.FPS - prefFPS) < 0.0001f)) {
-            return i;
-        }
-    }
+void AVForm::fillScreenModesComboBox(const QVector<lib::video::VideoMode> &modes) {
+    videoModes = modes;
 
-    return -1;
-}
-
-void AVForm::fillScreenModesComboBox() {
     bool previouslyBlocked = videoModescomboBox->blockSignals(true);
     videoModescomboBox->clear();
 
@@ -376,6 +360,22 @@ void AVForm::fillScreenModesComboBox() {
     videoModescomboBox->blockSignals(previouslyBlocked);
 }
 
+int AVForm::searchPreferredIndex() {
+    QRect prefRes = videoSettings->getCamVideoRes();
+    float prefFPS = videoSettings->getCamVideoFPS();
+
+    for (int i = 0; i < videoModes.size(); ++i) {
+        lib::video::VideoMode mode = videoModes[i];
+        if (mode.width == prefRes.width() && mode.height == prefRes.height() &&
+            (qAbs(mode.FPS - prefFPS) < 0.0001f)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
 void AVForm::fillAudioQualityComboBox() {
     const bool previouslyBlocked = audioQualityComboBox->blockSignals(true);
 
@@ -391,29 +391,33 @@ void AVForm::fillAudioQualityComboBox() {
     audioQualityComboBox->blockSignals(previouslyBlocked);
 }
 
-void AVForm::updateVideoModes(int curIndex) {
+lib::video::CameraSource* AVForm::initVideoModes(int curIndex) {
     if (curIndex < 0 || curIndex >= videoDeviceList.size()) {
         qWarning() << "Invalid index:" << curIndex;
-        return;
+        return nullptr;
     }
 
     auto dev = videoDeviceList[curIndex];
-    auto devName = dev.name;
-
-    QVector<lib::video::VideoMode> allVideoModes = camera->getVideoModes();
-
-    qDebug("available Modes:");
-    bool isScreen = lib::video::CameraDevice::isScreen(devName);
-    if (isScreen) {
-        // Add extra video mode to region selection
-        allVideoModes.push_back(lib::video::VideoMode());
-        videoModes = allVideoModes;
-        fillScreenModesComboBox();
-    } else {
-        selectBestModes(allVideoModes);
-        videoModes = allVideoModes;
-        fillCameraModesComboBox();
+    // auto devName = dev.name;
+    if(!camera){
+        camera = lib::video::CameraSource::CreateInstance(dev);
     }
+    auto modes = camera->getVideoModes();
+
+    // bool isScreen = lib::video::CameraDevice::isScreen(devName);
+    // if (isScreen) {
+        // Add extra video mode to region selection
+        // allVideoModes.push_back(lib::video::VideoMode());
+        // videoModes = allVideoModes;
+        // fillScreenModesComboBox(modes);
+    // } else {
+        // selectBestModes(allVideoModes);
+        // videoModes = allVideoModes;
+        fillCameraModesComboBox(modes);
+    // }
+
+
+    // QVector<lib::video::VideoMode> allVideoModes = camera->getVideoModes();
 
     int preferedIndex = searchPreferredIndex();
     if (preferedIndex != -1) {
@@ -421,18 +425,18 @@ void AVForm::updateVideoModes(int curIndex) {
         videoModescomboBox->blockSignals(true);
         videoModescomboBox->setCurrentIndex(preferedIndex);
         videoModescomboBox->blockSignals(false);
-        open(devName, videoModes[preferedIndex]);
-        return;
+        open(videoModes[preferedIndex]);
+        return camera.get();
     }
 
-    if (isScreen) {
-        QRect rect = videoSettings->getScreenRegion();
-        lib::video::VideoMode mode(rect);
-        videoSettings->setScreenGrabbed(true);
-        videoModescomboBox->setCurrentIndex(videoModes.size() - 1);
-        open(devName, mode);
-        return;
-    }
+    // if (isScreen) {
+    //     QRect rect = videoSettings->getScreenRegion();
+    //     lib::video::VideoMode mode(rect);
+    //     videoSettings->setScreenGrabbed(true);
+    //     videoModescomboBox->setCurrentIndex(videoModes.size() - 1);
+    //     open(mode);
+    //     return;
+    // }
 
     // If the user hasn't set a preferred resolution yet,
     // we'll pick the resolution in the middle of the list,
@@ -441,53 +445,61 @@ void AVForm::updateVideoModes(int curIndex) {
     // but if we picked the largest, FPS would be bad and thus quality bad too.
     int mid = (videoModes.size() - 1) / 2;
     videoModescomboBox->setCurrentIndex(mid);
+
+    return camera.get();
 }
 
 void AVForm::on_videoDevCombobox_currentIndexChanged(int index) {
     assert(0 <= index && index < videoDeviceList.size());
 
-    videoSettings->setScreenGrabbed(false);
+
     auto dev = videoDeviceList[index];
     videoSettings->setVideoDev(dev.name);
-    bool previouslyBlocked = videoModescomboBox->blockSignals(true);
-    updateVideoModes(index);
-    videoModescomboBox->blockSignals(previouslyBlocked);
+
+    videoSettings->setScreenGrabbed(false);
+
+    // bool previouslyBlocked = videoModescomboBox->blockSignals(true);
+    // updateVideoModes(index);
+    // videoModescomboBox->blockSignals(previouslyBlocked);
 
     if (videoSettings->getScreenGrabbed()) {
         return;
     }
 
-    int modeIndex = videoModescomboBox->currentIndex();
-    lib::video::VideoMode mode = lib::video::VideoMode();
-    if (0 <= modeIndex && modeIndex < videoModes.size()) {
-        mode = videoModes[modeIndex];
-    }
 
-    camera->setupDevice(dev.name, mode);
-    // if (dev == "none") {
-        // TODO: Use injected `coreAv` currently injected `nullptr`
-        //        Core::getInstance()->getAv()->sendNoVideo();
-    // }
+    camera = lib::video::CameraSource::CreateInstance(videoDeviceList.at(index));
+    videoModes = camera->getVideoModes();
+    fillCameraModesComboBox( camera->getVideoModes());
+
+    int modeIndex = videoModescomboBox->currentIndex();
+    if (0 <= modeIndex && modeIndex < videoModes.size()) {
+        auto mode = videoModes[modeIndex];
+        open(mode);
+    }
 }
 
 void AVForm::on_audioQualityComboBox_currentIndexChanged(int index) {
     audioSettings->setAudioBitrate(audioQualityComboBox->currentData().toInt());
 }
 
-void AVForm::getVideoDevices() {
+lib::video::VideoSource* AVForm::initVideoDevices() {
+    qDebug() << __func__;
+
     QString settingsInDev = videoSettings->getVideoDev();
-    int videoDevIndex = 0;
+
     videoDeviceList = lib::video::CameraDevice::getDeviceList();
     // prevent currentIndexChanged to be fired while adding items
     videoDevCombobox->blockSignals(true);
     videoDevCombobox->clear();
+
+    int videoDevIndex = 0;
     for (auto& device : videoDeviceList) {
         videoDevCombobox->addItem(device.name);
         if (device.url == settingsInDev) videoDevIndex = videoDevCombobox->count() - 1;
     }
     videoDevCombobox->setCurrentIndex(videoDevIndex);
     videoDevCombobox->blockSignals(false);
-    updateVideoModes(videoDevIndex);
+    return initVideoModes(videoDevIndex);
 }
 
 int AVForm::getModeSize(lib::video::VideoMode mode) {
@@ -618,11 +630,11 @@ void AVForm::on_audioThresholdSlider_valueChanged(int sliderSteps) {
     audio->setInputThreshold(normThreshold);
 }
 
-VideoSurface* AVForm::createVideoSurface() {
+VideoSurface* AVForm::createVideoSurface(const lib::video::VideoSource* const source) {
     camVideoSurface = std::make_unique<VideoSurface>(QPixmap());
     camVideoSurface->setObjectName(QStringLiteral("CamVideoSurface"));
     camVideoSurface->setMinimumSize(QSize(160, 120));
-    camVideoSurface->setSource(camera.get());
+    camVideoSurface->setSource(source);
     return camVideoSurface.get();
 }
 

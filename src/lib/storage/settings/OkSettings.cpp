@@ -61,6 +61,8 @@ OkSettings::OkSettings(QObject* parent)
     connect(this, &OkSettings::timestampFormatChanged, this, &OkSettings::saveGlobal);
     connect(this, &OkSettings::dateFormatChanged, this, &OkSettings::saveGlobal);
     connect(this, &OkSettings::outVolumeChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::camVideoResChanged, this, &OkSettings::saveGlobal);
+    connect(this, &OkSettings::camVideoFPSChanged, this, &OkSettings::saveGlobal);
 
     path = getGlobalSettingsFile();
     qDebug() << "Settings file at:" << path;

@@ -33,16 +33,20 @@ enum class VideoType {
 };
 
 struct VideoMode {
-    int width;
-    int height;
-    int x;
-    int y;
+    int width = 0;
+    int height = 0;
+    int x = 0;
+    int y = 0;
     float FPS = -1.0f;
     uint32_t pixel_format = 0;
 
     VideoMode(int width = 0, int height = 0, int x = 0, int y = 0, float FPS = -1.0f);
 
     explicit VideoMode(QRect rect);
+
+    inline bool isValid() const {
+        return width > 0 && height > 0;
+    }
 
     QRect toRect() const;
 
@@ -51,7 +55,7 @@ struct VideoMode {
     uint32_t norm(const VideoMode& other) const;
     uint32_t tolerance() const;
 
-    std::string toString();
+    QString toString() const;
 };
 
 
