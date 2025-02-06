@@ -61,13 +61,13 @@ CameraDevice::CameraDevice(const VideoDevice &dev, FrameHandler* h)
         , handler(h)
         , run(false)
 {
-    qDebug() << __func__;
+    qDebug() << __func__ << "Created.";
     avdevice_register_all();
 }
 
 CameraDevice::~CameraDevice()
 {
-    qDebug() << __func__;
+    qDebug() << __func__ << "Destroyed.";
 }
 
 

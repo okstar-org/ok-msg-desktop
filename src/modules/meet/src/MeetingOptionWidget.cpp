@@ -34,9 +34,17 @@
 
 namespace module::meet {
 
+enum class CameraStatus{
+    None,
+    Starting,
+    Started,
+    Stoping
+};
+
 class CameraVideoOutputWidget : public QWidget {
 public:
-    explicit CameraVideoOutputWidget(QWidget* parent) : QWidget(parent) {}
+    explicit CameraVideoOutputWidget(QWidget* parent) :
+            QWidget(parent) {}
 
     void render(const lib::video::VideoDevice& device);
     void stopRender();
@@ -48,6 +56,7 @@ private:
     std::unique_ptr<lib::video::CameraSource> _camera;
     std::shared_ptr<lib::video::OVideoFrame> lastFrame;
     QVector<lib::video::VideoMode> modes;
+    std::mutex mutex;
 };
 
 MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
@@ -118,7 +127,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addLayout(videoOutLayout, 1);
     mainLayout->addLayout(footerLayout);
 
-    // 初始化设备控件
+            // 初始化设备控件
     audioMenu = new QMenu(this);
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
@@ -163,7 +172,7 @@ void MeetingOptionWidget::hideEvent(QHideEvent* e) {
 void MeetingOptionWidget::initDeviceInfo() {
     QMutexLocker locker(&mutex);
 
-    // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
+            // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
     auto oa = std::make_unique<lib::audio::OpenAL>();
     auto alist = oa->inDeviceNames();
@@ -201,7 +210,6 @@ void MeetingOptionWidget::initDeviceInfo() {
         vGroup->addAction(act);
     }
 
-    // todo: 应该存在什么缓存机制，保存用户选择的视频，初始化选择
     if (!audioMenu->isEmpty()) {
         audioMenu->actions().first()->setChecked(true);
     }
@@ -245,12 +253,18 @@ void MeetingOptionWidget::audioSelected(QAction* action) {
 
 void MeetingOptionWidget::videoSelected(QAction* action) {
     QMutexLocker locker(&mutex);
+
     if (action->isChecked()) {
+        auto newSelectedVideo = action->text();
+        if(selectedVideo == newSelectedVideo){
+            return;
+        }
+
         if (!selectedVideo.isEmpty()) {
             // close previoues checked video
             doCloseVideo();
         }
-        selectedVideo = action->text();
+        selectedVideo = newSelectedVideo;
     }
 
     if (ctrlState.enableCam) {
@@ -292,16 +306,14 @@ void MeetingOptionWidget::doCloseVideo() {
 }
 
 void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
-    // lastFrame.reset();
+    qDebug() << __func__;
 
-    // if(_camera){
-    //     _camera.reset();
-    // }
-
+    lastFrame.reset();
     _camera = lib::video::CameraSource::CreateInstance(device);
 
     connect(_camera.get(), &lib::video::CameraSource::frameAvailable, this, [this](auto frame) {
-        qDebug() << "received frame:" << frame->sourceID;
+        // qDebug() << "received frame:" << frame->sourceID;
+        // std::lock_guard locker(mutex);
         lastFrame = std::move(frame);
         update();
     });
@@ -309,50 +321,38 @@ void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {
     connect(_camera.get(), &lib::video::CameraSource::sourceStopped, this, [&]() {
         qDebug() << "stopped";
         // Avoid dirty data affecting the next frame rendering
-        //  lastFrame.reset();
-        // destroy camera
-        //  _camera.reset();
-        update();
+        lastFrame.reset();
     });
 
-    // todo: 既然是单例，怎么保证多个订阅方选不同设备
-    // lib::video::VideoMode mode{200, 400, 0, 0, 30};
-
     modes = _camera->getVideoModes();
-    for (auto& m : modes) {
-        qDebug() << "mode:" << m.toString().c_str();
-    }
     if (modes.empty()) {
         qWarning() << "The video device have not valid modes!";
         return;
     }
+    //Default to set first one video mode
     _camera->setup(modes.front());
     _camera->openDevice();
-    // _camera->subscribe();
 }
 
 void CameraVideoOutputWidget::stopRender() {
-    if (_camera) {
-        disconnect(_camera.get());
-        // todo: 既然上面获取_camera是单例，其他如果用到了，是否存在释放问题，这里暂不释放
-        // todo: 而且涉及到摄像头的分辨率等问题，看怎么设计的
-        _camera->unsubscribe();
-        _camera->closeDevice();
+    qDebug() << __func__;
 
-        // lastFrame.reset();
-        // update();
+    std::lock_guard locker(mutex);
+
+    if (!_camera) {
+        return;
     }
-}
 
-// 比较两个 QRect 对象的面积大小
-bool AreaGreat(const QRect& rect1, const QRect& rect2) {
-    int area1 = rect1.width() * rect1.height();
-    int area2 = rect2.width() * rect2.height();
-    return area1 > area2;
+    disconnect(_camera.get());
+    _camera->unsubscribe();
+    _camera->closeDevice();
+    _camera.reset();
+
 }
 
 void CameraVideoOutputWidget::paintEvent(QPaintEvent* event) {
-    qDebug() << __func__;
+    // qDebug() << __func__;
+    // std::lock_guard locker(mutex);
 
     QPainter painter(this);
     painter.fillRect(painter.viewport(), Qt::black);
@@ -365,7 +365,7 @@ void CameraVideoOutputWidget::paintEvent(QPaintEvent* event) {
         return;
     }
 
-    qDebug() << "render:" << lastFrame->sourceID;
+    // qDebug() << "render:" << lastFrame->sourceID << lastFrame->image;
     painter.drawImage(rect(), lastFrame->image);
 }
 

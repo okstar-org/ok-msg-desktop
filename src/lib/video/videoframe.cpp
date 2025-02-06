@@ -255,15 +255,7 @@ const AVFrame* VideoFrame::getAVFrame(QSize frameSize,
 }
 
 /**
- * @brief Converts this VideoFrame to a QImage that shares this VideoFrame's buffer.
- *
- * The VideoFrame will be scaled into the RGB24 pixel format along with the given
- * dimension.
- *
- * @param frameSize the given frame size of QImage to generate. Defaults to source frame size if
- * frameSize is invalid.
- * @return a QImage that represents this VideoFrame, sharing it's buffers or a null image if
- * this VideoFrame is no longer valid.
+ * covert QImage from AVFrame copy.
  */
 QImage VideoFrame::toQImage(QSize frameSize) {
     if (!frameSize.isValid()) {
@@ -273,13 +265,14 @@ QImage VideoFrame::toQImage(QSize frameSize) {
     // Converter function (constructs QImage out of AVFrame*)
     const std::function<QImage(AVFrame* const)> converter =
             [&](AVFrame* const frame) {
-                return QImage{
+                auto img = QImage{
                               *(frame->data),
                                 frameSize.width(),
                                 frameSize.height(),
                                 *(frame->linesize),
-                                QImage::Format_RGB888
-                                        };};
+                                QImage::Format_RGB888};
+                return img.copy();
+            };
 
     // Returns an empty constructed QImage in case of invalid generation
     return toGenericObject(frameSize, AV_PIX_FMT_RGB24, false, converter, QImage{});

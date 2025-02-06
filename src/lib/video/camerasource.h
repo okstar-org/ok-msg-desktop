@@ -53,19 +53,22 @@ protected:
 private:
 
     QRecursiveMutex mutex;
-    // QThread* deviceThread;
-    // QFuture<void> streamFuture;
 
     VideoDevice dev;
     VideoMode mode;
     CameraDevice* device;
 
+    //cpp 20 jthread
     std::unique_ptr<std::jthread> deviceThread;
+
+    // QThread* deviceThread;
+    // QFuture<void> streamFuture;
+
 
 signals:
     void deviceOpened();
     void openFailed();
-
+    void deviceClosed();
 
 public slots:
     void openDevice();
