@@ -51,7 +51,7 @@ CameraSource::CameraSource(const VideoDevice &dev)
 
 
 CameraSource::~CameraSource() {
-
+    qDebug() << __func__;
     closeDevice();
     delete device;
     qDebug() << __func__ << "Destroyed.";
@@ -169,15 +169,13 @@ void CameraSource::openDevice() {
  * @note
  */
 void CameraSource::closeDevice() {
+    qDebug() << "Closing device" << dev.name;
+    QMutexLocker locker{&mutex};
 
     if(!device->isOpened()){
         qWarning() << "Was closed!";
         return;
     }
-
-    QMutexLocker locker{&mutex};
-    qDebug() << "Closing device" << dev.name;
-
 
     //stop device
     if (device) {

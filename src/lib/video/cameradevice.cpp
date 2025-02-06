@@ -15,7 +15,8 @@
 #include <QDesktopWidget>
 #include <QScreen>
 #include <format>
-#include <semaphore>
+#include <thread>
+
 
 extern "C" {
 #include <libavdevice/avdevice.h>
@@ -49,8 +50,6 @@ extern "C" {
 namespace lib::video {
 
 
-std::binary_semaphore sem(1);
-
 /**
  * @class CameraDevice
  *
@@ -78,15 +77,15 @@ CameraDevice::~CameraDevice()
 
 void CameraDevice::stop()
 {
+    qDebug() << __func__;
     // QMutexLocker locker{&openDeviceLock};
-    // sem.acquire();
     run = false;
-    // sem.release();
+    qDebug() << __func__ << "is set" ;
 }
 
 bool CameraDevice::isOpened()
 {
-    QMutexLocker locker{&openDeviceLock};
+    // QMutexLocker locker{&openDeviceLock};
     return context;
 }
 
@@ -96,6 +95,8 @@ void CameraDevice::stream() {
     run = true;
 
     forever {
+        QMutexLocker locker{&openDeviceLock};
+
         // Exit if context is no longer valid
         if(!run){
             // qWarning() << __func__ << "was Stoped!";
@@ -103,12 +104,11 @@ void CameraDevice::stream() {
         }
 
         if(!isOpened()){
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             return;
         }
 
-        // sem.acquire();
         readFrame();
-        // sem.release();
     }
 
     qDebug() << __func__ << "was Finished!";
@@ -120,10 +120,9 @@ void CameraDevice::stream() {
 
 void CameraDevice::readFrame()
 {
-    QMutexLocker locker{&openDeviceLock};
-
     if (!context) {
         // qWarning() << __func__ << "Exited.";
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         return;
     }
 
@@ -132,7 +131,7 @@ void CameraDevice::readFrame()
         return;
     }
 
-            // Forward packets to the decoder and grab the decoded frame
+    // Forward packets to the decoder and grab the decoded frame
     bool isVideo = packet.stream_index == videoStreamIndex;
     bool readyToRecive = isVideo && !avcodec_send_packet(cctx, &packet);
 
