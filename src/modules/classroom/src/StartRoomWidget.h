@@ -25,7 +25,7 @@ class QLineEdit;
 
 namespace module::classroom {
 
-class MeetingOptionWidget;
+class OptionWidget;
 
 class StartRoomWidget : public lib::ui::OWidget {
     Q_OBJECT
@@ -40,7 +40,7 @@ public:
 private:
     Widget* widget;
     QLineEdit* meetingNameEdit;
-    MeetingOptionWidget* optionWidget;
+    OptionWidget* optionWidget;
 
     // 确定按钮
     QPushButton* confirmButton = nullptr;

@@ -22,7 +22,7 @@ class QLineEdit;
 
 namespace module::classroom {
 
-class MeetingOptionWidget;
+class OptionWidget;
 
 class JoinRoomWidget : public lib::ui::OWidget {
     Q_OBJECT
@@ -32,7 +32,7 @@ public:
     void focusInput();
 
 private:
-    MeetingOptionWidget* optionWidget = nullptr;
+    OptionWidget* optionWidget = nullptr;
     QLineEdit* meetingNameEdit = nullptr;
 
     // 确定按钮

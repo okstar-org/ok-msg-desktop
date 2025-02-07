@@ -32,11 +32,11 @@ namespace module::classroom {
 /**
  * 选项配置控件
  */
-class MeetingOptionWidget : public QWidget {
+class OptionWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit MeetingOptionWidget(QWidget* parent = nullptr);
-    ~MeetingOptionWidget();
+    explicit OptionWidget(QWidget* parent = nullptr);
+    ~OptionWidget();
 
     void addFooterButton(QPushButton* button);
 

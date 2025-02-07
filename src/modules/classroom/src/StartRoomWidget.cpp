@@ -8,7 +8,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include "MeetingOptionWidget.h"
+#include "OptionWidget.h"
 #include "base/shadowbackground.h"
 
 namespace module::classroom {
@@ -33,7 +33,7 @@ StartRoomWidget::StartRoomWidget(QWidget* parent) : OWidget(parent) {
     meetingNameEdit->setText("test");
     meetingNameEdit->setAlignment(Qt::AlignCenter);
     meetingNameEdit->setPlaceholderText(tr("Meeting Name"));
-    optionWidget = new MeetingOptionWidget(this);
+    optionWidget = new OptionWidget(this);
 
     confirmButton = createButton(tr("Start Meeting"), optionWidget, "confirm");
     connect(confirmButton, &QPushButton::clicked, [this]() {

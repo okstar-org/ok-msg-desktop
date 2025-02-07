@@ -10,7 +10,7 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "MeetingOptionWidget.h"
+#include "OptionWidget.h"
 #include "base/RoundedPixmapLabel.h"
 #include "base/images.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
@@ -25,7 +25,7 @@
 
 namespace module::classroom {
 
-MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
+OptionWidget::OptionWidget(QWidget* parent)
         : QWidget(parent), ctrlState{true, true, true} {
     auto profile = ok::Application::Instance()->getProfile();
 
@@ -90,20 +90,20 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent)
     //    &RoundedPixmapLabel::setImage);
 }
 
-MeetingOptionWidget::~MeetingOptionWidget() {}
+OptionWidget::~OptionWidget() {}
 
-void MeetingOptionWidget::addFooterButton(QPushButton* button) {
+void OptionWidget::addFooterButton(QPushButton* button) {
     buttonLayout->addWidget(button);
 }
 
-void MeetingOptionWidget::retranslateUi() {
+void OptionWidget::retranslateUi() {
     micSpeakSetting->setLabel(tr("Micphone"));
     cameraSetting->setLabel(tr("Camera"));
 }
 
-void MeetingOptionWidget::showEvent(QShowEvent* event) {}
+void OptionWidget::showEvent(QShowEvent* event) {}
 
-void MeetingOptionWidget::updateAudioVideoIcon(bool audio, bool video, bool speaker) {
+void OptionWidget::updateAudioVideoIcon(bool audio, bool video, bool speaker) {
     if (audio) {
         if (ctrlState.enableMic) {
             micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
