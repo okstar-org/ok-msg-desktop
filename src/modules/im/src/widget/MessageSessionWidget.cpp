@@ -44,6 +44,7 @@
 #include <QMimeData>
 #include <QScrollBar>
 #include <QStyleOption>
+#include <application.h>
 
 #include <cassert>
 
@@ -53,6 +54,7 @@
 #include "src/core/coreav.h"
 #include "src/nexus.h"
 #include "src/widget/chatformheader.h"
+
 
 namespace module::im {
 
@@ -471,8 +473,7 @@ void MessageSessionWidget::setAvStart(bool video) {
         header->removeCallConfirm();
     }
 
-    auto w = Nexus::getInstance();
-    w->onStopNotification();
+    ok::Application::Instance()->onStopNotification();
 }
 
 void MessageSessionWidget::setAvPeerConnectedState(lib::ortc::PeerConnectionState state) {
@@ -508,8 +509,7 @@ void MessageSessionWidget::setAvEnd(bool error) {
     // 关计时器
     sendWorker->destroyCallDuration(error);
 
-    auto nexus = Nexus::getInstance();
-    nexus->onStopNotification();
+    ok::Application::Instance()->onStopNotification();
 }
 
 void MessageSessionWidget::setGroup(const Group* g) {
@@ -553,8 +553,7 @@ void MessageSessionWidget::doAcceptCall(const PeerId& p, bool video) {
     qDebug() << __func__ << p.toString();
 
     // 关闭声音
-    auto w = Nexus::getInstance();
-    w->onStopNotification();
+    ok::Application::Instance()->onStopNotification();
 
     // 关闭确认窗
     auto header = sendWorker->getHeader();
@@ -572,8 +571,7 @@ void MessageSessionWidget::doRejectCall(const PeerId& p) {
     header->removeCallConfirm();
 
     // 关闭声音
-    auto nexus = Nexus::getInstance();
-    nexus->onStopNotification();
+    ok::Application::Instance()->onStopNotification();
 
     // 发送拒绝应答
     CoreAV* coreav = CoreAV::getInstance();

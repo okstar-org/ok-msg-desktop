@@ -32,6 +32,7 @@
 #include "lib/plugin/pluginmanager.h"
 #include "lib/storage/StorageManager.h"
 #include "lib/storage/settings/OkSettings.h"
+#include "lib/audio/audio.h"
 
 namespace ok {
 
@@ -117,6 +118,16 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv) {
     // 初始化IPC
     ipc = new IPC(0, this);
     _bus = std::make_unique<Bus>();
+
+    //获取设置
+    auto& s = lib::settings::OkSettings::getInstance();
+    //选择的语言
+    QString locale = s.getTranslation();
+    qDebug() << "locale" << locale;
+
+    // 初始化音频
+    audioControl = std::unique_ptr<lib::audio::IAudioControl>(lib::audio::Audio::makeAudio(s));
+
 
     // 样式
     setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
@@ -237,5 +248,39 @@ void Application::on_exit() {
     // s.saveGlobal();
 }
 
+void Application::playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop) {
+    auto settings = &lib::settings::OkSettings::getInstance();
+    if (!settings->getAudioOutDevEnabled()) {
+        // don't try to play sounds if audio is disabled
+        return;
+    }
+
+    if (audioNotification == nullptr) {
+        audioControl->setOutputVolumeStep(settings->getOutVolume());
+        audioNotification = std::unique_ptr<lib::audio::IAudioSink>(audioControl->makeSink());
+        if (audioNotification == nullptr) {
+            qDebug() << "Failed to allocate AudioSink";
+            return;
+        }
+    }
+
+    audioNotification->connectTo_finishedPlaying(this, [this]() { cleanupNotificationSound(); });
+    audioNotification->playMono16Sound(sound);
+
+    if (loop) {
+        audioNotification->startLoop();
+    }
+}
+
+void Application::cleanupNotificationSound() {
+    audioNotification.reset();
+}
+
+/**
+ * @brief Widget::onStopNotification Stop the notification sound.
+ */
+void Application::onStopNotification() {
+    audioNotification.reset();
+}
 
 }  // namespace ok

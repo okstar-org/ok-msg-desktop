@@ -58,7 +58,7 @@ OpenAL::OpenAL() : audioThread{new QThread} {
     alGetError();
     alcGetError(nullptr);
 
-    audioThread->setObjectName("ok-audio");
+    audioThread->setObjectName("AudioThread");
 
     QObject::connect(audioThread, &QThread::finished, &voiceTimer, &QTimer::stop);
     QObject::connect(audioThread, &QThread::finished, &captureTimer, &QTimer::stop);
@@ -206,6 +206,8 @@ qreal OpenAL::maxInputThreshold() const {
 }
 
 void OpenAL::reinitInput(const QString& inDevDesc) {
+    qDebug() << __func__ << inDevDesc;
+
     QMutexLocker locker(&audioLock);
 
     const auto bakSources = sources;

@@ -80,7 +80,10 @@ public:
     void playMono16Sound(AlSink& sink, const IAudioSink::Sound& sound);
     void stopActive();
 
-    void playAudioBuffer(uint sourceId, const int16_t* data, int samples, unsigned channels,
+    void playAudioBuffer(uint sourceId,
+                         const int16_t* data,
+                         int samples,
+                         unsigned channels,
                          int sampleRate);
 signals:
     void startActive(qreal msec);

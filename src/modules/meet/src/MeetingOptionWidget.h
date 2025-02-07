@@ -21,6 +21,8 @@
 #include "base/compatiblerecursivemutex.h"
 #include "lib/video/videomode.h"
 #include "lib/ortc/ok_rtc.h"
+#include "lib/audio/iaudiosource.h"
+#include "lib/audio/iaudiosink.h"
 
 class QPushButton;
 class QSlider;
@@ -31,6 +33,10 @@ class RoundedPixmapLabel;
 
 namespace lib::ui {
 class PopupMenuComboBox;
+}
+
+namespace lib::audio{
+class IAudioControl;
 }
 
 namespace lib::video {
@@ -67,6 +73,9 @@ public slots:
     void doOpenVideo();
     void doCloseVideo();
 
+    void doOpenAudio();
+    void doCloseAudio();
+
 protected:
     void showEvent(QShowEvent* e) override;
     void hideEvent(QHideEvent* e) override;
@@ -91,6 +100,11 @@ private:
     QMenu* audioMenu = nullptr;
     QActionGroup* aGroup = nullptr;
     QString selectedAudio;
+
+    // audio
+    lib::audio::IAudioControl* audioControl;
+    std::unique_ptr<lib::audio::IAudioSource> audioSource;
+    std::unique_ptr<lib::audio::IAudioSink> audioSink;
 
     // 视频设备
     QMenu* videoMenu = nullptr;

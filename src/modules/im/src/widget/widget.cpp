@@ -713,7 +713,7 @@ bool Widget::newMessageAlert(QWidget* currentWindow, bool isActive, bool sound, 
             bool notifySound = settings->getNotifySound();
 
             if (notifySound && sound && (!isBusy || busySound)) {
-                Nexus::getInstance()->playNotificationSound(
+                ok::Application::Instance()->playNotificationSound(
                         lib::audio::IAudioSink::Sound::NewMessage);
             }
         }

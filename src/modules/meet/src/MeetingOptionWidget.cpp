@@ -75,6 +75,11 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     connect(micSpeakSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableMic = !ctrlState.enableMic;
         updateAudioVideoIcon(true, false, false);
+        if(ctrlState.enableMic){
+            doOpenAudio();
+        }else{
+            doCloseAudio();
+        }
     });
 
     cameraSetting = new lib::ui::PopupMenuComboBox(this);
@@ -127,7 +132,7 @@ MeetingOptionWidget::MeetingOptionWidget(QWidget* parent) : QWidget(parent) {
     mainLayout->addLayout(videoOutLayout, 1);
     mainLayout->addLayout(footerLayout);
 
-            // 初始化设备控件
+    // 初始化设备控件
     audioMenu = new QMenu(this);
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
@@ -159,11 +164,12 @@ void MeetingOptionWidget::retranslateUi() {
     cameraSetting->setLabel(tr("Camera"));
 }
 
-void MeetingOptionWidget::showEvent(QShowEvent* event) {}
+void MeetingOptionWidget::showEvent(QShowEvent* event) {
+
+}
 
 void MeetingOptionWidget::hideEvent(QHideEvent* e) {
-    updateAudioVideoIcon(true, true, true);
-    // doCloseVideo();
+
 }
 
 /**
@@ -172,10 +178,11 @@ void MeetingOptionWidget::hideEvent(QHideEvent* e) {
 void MeetingOptionWidget::initDeviceInfo() {
     QMutexLocker locker(&mutex);
 
-            // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
+    // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
-    auto oa = std::make_unique<lib::audio::OpenAL>();
-    auto alist = oa->inDeviceNames();
+
+    auto alist = ok::Application::Instance()->getAudioControl()->inDeviceNames();
+
     QSet<QString> item_set;
     for (auto& a : alist) {
         qDebug() << "audio device:" << a;
@@ -211,10 +218,14 @@ void MeetingOptionWidget::initDeviceInfo() {
     }
 
     if (!audioMenu->isEmpty()) {
-        audioMenu->actions().first()->setChecked(true);
+        auto f = audioMenu->actions().first();
+        f->setChecked(true);
+        selectedAudio = f->text();
     }
     if (!videoMenu->isEmpty()) {
-        videoMenu->actions().first()->setChecked(true);
+        auto f = videoMenu->actions().first();
+        f->setChecked(true);
+        selectedVideo = f->text();
     }
 }
 
@@ -248,6 +259,12 @@ void MeetingOptionWidget::audioSelected(QAction* action) {
 
     if (action->isChecked()) {
         selectedAudio = action->text();
+    }
+
+    if(ctrlState.enableMic){
+        doOpenAudio();
+    }else{
+        doCloseAudio();
     }
 }
 
@@ -303,6 +320,34 @@ void MeetingOptionWidget::doCloseVideo() {
     videoOutLayout->setCurrentWidget(avatarLabel);
     cameraOutput->stopRender();
     selectedVideo.clear();
+}
+
+void MeetingOptionWidget::doOpenAudio()
+{
+    QMutexLocker locker(&mutex);
+
+    auto ac = ok::Application::Instance()->getAudioControl();
+    if(!selectedAudio.isEmpty()){
+        ac->reinitInput(selectedAudio);
+    }
+
+    audioSink = ac->makeSink();
+
+    audioSource = ac->makeSource();
+    connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable, this,
+            [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
+                // qDebug() << "audio frame:" << pcm << samples << chans << rate;
+                QMutexLocker locker(&mutex);
+                if(audioSink)
+                audioSink->playAudioBuffer(pcm, samples, chans, rate);
+            });
+}
+
+void MeetingOptionWidget::doCloseAudio()
+{
+    QMutexLocker locker(&mutex);
+    audioSink.reset();
+    audioSource.reset();
 }
 
 void CameraVideoOutputWidget::render(const lib::video::VideoDevice& device) {

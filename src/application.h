@@ -20,6 +20,8 @@
 #include "UI/main/src/MainWindow.h"
 #include "lib/session/profile.h"
 #include "lib/storage/StorageManager.h"
+#include "lib/audio/iaudiocontrol.h"
+#include "lib/audio/iaudiosink.h"
 
 /**
  * @brief WindowSize 主窗口大小(黄金分割比例 1.618)
@@ -67,6 +69,15 @@ public:
         return m_loginWindow.get();
     }
 
+    // sound
+    inline lib::audio::IAudioControl* getAudioControl()const{
+        return audioControl.get();
+    }
+
+    void playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop = false);
+    void onStopNotification();
+    void cleanupNotificationSound();
+
 private:
     lib::storage::StorageManager* storageManager;
     std::shared_ptr<lib::session::AuthSession> session;
@@ -77,6 +88,9 @@ private:
     std::unique_ptr<UI::LoginWindow> m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
 
+    //Audio controller
+    std::unique_ptr<lib::audio::IAudioControl> audioControl;
+    std::unique_ptr<lib::audio::IAudioSink> audioNotification;
 
     /**
      * bootstrap: 打开程序首次启动为true，登出启动为false

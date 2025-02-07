@@ -16,8 +16,7 @@
 #include <QObject>
 #include <QPointer>
 #include "base/resources.h"
-#include "lib/audio/iaudiocontrol.h"
-#include "lib/audio/iaudiosink.h"
+
 #include "modules/module.h"
 #include "src/base/compatiblerecursivemutex.h"
 
@@ -28,8 +27,19 @@ OK_RESOURCE_LOADER(emojione);
 OK_RESOURCE_LOADER(smileys);
 OK_RESOURCE_LOADER(IM);
 
+class QMenuBar;
+class QMenu;
+class QAction;
+class QWindow;
+class QActionGroup;
+class QSignalMapper;
+
 namespace lib::session {
 class Profile;
+}
+
+namespace lib::audio{
+class IAudioControl;
 }
 
 namespace module::im {
@@ -38,14 +48,7 @@ class Widget;
 class Settings;
 class Core;
 
-#ifdef Q_OS_MAC
-class QMenuBar;
-class QMenu;
-class QAction;
-class QWindow;
-class QActionGroup;
-class QSignalMapper;
-#endif
+
 
 /**
  * 聊天模块关系组织者，模块实现。
@@ -67,15 +70,14 @@ public:
     void init(lib::session::Profile*) override;
 
     void showMainGUI();
-    [[nodiscard]] lib::audio::IAudioControl* audio() const {
-        return audioControl.get();
-    }
 
-    void playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop = false);
+    [[nodiscard]] lib::audio::IAudioControl* audio() const ;
+
+
     void incomingNotification(const QString& friendId);
-    void onStopNotification();
     void outgoingNotification();
-    void cleanupNotificationSound();
+
+
 
 protected:
     void start(std::shared_ptr<lib::session::AuthSession> session) override;
@@ -98,8 +100,7 @@ private:
     // 某些异常情况下widget会被提前释放
     QPointer<Widget> m_widget;
 
-    std::unique_ptr<lib::audio::IAudioControl> audioControl;
-    std::unique_ptr<lib::audio::IAudioSink> audioNotification;
+
 
     CompatibleRecursiveMutex mutex;
 

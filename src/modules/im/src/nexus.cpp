@@ -137,8 +137,6 @@ void Nexus::start(std::shared_ptr<lib::session::AuthSession> session) {
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
 
-    audioControl = std::unique_ptr<lib::audio::IAudioControl>(lib::audio::Audio::makeAudio(s));
-
     settings::Translator::translate(OK_IM_MODULE, locale);
 
     qApp->setQuitOnLastWindowClosed(false);
@@ -221,6 +219,11 @@ void Nexus::showMainGUI() {
     profile->start();
 }
 
+lib::audio::IAudioControl *Nexus::audio() const
+{
+    return ok::Application::Instance()->getAudioControl();
+}
+
 Module* Nexus::Create() {
     m_self = new Nexus();
     return m_self;
@@ -270,33 +273,6 @@ Widget* Nexus::getDesktopGUI() {
     return dynamic_cast<Widget*>(m_self->widget());
 }
 
-void Nexus::playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop) {
-    auto settings = &lib::settings::OkSettings::getInstance();
-    if (!settings->getAudioOutDevEnabled()) {
-        // don't try to play sounds if audio is disabled
-        return;
-    }
-
-    if (audioNotification == nullptr) {
-        audioControl->setOutputVolumeStep(settings->getOutVolume());
-        audioNotification = std::unique_ptr<lib::audio::IAudioSink>(audioControl->makeSink());
-        if (audioNotification == nullptr) {
-            qDebug() << "Failed to allocate AudioSink";
-            return;
-        }
-    }
-
-    audioNotification->connectTo_finishedPlaying(this, [this]() { cleanupNotificationSound(); });
-    audioNotification->playMono16Sound(sound);
-
-    if (loop) {
-        audioNotification->startLoop();
-    }
-}
-
-void Nexus::cleanupNotificationSound() {
-    audioNotification.reset();
-}
 
 void Nexus::incomingNotification(const QString& friendnumber) {
     qDebug() << __func__ << friendnumber;
@@ -304,26 +280,20 @@ void Nexus::incomingNotification(const QString& friendnumber) {
     m_widget->newFriendMessageAlert(friendId, {}, false);
 
     // loop until call answered or rejected
-    playNotificationSound(lib::audio::IAudioSink::Sound::IncomingCall, true);
+    ok::Application::Instance()->playNotificationSound(lib::audio::IAudioSink::Sound::IncomingCall, true);
 }
 
 void Nexus::outgoingNotification() {
     // loop until call answered or rejected
-    playNotificationSound(lib::audio::IAudioSink::Sound::OutgoingCall, true);
+    ok::Application::Instance()->playNotificationSound(lib::audio::IAudioSink::Sound::OutgoingCall, true);
 }
 
-/**
- * @brief Widget::onStopNotification Stop the notification sound.
- */
-void Nexus::onStopNotification() {
-    audioNotification.reset();
-}
 
 QWidget* Nexus::widget() {
     return m_widget->getInstance();
 }
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MAC0
 void Nexus::retranslateUi() {
     viewMenu->menuAction()->setText(tr("View", "OS X Menu bar"));
     windowMenu->menuAction()->setText(tr("Window", "OS X Menu bar"));
