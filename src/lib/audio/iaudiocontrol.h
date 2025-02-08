@@ -109,6 +109,13 @@ public:
 
     virtual qreal maxInputGain() const = 0;
     virtual void setMaxInputGain(qreal dB) = 0;
+    /**
+     * @brief Get volume of input audio
+     * @param buffer
+     * @param samples
+     * @return range of 0 ~ 1
+     */
+    virtual float getInputVol(const int16_t* buffer, int samples) = 0;
 
     virtual qreal inputGain() const = 0;
     virtual void setInputGain(qreal dB) = 0;
@@ -136,7 +143,7 @@ protected:
     static constexpr uint32_t AUDIO_SAMPLE_RATE = 48000;
     static constexpr uint32_t AUDIO_FRAME_DURATION = 20;
     static constexpr uint32_t AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL =
-            AUDIO_FRAME_DURATION * AUDIO_SAMPLE_RATE / 1000;
+        AUDIO_FRAME_DURATION * AUDIO_SAMPLE_RATE / 1000;
     uint32_t AUDIO_FRAME_SAMPLE_COUNT_TOTAL = 0;
 };
 }  // namespace lib::audio

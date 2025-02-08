@@ -368,20 +368,27 @@ bool OpenAL::initInput(const QString& deviceName) {
 }
 
 bool OpenAL::initInput(const QString& deviceName, uint32_t channels) {
-    qDebug() << "Opening audio input" << deviceName;
+
+    qDebug() <<__func__<< "Opening audio input" << deviceName << "channels" << channels;
     assert(!alInDev);
 
     // TODO: Try to actually detect if our audio source is stereo
     this->channels = channels;
-    int stereoFlag = channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+
+
     const int bytesPerSample = 2;
-    const int safetyFactor = 2;  // internal OpenAL ring buffer. must be larger than our inputBuffer
-                                 // to avoid the ring from overwriting itself between captures.
+    const int safetyFactor = 2;
+
+    // internal OpenAL ring buffer. must be larger than our inputBuffer
+    // to avoid the ring from overwriting itself between captures.
     AUDIO_FRAME_SAMPLE_COUNT_TOTAL = AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL * channels;
     const ALCsizei ringBufSize = AUDIO_FRAME_SAMPLE_COUNT_TOTAL * bytesPerSample * safetyFactor;
 
     const QByteArray qDevName = deviceName.toUtf8();
-    const ALchar* tmpDevName = qDevName.isEmpty() ? nullptr : qDevName.constData();
+    const ALchar* tmpDevName = qDevName.isEmpty() || qDevName == "Default"
+                                       ? nullptr : qDevName.constData();
+
+    int stereoFlag = channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
     alInDev = alcCaptureOpenDevice(tmpDevName, AUDIO_SAMPLE_RATE, stereoFlag, ringBufSize);
 
     // Restart the capture if necessary
@@ -390,7 +397,7 @@ bool OpenAL::initInput(const QString& deviceName, uint32_t channels) {
         return false;
     }
 
-    inputBuffer = new int16_t[AUDIO_FRAME_SAMPLE_COUNT_TOTAL];
+    // inputBuffer = new int16_t[AUDIO_FRAME_SAMPLE_COUNT_TOTAL];
     //    setInputGain(Nexus::getProfile()->getSettings()->getAudioInGainDecibel());
     //    setInputThreshold(Nexus::getProfile()->getSettings()->getAudioThreshold());
 
@@ -554,7 +561,7 @@ void OpenAL::cleanupInput() {
         qWarning() << "Failed to close input";
     }
 
-    delete[] inputBuffer;
+    // delete[] inputBuffer;
 }
 
 /**
@@ -587,18 +594,19 @@ void OpenAL::cleanupOutput() {
  *
  * @return normalized volume between 0-1
  */
-float OpenAL::getVolume() {
-    const quint32 samples = AUDIO_FRAME_SAMPLE_COUNT_TOTAL;
+float OpenAL::getVolume(const int16_t* buffer, int samples) {
+    // const quint32 samples = AUDIO_FRAME_SAMPLE_COUNT_TOTAL;
     const float rootTwo = 1.414213562;  // sqrt(2), but sqrt is not constexpr
     // calculate volume as the root mean squared of amplitudes in the sample
+
     float sumOfSquares = 0;
     for (quint32 i = 0; i < samples; i++) {
-        float sample = static_cast<float>(inputBuffer[i]) / std::numeric_limits<int16_t>::max();
+        float sample = static_cast<float>(buffer[i]) / std::numeric_limits<int16_t>::max();
         sumOfSquares += std::pow(sample, 2);
     }
+
     const float rms = std::sqrt(sumOfSquares / samples);
-    // our calculated normalized volume could possibly be above 1 because our RMS
-    // assumes a sinusoidal wave
+    // our calculated normalized volume could possibly be above 1 because our RMS assumes a sinusoidal wave
     const float normalizedVolume = std::min(rms * rootTwo, 1.0f);
     return normalizedVolume;
 }
@@ -616,35 +624,44 @@ void OpenAL::stopActive() {
 void OpenAL::doInput() {
     ALint curSamples = 0;
     alcGetIntegerv(alInDev, ALC_CAPTURE_SAMPLES, sizeof(curSamples), &curSamples);
-    if (curSamples < static_cast<ALint>(AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL)) {
+    if (curSamples <=0 ) {
         return;
     }
+    // static_cast<ALint>(AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL);
 
-    captureSamples(alInDev, inputBuffer, AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL);
+    //capture samples to input buffer.
 
-    applyGain(inputBuffer, AUDIO_FRAME_SAMPLE_COUNT_TOTAL, gainFactor);
+    int bytesToAllocate = curSamples * channels * ( 16 / 8);
+    printf("Bytes to allocate:%d\n", bytesToAllocate);
 
-    float volume = getVolume();
-    if (volume >= inputThreshold) {
-        isActive = true;
-        emit startActive(voiceHold);
-    } else if (!isActive) {
-        volume = 0;
-    }
+    // ALCvoid *buffer = (ALCvoid *)malloc(bytesToAllocate);
+    int16_t buffer[bytesToAllocate];
+    captureSamples(alInDev, buffer, curSamples);
+
+    // applyGain(inputBuffer, AUDIO_FRAME_SAMPLE_COUNT_TOTAL, gainFactor);
+
+    // float volume = getVolume();
+    // if (volume >= inputThreshold) {
+        // isActive = true;
+        // emit startActive(voiceHold);
+    // } else if (!isActive) {
+        // volume = 0;
+    // }
+
+    // NOTE(sudden6): this loop probably doesn't scale too well with many sources
+    // for (auto source : sources) {
+        // emit source->volumeAvailable(volume);
+    // }
+    // if (!isActive) {
+        // return;
+    // }
 
     // NOTE(sudden6): this loop probably doesn't scale too well with many sources
     for (auto source : sources) {
-        emit source->volumeAvailable(volume);
-    }
-    if (!isActive) {
-        return;
+        emit source->frameAvailable(buffer, curSamples, channels, AUDIO_SAMPLE_RATE);
     }
 
-    // NOTE(sudden6): this loop probably doesn't scale too well with many sources
-    for (auto source : sources) {
-        emit source->frameAvailable(inputBuffer, AUDIO_FRAME_SAMPLE_COUNT_PER_CHANNEL, channels,
-                                    AUDIO_SAMPLE_RATE);
-    }
+    // free(buffer);
 }
 
 void OpenAL::doOutput() {
@@ -696,7 +713,7 @@ QStringList OpenAL::outDeviceNames() {
 }
 
 QStringList OpenAL::inDeviceNames() {
-    QStringList list;
+    QStringList list = {"Default"};
     const ALchar* pDeviceList = alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
     if (pDeviceList) {
         while (*pDeviceList) {
@@ -757,5 +774,10 @@ void OpenAL::setInputGain(qreal dB) {
 
 void OpenAL::setInputThreshold(qreal normalizedThreshold) {
     inputThreshold = normalizedThreshold;
+}
+
+float OpenAL::getInputVol(const int16_t *buffer, int samples)
+{
+    return getVolume(buffer, samples);
 }
 }  // namespace lib::audio

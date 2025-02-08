@@ -61,6 +61,9 @@ public:
     qreal getInputThreshold() const;
     void setInputThreshold(qreal normalizedThreshold);
 
+    float getInputVol(const int16_t* buffer, int samples) override;
+
+
     void reinitInput(const QString& inDevDesc);
     bool reinitOutput(const QString& outDevDesc);
 
@@ -114,7 +117,7 @@ private:
     void cleanupBuffers(uint sourceId);
     void cleanupSound();
 
-    float getVolume();
+    float getVolume(const int16_t *buffer, int samples);
 
 protected:
     QThread* audioThread;
@@ -147,7 +150,7 @@ protected:
     QTimer voiceTimer;
     const qreal minInThreshold = 0.0;
     const qreal maxInThreshold = 0.4;
-    int16_t* inputBuffer = nullptr;
+    // int16_t* inputBuffer = nullptr;
 };
 }  // namespace lib::audio
 #endif  // OPENAL_H

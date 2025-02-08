@@ -335,11 +335,14 @@ void MeetingOptionWidget::doOpenAudio()
 
     audioSource = ac->makeSource();
     connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable, this,
-            [this](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
-                // qDebug() << "audio frame:" << pcm << samples << chans << rate;
-                QMutexLocker locker(&mutex);
-                if(audioSink)
-                audioSink->playAudioBuffer(pcm, samples, chans, rate);
+            [ac](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
+                // 音频帧 pcm
+                qDebug() << "Input audio volume is: " << ac->getInputVol(pcm, samples);
+
+
+                // QMutexLocker locker(&mutex);
+                // if(audioSink)
+                // audioSink->playAudioBuffer(pcm, samples, chans, rate);
             });
 }
 
