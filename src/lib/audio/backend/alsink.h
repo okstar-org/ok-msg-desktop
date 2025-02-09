@@ -38,6 +38,8 @@ public:
     void playAudioBuffer(const int16_t* data, int samples, unsigned channels,
                          int sampleRate) const override;
     void playMono16Sound(const IAudioSink::Sound& sound) override;
+    void playAudio(const QString& audioPath) override;
+
     void startLoop() override;
     void stopLoop() override;
 

@@ -53,6 +53,11 @@ void AlSink::playMono16Sound(const IAudioSink::Sound& sound) {
     }
 }
 
+void AlSink::playAudio(const QString &audioPath)
+{
+    audio.playFile(audioPath);
+}
+
 void AlSink::startLoop() {
     QMutexLocker{&killLock};
 

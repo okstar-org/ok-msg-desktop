@@ -46,9 +46,12 @@ public:
     static IChatItem::Ptr createChatInfoMessage(const QString& rawMessage,
                                                 SystemMessageType type,
                                                 const QDateTime& date);
+
     static IChatItem::Ptr createFileTransferMessage(const ChatLogItem& item, ToxFile file,
                                                     bool isMe, const QDateTime& date);
+
     static IChatItem::Ptr createTypingNotification(const QFont& baseFont);
+
     static IChatItem::Ptr createBusyNotification(const QFont& baseFont);
 
 protected:

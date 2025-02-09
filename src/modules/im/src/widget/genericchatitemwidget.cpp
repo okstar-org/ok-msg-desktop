@@ -24,9 +24,12 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
+
 namespace module::im {
 
-GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid, QWidget* parent)
+GenericChatItemWidget::GenericChatItemWidget(ChatType type,
+                                             const ContactId& cid,
+                                             QWidget* parent)
         : QFrame(parent)
         , chatType(type)
         , statusPic{nullptr}
@@ -44,6 +47,7 @@ GenericChatItemWidget::GenericChatItemWidget(ChatType type, const ContactId& cid
     lastMessageLabel->setObjectName("lastMessageLabel");
     lastMessageLabel->setTextFormat(Qt::PlainText);
     lastMessageLabel->setText("");
+
     auto p = lastMessageLabel->palette();
     p.setColor(QPalette::WindowText,
                lib::settings::Style::getColor(lib::settings::Style::ColorPalette::GroundExtra));

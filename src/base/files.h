@@ -20,6 +20,7 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QTemporaryFile>
+#include <QVector>
 
 #include "basic_types.h"
 #include "uuid.h"
@@ -40,6 +41,15 @@ enum class FileContentType {
     PPTX,
     XLS,
     XLSX
+};
+
+static const QVector<QString> AudioFileExts = {
+    "wav", "flac", "ape",//无损
+    "wma",//无损、有损
+    "mp3","aac","ogg",
+    "m4a", //MPEG-4 Audio (音质较好，文件体积相对较小)
+    "amr",//Adaptive Multi-Rate 的缩写，是一种主要用于移动设备语音通信的音频格式， 能够在有限的带宽下提供清晰的语音质量，常用于手机录音和语音通话等场景。
+    "au"//
 };
 
 class Files {
@@ -107,6 +117,15 @@ public:
         }
 
         return false;
+    }
+
+    static QString getFileExt(const QString& filePath){
+        QFileInfo fileInfo(filePath);
+        return fileInfo.suffix();
+    }
+
+    static bool isAudio(const QString &filePath){
+        return 0 <= AudioFileExts.indexOf(getFileExt(filePath));
     }
 
     static bool writeTo(const QByteArray& byteArray_, const QString& path) {

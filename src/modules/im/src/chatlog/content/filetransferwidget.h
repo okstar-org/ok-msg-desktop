@@ -32,7 +32,7 @@ class FileTransferWidget : public QWidget {
 
 public:
     explicit FileTransferWidget(QWidget* parent, ToxFile file);
-    virtual ~FileTransferWidget();
+    ~FileTransferWidget() override;
     bool isActive() const;
     bool previewable();
     static QString getHumanReadableSize(qint64 size);
@@ -62,6 +62,7 @@ private slots:
     void onLeftButtonClicked();
     void onRightButtonClicked();
     void onPreviewButtonClicked();
+    void onPlayButtonClicked();
 
 private:
     static QPixmap scaleCropIntoSquare(const QPixmap& source, int targetSize);

@@ -91,9 +91,8 @@ IChatItem::Ptr ChatMessage::createFileTransferMessage(const ChatLogItem& item, T
     }
 
     auto ftw = new FileTransferWidget(nullptr, file);
-    ChatLineContent* fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
-    ChatMessageBox* msg =
-            new ChatMessageBox(avatar, item.getDisplayName(), fileContent, item.getId(), isMe);
+    auto fileContent = new ChatLineContentProxy(ftw, 320, 0.6f);
+    auto msg = new ChatMessageBox(avatar, item.getDisplayName(), fileContent, item.getId(), isMe);
     msg->setTime(date);
     return IChatItem::Ptr(msg);
 }

@@ -34,9 +34,12 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QVariantAnimation>
+#include <application.h>
 
 #include <math.h>
 #include <cassert>
+
+#include <base/files.h>
 
 namespace module::im {
 
@@ -62,6 +65,7 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
     ui->fileSizeLabel->setText(getHumanReadableSize(file.fileSize));
     ui->etaLabel->setText("");
 
+
     backgroundColorAnimation = new QVariantAnimation(this);
     backgroundColorAnimation->setDuration(500);
     backgroundColorAnimation->setEasingCurve(QEasingCurve::OutCubic);
@@ -83,10 +87,11 @@ FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
     CoreFile* coreFile = CoreFile::getInstance();
 
     connect(ui->leftButton, &QPushButton::clicked, this, &FileTransferWidget::onLeftButtonClicked);
-    connect(ui->rightButton, &QPushButton::clicked, this,
-            &FileTransferWidget::onRightButtonClicked);
-    connect(ui->previewButton, &QPushButton::clicked, this,
-            &FileTransferWidget::onPreviewButtonClicked);
+    connect(ui->rightButton, &QPushButton::clicked, this, &FileTransferWidget::onRightButtonClicked);
+    connect(ui->previewButton, &QPushButton::clicked, this, &FileTransferWidget::onPreviewButtonClicked);
+
+    ui->playButton->setIcon(QIcon(lib::settings::Style::getImagePath("fileTransferInstance/arrow_white.svg")));
+    connect(ui->playButton, &QPushButton::clicked, this, &FileTransferWidget::onPlayButtonClicked);
 
     // Set lastStatus to anything but the file's current value, this forces an update
     lastStatus =
@@ -617,7 +622,6 @@ void FileTransferWidget::showPreview(const QString& filename) {
 
     const int size = qMax(ui->previewButton->width(), ui->previewButton->height()) - 4;
     const QPixmap iconPixmap = scaleCropIntoSquare(QPixmap::fromImage(image), size);
-
     ui->previewButton->setIcon(QIcon(iconPixmap));
     ui->previewButton->setIconSize(iconPixmap.size());
     ui->previewButton->show();
@@ -655,6 +659,20 @@ void FileTransferWidget::onRightButtonClicked() {
 
 void FileTransferWidget::onPreviewButtonClicked() {
     handleButton(ui->previewButton);
+}
+
+void FileTransferWidget::onPlayButtonClicked()
+{
+    if(!ok::base::Files::isAudio(fileInfo.filePath)){
+        return;
+    }
+
+    //播放音频文件
+    auto ac = ok::Application::Instance()->getAudioControl();
+    auto s = ac->makeSink();
+    s->playAudio(fileInfo.filePath);
+
+    // s->playAudio("/media/gaojie/alpha/works/CppWorkspace/ff-16b-2c-44100hz.wav");
 }
 
 QPixmap FileTransferWidget::scaleCropIntoSquare(const QPixmap& source, const int targetSize) {

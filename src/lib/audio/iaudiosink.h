@@ -89,6 +89,8 @@ public:
                                  int sampleRate) const = 0;
     virtual void playMono16Sound(const Sound& sound) = 0;
 
+    virtual void playAudio(const QString& audioPath) = 0;
+
     virtual void startLoop() = 0;
     virtual void stopLoop() = 0;
 

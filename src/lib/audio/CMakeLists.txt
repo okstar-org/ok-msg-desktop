@@ -9,13 +9,18 @@ pkg_check_modules(OpenAL REQUIRED openal)
 include_directories(${OpenAL_INCLUDE_DIRS})
 
 
+pkg_check_modules(ALUT REQUIRED freealut)
+include_directories(${ALUT_INCLUDE_DIRS})
+
+
 add_library(${PROJECT_NAME} STATIC
-		${${PROJECT_NAME}_SOURCES}
+            ${${PROJECT_NAME}_SOURCES}
 )
 
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${Qt5Core_LIBRARIES}
 		PRIVATE ${OpenAL_LINK_LIBRARIES}
+                PRIVATE ${ALUT_LINK_LIBRARIES}
 )
 
 if (WIN32)
