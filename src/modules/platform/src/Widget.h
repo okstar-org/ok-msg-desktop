@@ -52,7 +52,7 @@ public:
     /**
      * 重载主题
      */
-    void reloadTheme();
+    void reloadTheme() override;
 
 protected:
     // 工作平台页的相关操作

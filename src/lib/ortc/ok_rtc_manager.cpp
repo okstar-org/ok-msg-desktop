@@ -22,9 +22,9 @@ namespace lib::ortc {
 static OkRTCManager* instance = nullptr;
 static std::recursive_mutex mtx;
 
-OkRTCManager::OkRTCManager() {}
+OkRTCManager::OkRTCManager() = default;
 
-OkRTCManager::~OkRTCManager() {}
+OkRTCManager::~OkRTCManager() = default;
 
 OkRTCManager* OkRTCManager::getInstance() {
     std::lock_guard<std::recursive_mutex> lock(mtx);
@@ -45,7 +45,7 @@ void OkRTCManager::destroyInstance() {
     RTC_LOG(LS_INFO) << "instance:" << instance;
     delete instance;
     instance = nullptr;
-    RTC_LOG(LS_WARNING) << "Destroy the instance successfully.";
+    RTC_LOG(LS_WARNING) << "Destroyed the instance successfully.";
 }
 
 OkRTC* OkRTCManager::createRtc(Mode mode, const std::string& res) {
