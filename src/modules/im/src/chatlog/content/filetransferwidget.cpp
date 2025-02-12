@@ -41,6 +41,8 @@
 
 #include <base/files.h>
 
+#include <lib/audio/player.h>
+
 namespace module::im {
 
 FileTransferWidget::FileTransferWidget(QWidget* parent, ToxFile file)
@@ -668,11 +670,8 @@ void FileTransferWidget::onPlayButtonClicked()
     }
 
     //播放音频文件
-    auto ac = ok::Application::Instance()->getAudioControl();
-    auto s = ac->makeSink();
-    s->playAudio(fileInfo.filePath);
-
-    // s->playAudio("/media/gaojie/alpha/works/CppWorkspace/ff-16b-2c-44100hz.wav");
+    auto a = ok::Application::Instance();
+    a->getAudioPlayer()->play(fileInfo.filePath);
 }
 
 QPixmap FileTransferWidget::scaleCropIntoSquare(const QPixmap& source, const int targetSize) {

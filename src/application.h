@@ -22,6 +22,7 @@
 #include "lib/storage/StorageManager.h"
 #include "lib/audio/iaudiocontrol.h"
 #include "lib/audio/iaudiosink.h"
+#include "lib/audio/player.h"
 
 /**
  * @brief WindowSize 主窗口大小(黄金分割比例 1.618)
@@ -30,6 +31,11 @@
 constexpr QSize WindowSize() {
     return QSize{874, 520};
 }
+
+namespace lib::audio{
+class Player;
+}
+
 
 namespace ok {
 
@@ -74,6 +80,11 @@ public:
         return audioControl.get();
     }
 
+    //player
+    inline lib::audio::Player *getAudioPlayer() const {
+        return audioPlayer;
+    }
+
     void playNotificationSound(lib::audio::IAudioSink::Sound sound, bool loop = false);
     void onStopNotification();
     void cleanupNotificationSound();
@@ -83,7 +94,7 @@ private:
     std::shared_ptr<lib::session::AuthSession> session;
     std::unique_ptr<lib::session::Profile> profile;
     IPC* ipc;
-    std::unique_ptr<Bus> _bus;
+    Bus* _bus;
 
     std::unique_ptr<UI::LoginWindow> m_loginWindow;
     std::unique_ptr<UI::MainWindow> m_mainWindow;
@@ -91,6 +102,8 @@ private:
     //Audio controller
     std::unique_ptr<lib::audio::IAudioControl> audioControl;
     std::unique_ptr<lib::audio::IAudioSink> audioNotification;
+
+    lib::audio::Player* audioPlayer;
 
     /**
      * bootstrap: 打开程序首次启动为true，登出启动为false

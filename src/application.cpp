@@ -117,7 +117,7 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv) {
 
     // 初始化IPC
     ipc = new IPC(0, this);
-    _bus = std::make_unique<Bus>();
+    _bus = new Bus(this);
 
     //获取设置
     auto& s = lib::settings::OkSettings::getInstance();
@@ -127,7 +127,11 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv) {
 
     // 初始化音频
     audioControl = std::unique_ptr<lib::audio::IAudioControl>(lib::audio::Audio::makeAudio(s));
-
+    audioPlayer = new lib::audio::Player(this);
+    connect(audioPlayer,  &lib::audio::Player::stateChanged, this,
+            [](QString file , lib::audio::PlayState state){
+                qDebug() << "play:" << file <<" state:" << lib::audio::PlayStateAsStr(state);
+            });
 
     // 样式
     setStyleSheet(ok::base::Files::readStringAll(":/resources/style/application.css"));
@@ -222,7 +226,8 @@ void Application::cleanup() {
 void Application::finish() {}
 
 Bus* Application::bus() const {
-    return _bus.get();
+    assert(_bus);
+    return _bus;
 }
 
 #ifdef OK_PLUGIN

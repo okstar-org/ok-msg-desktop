@@ -89,7 +89,6 @@ public:
                          unsigned channels,
                          int sampleRate);
 
-    void playFile(const QString& file);
 
 signals:
     void startActive(qreal msec);

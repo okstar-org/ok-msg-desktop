@@ -24,7 +24,6 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <AL/alut.h>
 
 #include "audio.h"
 #include "lib/storage/settings/OkSettings.h"
@@ -548,46 +547,6 @@ void OpenAL::playAudioBuffer(uint sourceId, const int16_t* data, int samples, un
     }
 }
 
-void checkALUTError()
-{
-    ALenum error = alutGetError();
-    if (error != ALUT_ERROR_NO_ERROR)
-    {
-        qWarning() << "ALUT error: " << alutGetErrorString(error);
-    }
-}
-
-void OpenAL::playFile(const QString &file)
-{
-    qDebug() << __func__ << file;
-
-    // 初始化 ALUT
-    alutInit(NULL, 0);
-    checkALUTError();
-    // 从文件创建缓冲区
-    ALuint buffer = alutCreateBufferFromFile(file.toStdString().c_str());
-    if (buffer == AL_NONE) {
-        checkALUTError();
-        alutExit();
-        return;
-    }
-    // 创建音频源
-    ALuint source;
-    alGenSources(1, &source);
-    // 将缓冲区绑定到音频源
-    alSourcei(source, AL_BUFFER, buffer);
-    // 播放音频
-    alSourcePlay(source);
-    // 等待音频播放完成
-    ALint state;
-    do {
-        alGetSourcei(source, AL_SOURCE_STATE, &state);
-    } while (state == AL_PLAYING);
-    // 清理资源
-    alDeleteSources(1, &source);
-    alDeleteBuffers(1, &buffer);
-    alutExit();
-}
 
 /**
  * @brief Close active audio input device.
