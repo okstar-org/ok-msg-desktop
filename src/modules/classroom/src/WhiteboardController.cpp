@@ -73,13 +73,7 @@ void WhiteboardControllerButton::mousePressEvent(QMouseEvent* event) {
 void WhiteboardControllerButton::mouseMoveEvent(QMouseEvent* event) {
     if (m_isPressed) {
         m_isMoved = true;
-
-        QWidget* p = m_target;
-
-        if (!p) {
-            p = this->parentWidget();
-        }
-
+        auto p = m_target ? m_target: parentWidget();
         if (p) {
             QPoint movePoint = event->globalPos() - m_startMovePos;
             QPoint widgetPos = p->pos() + movePoint;

@@ -63,7 +63,7 @@ PainterView::PainterView(QWidget* parent) : QWidget(parent) {
 
     // 工具箱
     _oToolbox = std::make_unique<OPainterToolBox>(this);
-    _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
+    // _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
 
     setLayout(layout);
 
@@ -103,7 +103,7 @@ void PainterView::showEvent(QShowEvent* event) {
 void PainterView::resizeEvent(QResizeEvent* e) {
     painterManager_->setSize(e->size());
     mdiArea->setFixedSize(e->size());
-    _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
+    // _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
     _oController->move(width() - 320, 20);
 }
 

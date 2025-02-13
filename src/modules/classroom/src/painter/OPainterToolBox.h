@@ -19,6 +19,7 @@
 #include "OPainterColorPanel.h"
 #include "OPainterToolBox.h"
 #include "base/timer.h"
+#include "lib/ui/widget/OWidget.h"
 #include "lib/ui/widget/MoveableBar.h"
 
 namespace Ui {
@@ -27,7 +28,7 @@ class OPainterToolBox;
 
 namespace module::classroom {
 
-class OPainterToolBox : public lib::ui::MoveableBar {
+class OPainterToolBox : public lib::ui::OWidget {
     Q_OBJECT
 public:
     explicit OPainterToolBox(QWidget* parent = nullptr);

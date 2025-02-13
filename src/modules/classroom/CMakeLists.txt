@@ -75,10 +75,14 @@ add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_FORMS}
 )
 
+list (APPEND ${PROJECT_NAME}_LIBS
+   PRIVATE OkBoard
+   PRIVATE OkBase
+   PRIVATE OkMessenger
+)
+
 target_link_libraries(${PROJECT_NAME}
-		PRIVATE OkBoard
-		PRIVATE OkBase
-		PRIVATE OkMessenger
+                PRIVATE ${${PROJECT_NAME}_LIBS}
 		PRIVATE ${Qt5Widgets_LIBRARIES}
 		PRIVATE ${Qt5Core_LIBRARIES}
 )
@@ -86,3 +90,27 @@ target_link_libraries(${PROJECT_NAME}
 if (WIN32)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
+
+
+# Google Test
+FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/*.cpp)
+
+message(STATUS "Test files: ${${PROJECT_NAME}_TEST_RESOURCES}")
+add_executable(${PROJECT_NAME}Tests
+                ${${PROJECT_NAME}_TEST_RESOURCES}
+)
+
+# 链接gtest和gtest_main库
+target_link_libraries(${PROJECT_NAME}Tests
+                PUBLIC ${PROJECT_NAME}
+                PRIVATE gtest
+                PRIVATE gtest_main
+                PRIVATE ${Qt5Core_LIBRARIES}
+                PRIVATE ${Qt5Gui_LIBRARIES}
+                PRIVATE ${Qt5Svg_LIBRARIES}
+                PRIVATE ${Qt5Xml_LIBRARIES}
+)
+
+# 添加测试到CTest（如果你使用CTest）
+add_test(NAME RunAllTests COMMAND ${PROJECT_NAME}Tests)
+

@@ -15,6 +15,7 @@
 #include "base/logs.h"
 #include "base/widgets.h"
 
+
 static QPoint GetCurPos() {
     auto curPos = QCursor().pos();
     curPos.setX(curPos.x() - 220);
@@ -24,7 +25,7 @@ static QPoint GetCurPos() {
 namespace module::classroom {
 
 OPainterToolBox::OPainterToolBox(QWidget* parent)
-        : lib::ui::MoveableBar(parent)
+        : lib::ui::OWidget(parent)
         , ui(new Ui::OPainterToolBox)
         , _delayCaller(std::make_unique<base::DelayedCallTimer>()) {
     ui->setupUi(this);
@@ -59,6 +60,9 @@ OPainterToolBox::OPainterToolBox(QWidget* parent)
             &OPainterToolBox::onPenColorChange);
     connect(m_penColorPanel.get(), &OPainterColorPanel::weightChange, this,
             &OPainterToolBox::onPenWeightChange);
+
+    auto *lay = ui->layout;
+    lay ->insertWidget(0, new lib::ui::MoveableBar(this));
 }
 
 OPainterToolBox::~OPainterToolBox() {
@@ -67,18 +71,16 @@ OPainterToolBox::~OPainterToolBox() {
 
 void OPainterToolBox::on_toolbox_move_clicked(bool checked) {
     if (!checked) return;
-
     ui->toolbox_move->setChecked(checked);
     ui->toolbox_text->setChecked(false);
     ui->toolbox_pen->setChecked(false);
     ui->toolbox_delete->setChecked(false);
     ui->toolbox_cutter->setCheckable(false);
-
     emit toolChange(ToolboxType::P_MOVE);
 }
 
 void OPainterToolBox::on_toolbox_text_clicked(bool checked) {
-    qDebug() << "on_toolbox_text_clicked" << checked;
+    qDebug() << __func__ << checked;
     m_textColorPanel->move(GetCurPos());
     m_textColorPanel->show();
     m_penColorPanel->hide(true);

@@ -21,12 +21,11 @@ namespace lib::ui {
 class OWidget : public QWidget {
     Q_OBJECT
 public:
-    OWidget(QWidget* parent = nullptr);
-    virtual ~OWidget() override;
+    explicit OWidget(QWidget* parent = nullptr);
+    ~OWidget() override;
 
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
 
-private:
 };
 }  // namespace UI

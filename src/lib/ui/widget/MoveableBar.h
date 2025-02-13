@@ -20,20 +20,26 @@ class MoveableBar : public QWidget {
     Q_OBJECT
 
 public:
-    MoveableBar(QWidget* parent = nullptr);
-    ~MoveableBar();
+    explicit MoveableBar(QWidget* parent = nullptr);
+    ~MoveableBar() override;
 
     void setMoveable(bool);
-    virtual void setTarget(QWidget*);
+
+    /**
+     * Set moveable target
+     * @brief setTarget
+     * @param tgt
+     */
+    void setTarget(QWidget* tgt);
 
 protected:
     bool _moveable;
 
     QWidget* m_target;
 
-    virtual void mousePressEvent(QMouseEvent*);
-    virtual void mouseMoveEvent(QMouseEvent*);
-    virtual void mouseReleaseEvent(QMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent*) override;
+    virtual void mouseMoveEvent(QMouseEvent*) override;
+    virtual void mouseReleaseEvent(QMouseEvent*) override;
 
 private:
     bool m_isPressed = false;

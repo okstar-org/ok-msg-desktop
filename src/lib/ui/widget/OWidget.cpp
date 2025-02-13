@@ -39,7 +39,11 @@ OWidget::OWidget(QWidget* parent) : QWidget(parent) {
     //   setGraphicsEffect(effect);
 }
 
+OWidget::~OWidget() {
+
+}
+
 void OWidget::paintEvent(QPaintEvent* event) {}
-OWidget::~OWidget() {}
+
 
 }  // namespace UI

@@ -14,10 +14,15 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QWidget>
+#include <QBoxLayout>
 
 namespace lib::ui {
 
-MoveableBar::MoveableBar(QWidget* parent) : QWidget(parent), _moveable(true), m_target(nullptr) {}
+MoveableBar::MoveableBar(QWidget* parent) : QWidget(parent), _moveable(true), m_target(nullptr) {
+    auto layout =  new QGridLayout(this);
+    layout->addWidget(new QLabel("Move"));
+    setLayout(layout);
+}
 
 MoveableBar::~MoveableBar() {}
 
@@ -31,18 +36,18 @@ void MoveableBar::mousePressEvent(QMouseEvent* event) {
 
 void MoveableBar::mouseMoveEvent(QMouseEvent* event) {
     if (m_isPressed) {
-        QWidget* p = m_target;
-
+        auto p = m_target ? m_target : parentWidget();
         if (!p) {
-            p = this->parentWidget();
+            // qWarning() <<"Have no moveable target!";
+            return;
         }
 
-        if (p) {
-            QPoint movePoint = event->globalPos() - m_startMovePos;
-            QPoint widgetPos = p->pos() + movePoint;
-            m_startMovePos = event->globalPos();
-            p->move(widgetPos.x(), widgetPos.y());
-        }
+
+        QPoint movePoint = event->globalPos() - m_startMovePos;
+        QPoint widgetPos = p->pos() + movePoint;
+        m_startMovePos = event->globalPos();
+        p->move(widgetPos.x(), widgetPos.y());
+
     }
     return QWidget::mouseMoveEvent(event);
 }
