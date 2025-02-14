@@ -30,6 +30,7 @@ include(cmake/platform.cmake)
 include(cmake/build.cmake)
 include(cmake/develop.cmake)
 include(cmake/test.cmake)
+include(cmake/enable.cmake)
 
 include_directories(.)
 

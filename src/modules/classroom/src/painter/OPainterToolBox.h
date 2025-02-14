@@ -35,11 +35,9 @@ public:
     ~OPainterToolBox() override;
 
 protected:
-    //  bool eventFilter(QObject *target, QEvent *event);
-
-    void leaveEvent(QEvent* event);
-    void enterEvent(QEvent* event);
-    void mouseMoveEvent(QMouseEvent* e);
+    void leaveEvent(QEvent* event) override;
+    void enterEvent(QEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* e) override;
 
 private:
     Ui::OPainterToolBox* ui;

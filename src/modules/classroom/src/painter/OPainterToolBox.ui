@@ -9,74 +9,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>60</width>
-    <height>422</height>
+    <width>48</width>
+    <height>363</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">#OPainterToolBox{
-background-color: #535353;
-border-radius: 8px
- }
-
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <property name="spacing">
     <number>6</number>
    </property>
    <property name="leftMargin">
-    <number>10</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>10</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QWidget" name="bar_widget" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">
-
-                                        background-color: transparent;
-                                        background-image:url(:/res/icon/toolbox/toolbox_pull.png);
-                                        background-repeat: no-repeat;
-                                        background-position: center;
-                                        border-radius: 4px;
-                                    </string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QWidget" name="tool_widget" native="true">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -91,6 +54,7 @@ border-radius: 8px
      </property>
      <property name="styleSheet">
       <string notr="true">
+
 QToolButton {
                                         background-color: transparent;
                                         background-image:url(:/res/icon/toolbox/toolbox_move.png) ;
@@ -141,7 +105,10 @@ QToolButton {
                                         background-color:none;
                                         }</string>
      </property>
-     <layout class="QVBoxLayout" name="boxLayout">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
@@ -157,19 +124,20 @@ QToolButton {
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
-       <widget class="Line" name="line">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>10</height>
-         </size>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="label">
+        <property name="styleSheet">
+         <string notr="true">
+
+                                        background-color: transparent;
+                                        background-image:url(:/res/icon/toolbox/toolbox_pull.png);
+                                        background-repeat: no-repeat;
+                                        background-position: center;
+                                        border-radius: 4px;
+                                    </string>
         </property>
-        <property name="lineWidth">
-         <number>1</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -324,6 +292,22 @@ QToolButton {
         </property>
         <property name="checkable">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>10</height>
+         </size>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>

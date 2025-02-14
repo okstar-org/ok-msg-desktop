@@ -83,27 +83,3 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DOK_HAVE_CONFIG)
 
 set(QT_CREATOR_SKIP_VCPKG_SETUP ON)
-
-# 开启插件（ON/OFF）
-option(ENABLE_PLUGINS "Enable plugins" ON)
-message(STATUS "ENABLE_PLUGINS=${ENABLE_PLUGINS}")
-
-if(ENABLE_PLUGINS)
-  add_definitions(-DOK_PLUGIN)
-  include(${PROJECT_SOURCE_DIR}/plugins/plugins.cmake)
-
-  if(NOT DEV_MODE)
-    set(LIB_SUFFIX
-            ""
-            CACHE STRING "Define suffix of directory name")
-    set(OK_LIBDIR
-            "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/${PROJECT_NAME}"
-            CACHE STRING "${PROJECT_NAME} libraries directory")
-    set(OK_DATADIR
-            "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}"
-            CACHE STRING "${PROJECT_NAME} data directory")
-  else()
-    set(OK_LIBDIR ".")
-    set(OK_DATADIR ".")
-  endif()
-endif()

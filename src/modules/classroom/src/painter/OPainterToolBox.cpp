@@ -61,8 +61,9 @@ OPainterToolBox::OPainterToolBox(QWidget* parent)
     connect(m_penColorPanel.get(), &OPainterColorPanel::weightChange, this,
             &OPainterToolBox::onPenWeightChange);
 
-    auto *lay = ui->layout;
-    lay ->insertWidget(0, new lib::ui::MoveableBar(this));
+    ui->layout->insertWidget(0, new lib::ui::MoveableBar(this));
+    //module--classroom--OPainterToolBox{
+    setStyleSheet("#OPainterToolBox{background-color: #535353; border-radius: 8px;}");
 }
 
 OPainterToolBox::~OPainterToolBox() {
