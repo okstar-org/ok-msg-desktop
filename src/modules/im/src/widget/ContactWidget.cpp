@@ -70,7 +70,9 @@ ContactWidget::ContactWidget(QWidget* parent)
     ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)contactListWidget);
 
     ui->mainSplitter->addWidget(contentWidget.get());
-    ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
+    ui->mainSplitter->setSizes(QList<int>() << 240 << 500);
+    ui->mainSplitter->setStretchFactor(1, 1);
+    ui->mainSplitter->setChildrenCollapsible(false);
 
     ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     connect(ui->searchContact, &QLineEdit::textChanged, this, &ContactWidget::searchContacts);
