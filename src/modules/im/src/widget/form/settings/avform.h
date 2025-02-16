@@ -27,8 +27,8 @@
 namespace lib::video {
 class CameraSource;
 class IVideoSettings;
-class VideoMode;
-class VideoDevice;
+struct VideoMode;
+struct VideoDevice;
 }  // namespace lib::video
 
 namespace lib::audio {

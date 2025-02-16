@@ -111,8 +111,8 @@ ChatWidget::ChatWidget(QWidget* parent)
     ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)sessionListWidget.get());
 
     ui->mainSplitter->addWidget(contentWidget.get());
-    ui->mainSplitter->setSizes(QList<int>() << 200 << 500);
-    ui->mainSplitter->setStretchFactor(1, 0);
+    ui->mainSplitter->setSizes(QList<int>() << 240 << 500);
+    ui->mainSplitter->setStretchFactor(1, 1);
     ui->mainSplitter->setChildrenCollapsible(false);
 
     setupStatus();
