@@ -1,7 +1,7 @@
 
 # 开启插件（ON/OFF）
 option(ENABLE_PLUGINS "Enable plugins" ON)
-message(STATUS "ENABLE_PLUGINS=${ENABLE_PLUGINS}")
+message(STATUS "Enable plugin: ${ENABLE_PLUGINS}")
 
 if(ENABLE_PLUGINS)
   add_definitions(-DOK_PLUGIN)
@@ -23,10 +23,30 @@ if(ENABLE_PLUGINS)
   endif()
 endif()
 
+# Enable platform module（ON/OFF）
+set(ENABLE_Platform ON)
+message(STATUS "Enable meet: ${ENABLE_Platform}")
+if(ENABLE_Platform)
+	add_definitions(-DENABLE_Platform)
+endif()
+
+# Enable meet module（ON/OFF）
+set(ENABLE_Meet ON)
+message(STATUS "Enable meet: ${ENABLE_Meet}")
+if(ENABLE_Meet)
+	add_definitions(-DENABLE_Meet)
+endif()
+
+# Enable document module（ON/OFF）
+set(ENABLE_Document ON)
+message(STATUS "Enable document: ${ENABLE_Document}")
+if(ENABLE_Document)
+	add_definitions(-DENABLE_Document)
+endif()
 
 # Enable classroom module（ON/OFF）
-option(ENABLE-Classroom "Enable Classroom module" ON)
-# Enable document module
-option(ENABLE-Document "Enable Document module" ON)
-# Enable meet module
-option(ENABLE-Meet "Enable Meet module" ON)
+set(ENABLE_Classroom ON)
+message(STATUS "Enable classroom: ${ENABLE_Classroom}")
+if(ENABLE_Classroom)
+	add_definitions(-DENABLE_Classroom)
+endif()

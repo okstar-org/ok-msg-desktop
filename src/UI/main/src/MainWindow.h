@@ -19,9 +19,7 @@
 #include <QSystemTrayIcon>
 
 #include "OMainMenu.h"
-#include "base/Page.h"
 #include "lib/session/AuthSession.h"
-#include "modules/module.h"
 
 namespace Ui {
 class MainWindow;
@@ -56,17 +54,11 @@ public:
     }
     QWidget* getContainer(SystemMenu menu);
 
-    OMenuWidget* createChatModule(MainWindow* pWindow);
-    OMenuWidget* createPlatformModule(MainWindow* pWindow);
-    OMenuWidget* createMeetingModule(MainWindow* pWindow);
-    OMenuWidget* createClassroomModule(MainWindow* pWindow);
-    OMenuWidget* createConfigModule(MainWindow* pWindow);
-    OMenuWidget* createDocumentModule(MainWindow* pWindow);
-
 protected:
     void showEvent(QShowEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
     void updateIcons();
+    void retranslateUi();
 
 private:
     std::shared_ptr<lib::session::AuthSession> session;

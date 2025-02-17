@@ -35,8 +35,6 @@ set(${PROJECT_NAME}_SOURCES
 		RecursiveSignalBlocker.h
 		RecursiveSignalBlocker.cpp
 		uuid.h
-		stylediconbutton.h
-		stylediconbutton.cpp
 		roundedmaskcontainer.h
 		roundedmaskcontainer.cpp
 		verticalonlyscroller.h

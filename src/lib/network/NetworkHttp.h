@@ -16,7 +16,6 @@
 #include <QString>
 #include <QUrl>
 #include <QMap>
-#include <memory>
 #include <base/basic_types.h>
 #include <base/timer.h>
 

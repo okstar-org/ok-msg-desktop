@@ -13,28 +13,34 @@
 #define OMAINMENU_H
 
 #include <QFrame>
-#include <memory>
-
-#include "base/Page.h"
+#include <QMap>
 #include "base/resources.h"
 #include "base/timer.h"
 
+
 OK_RESOURCE_LOADER(UIMainWindow)
+
+namespace ok::base {
+class StyledIconButton;
+}
+
+
 
 namespace Ui {
 class OMainMenu;
 }
 
 namespace UI {
-
+class OMenuWidget;
+class OMenuItem;
 // 系统级别主菜单
-enum class SystemMenu {
-    chat,   //消息
-    document,   // 文档
-    meeting,//会议
-    platform,//工作平台
-    classroom,  // 课堂
-    setting,//配置
+enum class SystemMenu;
+
+struct MenuItem{
+    SystemMenu menu;
+    QString key;
+    QString toolTip;
+    ok::base::Fn<OMenuWidget*()> fn;
 };
 
 /**
@@ -46,11 +52,16 @@ public:
     explicit OMainMenu(QWidget* parent = nullptr);
     ~OMainMenu() override;
 
+    void check(SystemMenu menu);
+
+    OMenuWidget* createWidget(SystemMenu menu);
+
+
+
 protected:
     virtual void showEvent(QShowEvent* e) override;
 
     void retranslateUi();
-
 
 private:
     OK_RESOURCE_PTR(UIMainWindow);
@@ -59,7 +70,25 @@ private:
 
     base::DelayedCallTimer* delayCaller_;
 
-    void check(SystemMenu menu);
+    QList<OMenuItem*> items;
+
+    QMap<SystemMenu, OMenuWidget*> menuMap;
+
+    std::unique_ptr<OMenuWidget> createChatModule();
+    std::unique_ptr<OMenuWidget> createConfigModule();
+
+#ifdef ENABLE_Platform
+    std::unique_ptr<OMenuWidget> createPlatformModule();
+#endif
+#ifdef ENABLE_Meet
+    std::unique_ptr<OMenuWidget> createMeetingModule();
+#endif
+#ifdef ENABLE_Classroom
+    std::unique_ptr<OMenuWidget> createClassroomModule();
+#endif
+#ifdef ENABLE_Document
+    std::unique_ptr<OMenuWidget> createDocumentModule();
+#endif
 
 signals:
     void menuPushed(SystemMenu menu, bool checked);

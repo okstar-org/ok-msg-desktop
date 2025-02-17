@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 namespace ok::base {
+
 template <typename Signature> using Fn = std::function<Signature>;
 
 template <typename Type> inline Type take(Type& value) { return std::exchange(value, Type{}); }
@@ -40,4 +41,13 @@ inline QStringList qstringlist(std::list<std::string> sl) {
 }
 
 #define ARRAY_LENGTH_OF(array) (sizeof(array) / sizeof(array[0]))
+
+
+template <typename Enum>
+constexpr std::size_t enum_length() {
+    return []<std::size_t... Indices>(std::index_sequence<Indices...>) {
+        return (0 + ... + static_cast<int>(std::is_same_v<Enum, decltype(static_cast<Enum>(Indices))>));
+    }(std::make_index_sequence<static_cast<std::size_t>(Enum::MAX)>());
+}
+
 }

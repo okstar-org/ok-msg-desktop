@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  - Copyright (c) 2022 船山信息 chuanshaninfo.com
-  - The project is licensed under Mulan PubL v2.
-  - You can use this software according to the terms and conditions of the Mulan
-  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
-  -          http://license.coscl.org.cn/MulanPubL-2.0
-  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-  - See the Mulan PubL v2 for more details.
-  -->
-
 <ui version="4.0">
  <class>OMainMenu</class>
  <widget class="QFrame" name="OMainMenu">
@@ -125,175 +113,15 @@
         </property>
        </spacer>
       </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="ok::base::StyledIconButton" name="chatBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item>
+       <layout class="QVBoxLayout" name="menuLayout">
+        <property name="topMargin">
+         <number>10</number>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
+        <property name="bottomMargin">
+         <number>10</number>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-           <property name="checkable">
-               <bool>true</bool>
-           </property>
-       </widget>
-      </item>
-         <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-             <widget class="ok::base::StyledIconButton" name="docBtn">
-                 <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                     </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                     <size>
-                         <width>52</width>
-                         <height>52</height>
-                     </size>
-                 </property>
-                 <property name="maximumSize">
-                     <size>
-                         <width>52</width>
-                         <height>52</height>
-                     </size>
-                 </property>
-                 <property name="text">
-                     <string/>
-                 </property>
-                 <property name="iconSize">
-                     <size>
-                         <width>40</width>
-                         <height>40</height>
-                     </size>
-                 </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="ok::base::StyledIconButton" name="meetBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="ok::base::StyledIconButton" name="classroomBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="ok::base::StyledIconButton" name="platformBtn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>52</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>40</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
+       </layout>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -309,7 +137,7 @@
        </spacer>
       </item>
       <item alignment="Qt::AlignHCenter">
-       <widget class="ok::base::StyledIconButton" name="settingBtn">
+       <widget class="lib::ui::StyledIconButton" name="settingBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -354,9 +182,9 @@
    <header location="global">lib/ui/widget/tools/CroppingLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ok::base::StyledIconButton</class>
+   <class>lib::ui::StyledIconButton</class>
    <extends>QPushButton</extends>
-   <header location="global">src/base/stylediconbutton.h</header>
+   <header location="global">lib/ui/widget/tools/StyledIconButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -117,10 +117,17 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv) {
 
     // 初始化IPC
     ipc = new IPC(0, this);
-    _bus = new Bus(this);
 
     //获取设置
     auto& s = lib::settings::OkSettings::getInstance();
+
+
+    //全局总线Bus
+    _bus = new Bus(this);
+    connect(_bus, &ok::Bus::languageChanged, [&](const QString& locale0) {
+        s.saveGlobal();
+    });
+
     //选择的语言
     QString locale = s.getTranslation();
     qDebug() << "locale" << locale;
@@ -204,6 +211,7 @@ void Application::startMainUI() {
     // Create main window
     m_mainWindow = std::make_unique<UI::MainWindow>(session);
     m_mainWindow->show();
+
 
     // 关闭登录窗口
     closeLoginUI();

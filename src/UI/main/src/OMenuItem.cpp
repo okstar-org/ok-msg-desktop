@@ -10,26 +10,23 @@
  * See the Mulan PubL v2 for more details.
  */
 
-//
-// Created by gaojie on 24-7-31.
-//
+#include "OMenuItem.h"
+#include "OMainMenu.h"
+#include <QDebug>
 
-#include "OMenuWidget.h"
+namespace UI{
 
-#include "modules/module.h"
-
-namespace UI {
-
-OMenuWidget::OMenuWidget(QWidget* parent)
-        : QFrame(parent) {
-}
-
-OMenuWidget::~OMenuWidget() = default;
-
-void OMenuWidget::stop()
+OMenuItem::OMenuItem(const MenuItem &item, QWidget* parent)
+        : lib::ui::StyledIconButton(parent)
+        , item(item)
 {
-    module->cleanup();
-    module->stop();
+    qDebug() << __func__ << item.toolTip;
+    setObjectName(item.key);
 }
 
-}  // namespace UI
+void OMenuItem::retranslateUi()
+{
+
+}
+
+}

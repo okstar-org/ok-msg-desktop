@@ -10,26 +10,28 @@
  * See the Mulan PubL v2 for more details.
  */
 
-//
-// Created by gaojie on 24-7-31.
-//
+#pragma once
 
-#include "OMenuWidget.h"
-
-#include "modules/module.h"
+#include "OMainMenu.h"
+#include "lib/ui/widget/tools/StyledIconButton.h"
 
 namespace UI {
 
-OMenuWidget::OMenuWidget(QWidget* parent)
-        : QFrame(parent) {
+enum class SystemMenu;
+
+class OMenuItem : public lib::ui::StyledIconButton {
+    Q_OBJECT
+public:
+    explicit OMenuItem(const MenuItem& item, QWidget* parent = nullptr);
+    void retranslateUi();
+
+    const SystemMenu getSysMenu() const {
+        return item.menu;
+    }
+
+private:
+    MenuItem item;
+};
 }
 
-OMenuWidget::~OMenuWidget() = default;
 
-void OMenuWidget::stop()
-{
-    module->cleanup();
-    module->stop();
-}
-
-}  // namespace UI

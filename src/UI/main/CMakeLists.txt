@@ -92,13 +92,26 @@ add_library(${PROJECT_NAME} STATIC
     ${${PROJECT_NAME}_FORMS}
     ${${PROJECT_NAME}_RESOURCES}
     ${${PROJECT_NAME}_QM_FILES}
-    ${${PROJECT_NAME}_SOURCES})
+		${${PROJECT_NAME}_SOURCES}
+	)
+
+if(ENABLE_Meet)
+list(APPEND OK_MODULES Meet)
+endif()
+
+if(ENABLE_Classroom)
+list(APPEND OK_MODULES Classroom)
+endif()
+
+if(ENABLE_Document)
+list(APPEND OK_MODULES Document)
+endif()
+
+message(STATUS "Enable modules: ${OK_MODULES}")
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE IM
-		PRIVATE Meet
-		PRIVATE Document
-		PRIVATE Classroom
+		PRIVATE ${OK_MODULES}
 		PRIVATE Platform
 		PRIVATE Config
 		PRIVATE OkStorage

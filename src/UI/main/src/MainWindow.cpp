@@ -10,15 +10,14 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "MainWindow.h"
+#include "Bus.h"
 #include "ui_MainWindow.h"
 
 #include "application.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/style.h"
-#include "modules/classroom/src/Classroom.h"
-#include "modules/config/src/ConfigWindow.h"
+#include "lib/storage/settings/translator.h"
 #include "modules/im/src/model/status.h"
-#include "modules/platform/src/Platform.h"
 
 #include <QLabel>
 #include <QMenu>
@@ -33,10 +32,8 @@
 #include <modules/im/src/nexus.h>
 #include <modules/meet/src/Meet.h>
 #include <modules/platform/src/Platform.h>
-#include "modules/config/src/Config.h"
-#include "src/modules/im/src/nexus.h"
-#include "src/modules/meet/src/Meet.h"
-#include "src/modules/platform/src/Platform.h"
+
+#include "OMainMenu.h"
 
 namespace UI {
 
@@ -104,6 +101,16 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
 
     // 启动桌面图标
     createSystemTrayIcon();
+
+
+    auto locale = lib::settings::OkSettings().getTranslation();
+    settings::Translator::translate(OK_UIMainWindow_MODULE, locale);
+
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged, [&](const QString& locale0) {
+        retranslateUi();
+        settings::Translator::translate(OK_UIMainWindow_MODULE, locale);
+    });
 
     qDebug() << __func__ << " has be created.";
 }
@@ -297,33 +304,19 @@ void MainWindow::updateIcons() {
     }
 }
 
+void MainWindow::retranslateUi()
+{
+
+}
+
 /**
  * 初始化菜单
  * @param menu
  * @return
  */
 OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
-    OMenuWidget* w = nullptr;
-    switch (menu) {
-        case SystemMenu::chat:
-            w = createChatModule(this);
-            break;
-        case SystemMenu::document:
-            w = createDocumentModule(this);
-            break;
-        case SystemMenu::platform:
-            w = createPlatformModule(this);
-            break;
-        case SystemMenu::meeting:
-            w = createMeetingModule(this);
-            break;
-        case SystemMenu::classroom:
-            w = createClassroomModule(this);
-            break;
-        case SystemMenu::setting:
-            w = createConfigModule(this);
-            break;
-    }
+    auto w = ui->menu_widget->createWidget(menu);
+
     assert(w);
 
     auto m = w->getModule();
@@ -336,7 +329,6 @@ OMenuWidget* MainWindow::initMenuWindow(SystemMenu menu) {
 
     menuMap.insert(menu, w);
     ui->stacked_widget->addWidget(w);
-
     return w;
 }
 
@@ -345,7 +337,7 @@ OMenuWidget* MainWindow::getMenuWindow(SystemMenu menu) {
 }
 
 void MainWindow::onSwitchPage(SystemMenu menu, bool checked) {
-    OMenuWidget* p = getMenuWindow(menu);
+    auto p = getMenuWindow(menu);
     if (!p) {
         p = initMenuWindow(menu);
     }
@@ -362,98 +354,6 @@ void MainWindow::onSwitchPage(SystemMenu menu, bool checked) {
 
 QWidget* MainWindow::getContainer(SystemMenu menu) {
     return ui->stacked_widget;
-}
-
-/**
- * 创建聊天模块
- * @param pWindow
- * @return
- */
-OMenuWidget* MainWindow::createChatModule(MainWindow* pWindow) {
-    qDebug() << "Creating chat module...";
-    auto m = module::im::Nexus::Create();
-    auto nexus = static_cast<module::im::Nexus*>(m);
-
-    // connect(nexus, &Nexus::updateAvatar,
-    //         ok::Application::Instance(), &ok::Application::onAvatar);
-
-    connect(nexus, &module::im::Nexus::destroyProfile,  //
-            ok::Application::Instance(), &ok::Application::on_logout);
-    // connect(nexus, &Nexus::exit,
-    // ok::Application::Instance(), &ok::Application::on_exit);
-
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-    return w;
-}
-
-/**
- * 创建工作平台模块
- * @param pWindow
- * @return
- */
-OMenuWidget* MainWindow::createPlatformModule(MainWindow* pWindow) {
-    auto m = new module::platform::Platform();
-
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-
-    return w;
-}
-
-/**
- * 创建会议模块
- * @param pWindow
- * @return
- */
-OMenuWidget* MainWindow::createMeetingModule(MainWindow* pWindow) {
-    auto m = new module::meet::Meet();
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-    return w;
-}
-
-/**
- * 创建课堂模块
- * @param pWindow
- * @return
- */
-OMenuWidget* MainWindow::createClassroomModule(MainWindow* pWindow) {
-    auto m = new module::classroom::Classroom();
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-    return w;
-}
-OMenuWidget* MainWindow::createConfigModule(MainWindow* pWindow) {
-    auto m = new module::config::Config();
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-    return w;
-}
-
-OMenuWidget* MainWindow::createDocumentModule(MainWindow* mw) {
-    auto m = new module::doc::Document();
-    auto w = new OMenuWidget(this);
-    w->setModule(m);
-    w->setLayout(new QGridLayout());
-    w->layout()->setContentsMargins(0, 0, 0, 0);
-    w->layout()->addWidget(m->widget());
-    return w;
 }
 
 }  // namespace UI
