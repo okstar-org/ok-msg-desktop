@@ -96,7 +96,7 @@ add_executable(${PROJECT_NAME}Tests
 
 # 链接gtest和gtest_main库
 target_link_libraries(${PROJECT_NAME}Tests
-                PRIVATE gtest
+	  PRIVATE gtest
 		PRIVATE gtest_main
 		${PLATFORM_LIBS}
 		PRIVATE ${Qt5Core_LIBRARIES}
@@ -106,4 +106,4 @@ target_link_libraries(${PROJECT_NAME}Tests
 )
 
 # 添加测试到CTest（如果你使用CTest）
-add_test(NAME RunAllTests COMMAND ${PROJECT_NAME}Tests)
+add_test(NAME Run${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME}Tests)
