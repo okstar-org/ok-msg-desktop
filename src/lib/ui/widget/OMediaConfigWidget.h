@@ -19,7 +19,7 @@
 #include "lib/ortc/ok_rtc.h"
 
 class QPushButton;
-class QSlider;
+class AudioVolumnSlider;
 class QHBoxLayout;
 class QStackedLayout;
 class QMenu;
@@ -67,7 +67,7 @@ protected:
     lib::ui::PopupMenuComboBox* cameraSetting = nullptr;
     lib::ui::PopupMenuComboBox* volumnSetting = nullptr;
 
-    QSlider* volumnSlider = nullptr;
+    AudioVolumnSlider* volumnSlider = nullptr;
 
     QHBoxLayout* buttonLayout = nullptr;
 
