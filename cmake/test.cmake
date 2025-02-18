@@ -1,5 +1,4 @@
-# 为了简化，我们不将gtest安装到系统路径中，而是直接在构建目录中构建和使用它
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+#set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
 
 # Disable pthread on google test
 if(WIN32)
