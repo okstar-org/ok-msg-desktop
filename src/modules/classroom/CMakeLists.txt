@@ -87,7 +87,7 @@ target_link_libraries(${PROJECT_NAME}
 		PRIVATE ${Qt5Core_LIBRARIES}
 )
 
-if (WIN32)
+if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
 
@@ -102,7 +102,6 @@ add_executable(${PROJECT_NAME}Tests
 
 # 链接gtest和gtest_main库
 target_link_libraries(${PROJECT_NAME}Tests
-                PUBLIC ${PROJECT_NAME}
                 PRIVATE gtest
                 PRIVATE gtest_main
                 PRIVATE ${Qt5Core_LIBRARIES}
@@ -110,6 +109,7 @@ target_link_libraries(${PROJECT_NAME}Tests
                 PRIVATE ${Qt5Svg_LIBRARIES}
                 PRIVATE ${Qt5Xml_LIBRARIES}
 )
+
 
 # 添加测试到CTest（如果你使用CTest）
 add_test(NAME RunAllTests COMMAND ${PROJECT_NAME}Tests)

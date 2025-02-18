@@ -17,5 +17,6 @@
 #include <iostream>
 
 TEST(ClassroomTest, BasicAssertions) {
-
+    std::cout << "Helloworld" << std::endl;
+    EXPECT_GE(1, 0);
 }
