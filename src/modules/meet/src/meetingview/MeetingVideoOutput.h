@@ -15,7 +15,9 @@
 
 #include <QWidget>
 
+namespace lib::ui {
 class RoundedPixmapLabel;
+}
 
 namespace module::meet {
 
@@ -25,8 +27,8 @@ class MeetingVideoWidgetRender;
 class MeetingVideoOutput : public QWidget {
     Q_OBJECT
 public:
-    MeetingVideoOutput(QWidget* parent);
-    ~MeetingVideoOutput();
+    MeetingVideoOutput(QWidget* parent = nullptr);
+    ~MeetingVideoOutput() override;
 
     // 绑定与会者
     void bindParticipant(MeetingParticipant* participant);
@@ -43,8 +45,8 @@ private:
     QRectF calcAvatarRect();
 
     MeetingVideoWidgetRender* videoRender = nullptr;
-    RoundedPixmapLabel* avatarLabel = nullptr;
     MeetingParticipant* participant = nullptr;
+    lib::ui::RoundedPixmapLabel* avatarLabel = nullptr;
 };
 }  // namespace module::meet
 #endif  // !MEETINGVIDEOOUTPUT_H

@@ -23,7 +23,7 @@
 #include <QPushButton>
 #include <QRect>
 #include <QVBoxLayout>
-#include "base/RoundedPixmapLabel.h"
+#include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "base/widgets.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/model/friendlist.h"
@@ -49,7 +49,7 @@ CallConfirmWidget::CallConfirmWidget(const PeerId& from, bool video, QWidget* pa
 
     // 头像
     auto frd = Core::getInstance()->getFriendList().findFriend(from);
-    auto avt = new RoundedPixmapLabel(this);
+    auto avt = new lib::ui::RoundedPixmapLabel(this);
     // avt->setText(tr("Avatar"));
     avt->setPixmap(frd->getAvatar());
     avt->setContentsSize(QSize(120, 120));

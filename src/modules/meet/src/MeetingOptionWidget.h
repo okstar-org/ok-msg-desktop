@@ -31,10 +31,10 @@ class QSlider;
 class QHBoxLayout;
 class QStackedLayout;
 
-class RoundedPixmapLabel;
 
 namespace lib::ui {
 class PopupMenuComboBox;
+class RoundedPixmapLabel;
 }
 
 namespace lib::audio{

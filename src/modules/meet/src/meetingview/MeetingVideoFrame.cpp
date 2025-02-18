@@ -16,7 +16,7 @@
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
 #include "application.h"
-#include "base/RoundedPixmapLabel.h"
+#include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "lib/messenger/Messenger.h"
 #include "lib/storage/settings/style.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"

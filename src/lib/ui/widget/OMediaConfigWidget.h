@@ -25,8 +25,6 @@ class QStackedLayout;
 class QMenu;
 class QActionGroup;
 
-class RoundedPixmapLabel;
-
 
 namespace lib::audio{
 class IAudioControl;
@@ -40,6 +38,7 @@ class VideoFrame;
 namespace lib::ui {
 
 class PopupMenuComboBox;
+class RoundedPixmapLabel;
 
 class OMediaConfigWidget : public QWidget {
     Q_OBJECT

@@ -4,52 +4,7 @@ project(OkBase)
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/plugins/include)
 
-set(${PROJECT_NAME}_SOURCES
-		basic_types.h
-		files.h
-		logs.cpp
-		StringUtils.cpp
-		timer.cpp
-		times.h
-		task.h
-		widgets.h
-		system/sys_info.h
-		jid.h
-		jid.cpp
-		OkAccount.h
-		OkAccount.cpp
-		svgiconengine.h
-		svgiconengine.cpp
-		hashs.h
-		hashs.cpp
-		images.h
-		xmls.h
-		jsons.h
-		r.h
-		Page.h
-		Page.cpp
-		PageFactory.h
-		OkProcess.h
-		utils.h
-		SvgUtils.h
-		RecursiveSignalBlocker.h
-		RecursiveSignalBlocker.cpp
-		uuid.h
-		roundedmaskcontainer.h
-		roundedmaskcontainer.cpp
-		verticalonlyscroller.h
-		verticalonlyscroller.cpp
-		MessageBox.h
-		MessageBox.cpp
-		shadowbackground.h
-		shadowbackground.cpp
-		RoundedPixmapLabel.h
-		RoundedPixmapLabel.cpp
-		Styles.h
-		identicon.cpp
-		identicon.h
-)
-
+file(GLOB ${PROJECT_NAME}_SOURCES *.h *.cpp)
 
 if (WIN32)
 	list(APPEND ${PROJECT_NAME}_SOURCES
@@ -79,7 +34,6 @@ target_link_libraries(
 		${PROJECT_NAME}
 		${PLATFORM_LIBS}
 		PRIVATE ${Qt5Core_LIBRARIES}
-		PRIVATE ${Qt5Gui_LIBRARIES}
 		PRIVATE ${Qt5Svg_LIBRARIES}
 		PRIVATE ${Qt5Xml_LIBRARIES}
 )
@@ -88,14 +42,18 @@ if (WIN32)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
 
+
 # Google Test
-add_executable(${PROJECT_NAME}Tests
-		${${PROJECT_NAME}_TEST_RESOURCES}
+set(${PROJECT_NAME}_TEST_TARGET "${PROJECT_NAME}Tests")
+message(STATUS "Test target: ${${PROJECT_NAME}_TEST_TARGET}")
+
+add_executable(${${PROJECT_NAME}_TEST_TARGET}
+	  ${${PROJECT_NAME}_TEST_RESOURCES}
 		${${PROJECT_NAME}_SOURCES}
 )
 
 # 链接gtest和gtest_main库
-target_link_libraries(${PROJECT_NAME}Tests
+target_link_libraries(${${PROJECT_NAME}_TEST_TARGET}
 	  PRIVATE gtest
 		PRIVATE gtest_main
 		${PLATFORM_LIBS}
@@ -106,4 +64,5 @@ target_link_libraries(${PROJECT_NAME}Tests
 )
 
 # 添加测试到CTest（如果你使用CTest）
-add_test(NAME Run${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME}Tests)
+add_test(NAME ${${PROJECT_NAME}_TEST_TARGET} COMMAND ${PROJECT_NAME}Tests)
+

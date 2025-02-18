@@ -13,7 +13,7 @@
 #include "OMediaConfigWidget.h"
 
 #include "application.h"
-#include "base/RoundedPixmapLabel.h"
+#include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
 
 #include <QMenu>
@@ -26,7 +26,7 @@ namespace lib::ui {
 OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     auto profile = ok::Application::Instance()->getProfile();
 
-    avatarLabel = new RoundedPixmapLabel(this);
+    avatarLabel = new lib::ui::RoundedPixmapLabel(this);
     avatarLabel->setObjectName("avatarLabel");
     avatarLabel->setAttribute(Qt::WA_StyledBackground);
     avatarLabel->setContentsSize(QSize(120, 120));

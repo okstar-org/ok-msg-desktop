@@ -15,6 +15,8 @@
 #include <QPainterPath>
 #include <QWidget>
 
+namespace lib::ui{
+
 class RoundedPixmapLabel : public QWidget {
     Q_OBJECT
 
@@ -72,3 +74,4 @@ private:
     bool maskPixmap = true;
     QPoint roundRadius= {0, 0};
 };
+}

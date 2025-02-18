@@ -14,7 +14,9 @@
 
 #include <QPainter>
 #include <QStyle>
-#include "images.h"
+#include "base/images.h"
+
+namespace lib::ui{
 
 RoundedPixmapLabel::RoundedPixmapLabel(QWidget* parent) : QWidget(parent) {}
 
@@ -157,4 +159,5 @@ QPainterPath RoundedPixmapLabel::roundMaskPath(const QRect& rect) {
         path.addRoundedRect(rect, roundRadius.x(), roundRadius.y());
     }
     return path;
+}
 }

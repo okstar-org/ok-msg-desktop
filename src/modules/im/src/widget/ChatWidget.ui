@@ -99,7 +99,7 @@
        <property name="childrenCollapsible">
         <bool>false</bool>
        </property>
-       <widget class="RoundedMaskContainer" name="statusPanel">
+       <widget class="lib::ui::RoundedMaskContainer" name="statusPanel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -870,9 +870,9 @@
    <header location="global">lib/ui/widget/tools/CroppingLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>RoundedMaskContainer</class>
+   <class>lib::ui::RoundedMaskContainer</class>
    <extends>QFrame</extends>
-   <header location="global">base/roundedmaskcontainer.h</header>
+   <header location="global">lib/ui/widget/tools/RoundedMaskContainer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

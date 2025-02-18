@@ -12,7 +12,7 @@
 
 #include "MeetingVideoOutput.h"
 #include "../MeetingVideoRender.h"
-#include "base/RoundedPixmapLabel.h"
+#include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "src/MeetingParticipant.h"
 
 #include <QPainter>
@@ -61,7 +61,7 @@ void MeetingVideoOutput::showVideo() {
 void MeetingVideoOutput::showAvatar() {
     // todo for lipeixu: 应检查图片是否存在，并构造控件，设置图片
     if (!avatarLabel) {
-        avatarLabel = new RoundedPixmapLabel(this);
+        avatarLabel = new lib::ui::RoundedPixmapLabel(this);
     }
     avatarLabel->setGeometry(calcAvatarRect().toRect());
     avatarLabel->raise();
@@ -72,7 +72,7 @@ bool MeetingVideoOutput::hasVideoOutput() {
 }
 
 QRectF MeetingVideoOutput::calcAvatarRect() {
-    QRectF rect = this->rect();
+    auto rect = this->rect();
     int d = std::min(rect.width(), rect.height()) * 0.5;
     d = std::min(d, 150);
     QRectF circle(0, 0, d, d);
