@@ -54,18 +54,18 @@ AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
     ui->avatar->setPixmap(about->getAvatar());
 
     auto f = about->getFriend();
-    connect(f, &Friend::avatarChanged,
+    connect(f, &Friend::avatarChanged, this,
             [&](const QPixmap& pixmap) { ui->avatar->setPixmap(pixmap); });
 
     ui->userName->setText(about->getName());
-    connect(about->getFriend(), &Friend::nameChanged, [&](auto name) {
+    connect(f, &Friend::nameChanged, this, [&](auto name) {
         ui->userName->setText(name);
         ui->alias->setPlaceholderText(name);
     });
 
     ui->alias->setText(about->getAlias());
     ui->alias->setPlaceholderText(about->getName());
-    connect(about->getFriend(), &Contact::aliasChanged,
+    connect(f, &Contact::aliasChanged, this,
             [&](const auto& alias) { ui->alias->setText(alias); });
 
     connect(ui->alias, &QLineEdit::textChanged, this, &AboutFriendForm::onAliasChanged);
