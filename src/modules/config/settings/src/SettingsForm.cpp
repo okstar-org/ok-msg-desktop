@@ -17,10 +17,11 @@
 
 #include <memory>
 
+#include "Bus.h"
 #include "ConnectForm.h"
 #include "GeneralForm.h"
 #include "SettingsForm.h"
-#include "lib/storage/settings/translator.h"
+#include "application.h"
 
 namespace module::config {
 SettingsWidget::SettingsWidget(QWidget* parent)
@@ -66,12 +67,17 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     connect(settingsWidgets.get(), &QTabWidget::currentChanged, this,
             &SettingsWidget::onTabChanged);
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 SettingsWidget::~SettingsWidget() {
-    settings::Translator::unregister(this);
+
 }
 
 void SettingsWidget::setBodyHeadStyle(QString style) {

@@ -22,6 +22,7 @@
 #include <QSignalMapper>
 #include <QTabWidget>
 #include <QWindow>
+#include "Bus.h"
 #include "application.h"
 #include "friendform.h"
 #include "lib/backend/UserService.h"
@@ -76,7 +77,11 @@ AddFriendForm::AddFriendForm(QWidget* parent) : QWidget(parent), addUi{new Ui::A
     addUi->input->setPlaceholderText(tr("Account/E-Mail/Phone Number"));
 
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&AddFriendForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 
     auto _session = ok::Application::Instance()->getSession();
     signIn = &_session->getSignInInfo();
@@ -84,7 +89,6 @@ AddFriendForm::AddFriendForm(QWidget* parent) : QWidget(parent), addUi{new Ui::A
 }
 
 AddFriendForm::~AddFriendForm() {
-    settings::Translator::unregister(this);
     delete addUi;
 }
 

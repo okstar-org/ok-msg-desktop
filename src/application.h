@@ -23,6 +23,8 @@
 #include "lib/audio/iaudiocontrol.h"
 #include "lib/audio/iaudiosink.h"
 #include "lib/audio/player.h"
+#include "Bus.h"
+#include "ipc.h"
 
 /**
  * @brief WindowSize 主窗口大小(黄金分割比例 1.618)
@@ -38,9 +40,6 @@ class Player;
 
 
 namespace ok {
-
-class IPC;
-class Bus;
 
 class Application : public QApplication {
     Q_OBJECT

@@ -10,22 +10,21 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "ConfigWindow.h"
+#include "Bus.h"
 #include "ui_ConfigWindow.h"
 
-#include <memory>
 #include <QWidget>
 
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/style.h"
 #include "lib/storage/settings/translator.h"
-#include "src/base/basic_types.h"
 
 #include "about/src/aboutform.h"
-#include "base/widgets.h"
 #include "modules/im/src/widget/form/settingswidget.h"
 #include "plugin/src/PluginManagerForm.h"
 #include "settings/src/GeneralForm.h"
-#include "settings/src/SettingsForm.h"
+#include "application.h"
+
 
 namespace module::config {
 
@@ -54,12 +53,16 @@ ConfigWindow::ConfigWindow(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui:
 
     QString locale = lib::settings::OkSettings().getTranslation();
     settings::Translator::translate(OK_Config_MODULE, locale);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 ConfigWindow::~ConfigWindow() {
-    settings::Translator::unregister(this);
     delete ui;
 }
 

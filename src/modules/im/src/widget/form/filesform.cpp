@@ -13,10 +13,11 @@
 #include "filesform.h"
 #include <QFileInfo>
 #include <QWindow>
-#include "lib/storage/settings/translator.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
+
 namespace module::im {
 
 FilesForm::FilesForm()
@@ -39,11 +40,15 @@ FilesForm::FilesForm()
     connect(recvd, &QListWidget::itemActivated, this, &FilesForm::onFileActivated);
 
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&FilesForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 FilesForm::~FilesForm() {
-    settings::Translator::unregister(this);
+    
     delete recvd;
     delete sent;
     head->deleteLater();

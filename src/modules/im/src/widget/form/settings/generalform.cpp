@@ -48,14 +48,17 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     eventsInit();
-    settings::Translator::registerHandler(std::bind(&GeneralForm::retranslateUi, this), this);
 
     auto bus = ok::Application::Instance()->bus();
+    connect(bus, &ok::Bus::languageChanged,
+            [&](QString locale0) {
+                retranslateUi();
+            });
     connect(bus, &ok::Bus::profileChanged, this, &GeneralForm::onProfileChanged);
 }
 
 GeneralForm::~GeneralForm() {
-    settings::Translator::unregister(this);
+    
     delete bodyUI;
 }
 

@@ -11,45 +11,38 @@
  */
 
 #include "chatform.h"
-#include <QApplication>
-#include <QClipboard>
-#include <QFileDialog>
-#include <QFileInfo>
-#include "lib/storage/settings/translator.h"
-#include "lib/ui/widget/tools/CroppingLabel.h"
-#include "src/base/MessageBox.h"
-#include "src/chatlog/chatlinecontentproxy.h"
-#include "src/chatlog/chatlog.h"
-#include "src/chatlog/chatmessage.h"
-#include "src/chatlog/content/filetransferwidget.h"
-#include "src/chatlog/content/text.h"
-#include "src/core/core.h"
-#include "src/core/coreav.h"
-#include "src/core/corefile.h"
-#include "src/lib/session/profile.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
-#include "src/model/friend.h"
-#include "src/model/status.h"
-#include "src/nexus.h"
-#include "src/persistence/history.h"
-#include "src/persistence/offlinemsgengine.h"
-#include "src/persistence/settings.h"
-#include "src/video/netcamview.h"
-#include "src/widget/chatformheader.h"
-#include "src/widget/form/loadhistorydialog.h"
-#include "src/widget/tool/callconfirmwidget.h"
-#include "src/widget/tool/chattextedit.h"
-#include "src/widget/tool/screenshotgrabber.h"
-#include "src/widget/widget.h"
 
 #include <QMimeData>
 #include <QPushButton>
 #include <QScrollBar>
 #include <QSplitter>
 #include <QStringBuilder>
+#include <QApplication>
+#include <QClipboard>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QTextDocument>
+#include <QEvent>
+#include <QDragEnterEvent>
 
-#include <cassert>
+#include "lib/ui/widget/tools/CroppingLabel.h"
+#include "src/base/MessageBox.h"
+#include "src/chatlog/chatlog.h"
+#include "src/chatlog/chatmessage.h"
+#include "src/core/core.h"
+#include "src/core/coreav.h"
+#include "src/core/corefile.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/model/status.h"
+#include "src/nexus.h"
+#include "src/persistence/history.h"
+#include "src/persistence/settings.h"
+#include "src/widget/chatformheader.h"
+#include "src/widget/form/loadhistorydialog.h"
+#include "src/widget/tool/callconfirmwidget.h"
+#include "src/widget/widget.h"
+#include "src/application.h"
+
 namespace module::im {
 
 /**
@@ -126,12 +119,16 @@ ChatForm::ChatForm(const FriendId* chatFriend,
 
     setAcceptDrops(true);
 
-    settings::Translator::registerHandler(std::bind(&ChatForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
     retranslateUi();
 }
 
 ChatForm::~ChatForm() {
-    settings::Translator::unregister(this);
+    
 }
 
 void ChatForm::setStatusMessage(const QString& newMessage) {

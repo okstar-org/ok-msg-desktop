@@ -54,22 +54,24 @@ Widget::Widget(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui::WorkPlatfor
     ui->tabWidget->tabBar()->setCursor(Qt::PointingHandCursor);
     reloadTheme();
 
+    auto a = ok::Application::Instance();
     QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_Platform_MODULE, locale);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
-    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_Platform_MODULE, locale0); });
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+                settings::Translator::translate(OK_Platform_MODULE, locale0);
+            });
 
     //    thread = (std::make_unique<QThread>());
     //    thread->setObjectName("WorkPlatform");
     //    connect(thread.get(), &QThread::started, this, &Widget::doStart);
     //    moveToThread(thread.get());
-    //
 }
 
 Widget::~Widget() {
-    settings::Translator::unregister(this);
 
     const int count = ui->tabWidget->count();
     QList<PlatformPage*> pages;

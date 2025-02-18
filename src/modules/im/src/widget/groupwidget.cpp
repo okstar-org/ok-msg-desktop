@@ -19,11 +19,11 @@
 #include <QMimeData>
 #include <QPalette>
 
+#include "Bus.h"
 #include "contentdialogmanager.h"
 #include "form/groupchatform.h"
 #include "groupwidget.h"
 #include "lib/storage/settings/style.h"
-#include "lib/storage/settings/translator.h"
 #include "lib/ui/gui.h"
 #include "lib/ui/widget/tools/CroppingLabel.h"
 #include "lib/ui/widget/tools/MaskablePixmap.h"
@@ -31,6 +31,7 @@
 #include "src/nexus.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
 
 namespace module::im {
 
@@ -59,7 +60,11 @@ GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName)
         emit groupWidgetClicked(this);
     });
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
     retranslateUi();
 
     emit Widget::getInstance() -> groupAdded(group);
@@ -70,7 +75,7 @@ GroupWidget::GroupWidget(const GroupId& groupId, const QString& groupName)
 GroupWidget::~GroupWidget() {
     qDebug() << __func__;
     emit Widget::getInstance() -> groupRemoved(group);
-    settings::Translator::unregister(this);
+    
 }
 
 void GroupWidget::init() {}

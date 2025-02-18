@@ -87,13 +87,17 @@ ContactWidget::ContactWidget(QWidget* parent)
     connect(Widget::getInstance(), &Widget::friendRemoved, this, &ContactWidget::onFriendRemoved);
     connect(Widget::getInstance(), &Widget::addMember, this, &ContactWidget::do_addContactToGroup);
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+       auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 ContactWidget::~ContactWidget() {
     qDebug() << __func__;
     deinit();
-    settings::Translator::unregister(this);
+    
     delete ui;
 }
 

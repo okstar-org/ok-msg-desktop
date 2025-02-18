@@ -110,14 +110,16 @@ AVForm::AVForm()
     connect(qGUIApp, &QGuiApplication::screenAdded, this, &AVForm::rescanDevices);
     connect(qGUIApp, &QGuiApplication::screenRemoved, this, &AVForm::rescanDevices);
 
-    settings::Translator::registerHandler(std::bind(&AVForm::retranslateUi, this), this);
-
-    auto bus = ok::Application::Instance()->bus();
-    connect(bus, &ok::Bus::profileChanged, this, &AVForm::onProfileChanged);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
+    connect(a->bus(), &ok::Bus::profileChanged, this, &AVForm::onProfileChanged);
 }
 
 AVForm::~AVForm() {
-    settings::Translator::unregister(this);
+    
 }
 
 void AVForm::hideEvent(QHideEvent* event) {

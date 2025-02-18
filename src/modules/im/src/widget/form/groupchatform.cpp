@@ -12,34 +12,26 @@
 
 #include "groupchatform.h"
 
-#include "lib/storage/settings/translator.h"
-#include "lib/ui/layout/FlowLayout.h"
-#include "lib/ui/widget/tools/CroppingLabel.h"
-#include "src/chatlog/chatlog.h"
-#include "src/chatlog/content/text.h"
-#include "src/core/core.h"
-#include "src/core/coreav.h"
-#include "src/lib/session/profile.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
-#include "src/model/friend.h"
-#include "src/model/friendlist.h"
-#include "src/model/group.h"
-#include "src/model/groupid.h"
-#include "src/persistence/igroupsettings.h"
-#include "src/video/groupnetcamview.h"
-#include "src/widget/chatformheader.h"
-#include "src/widget/form/chatform.h"
-#include "src/widget/groupwidget.h"
-#include "tabcompleter.h"
-
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QRegularExpression>
 #include <QTimer>
 #include <QToolButton>
 
+#include "Bus.h"
+#include "lib/ui/layout/FlowLayout.h"
+#include "src/chatlog/chatlog.h"
+#include "src/core/core.h"
+#include "src/core/coreav.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/model/friend.h"
+#include "src/model/friendlist.h"
+#include "src/model/groupid.h"
+#include "src/persistence/igroupsettings.h"
+#include "src/widget/chatformheader.h"
+#include "src/widget/form/chatform.h"
 #include "src/nexus.h"
+#include "src/application.h"
 
 namespace {
 const auto LABEL_PEER_TYPE_OUR = QVariant(QStringLiteral("our"));
@@ -127,11 +119,15 @@ GroupChatForm::GroupChatForm(const GroupId* chatGroup, IChatLog& chatLog,
     //    connect(group, &Group::peerCountChanged, this, &GroupChatForm::updateUserCount);
 
     setAcceptDrops(true);
-    settings::Translator::registerHandler(std::bind(&GroupChatForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 GroupChatForm::~GroupChatForm() {
-    settings::Translator::unregister(this);
+
 }
 
 void GroupChatForm::onTitleChanged(const QString& author, const QString& title) {

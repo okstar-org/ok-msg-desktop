@@ -18,11 +18,10 @@
 #include "PluginInfoForm.h"
 #include "PluginItemForm.h"
 #include "lib/network/NetworkHttp.h"
-#include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/style.h"
-#include "lib/storage/settings/translator.h"
 #include "lib/ui/widget/GenericForm.h"
 #include "ui_PluginManagerForm.h"
+#include "application.h"
 
 namespace module::config {
 
@@ -38,10 +37,13 @@ PluginManagerForm::PluginManagerForm(QWidget* parent)
         setGeometry(parent->contentsRect());
     }
 
-    //  QString locale = lib::settings::OkNexus::getSettings()->getTranslation();
-    //  settings::Translator::translate(OK_UIWindowConfig_MODULE, "plugin_"+locale);
-    //  settings::Translator::registerHandler([this] { retranslateUi(); }, this);
-    //  retranslateUi();
+
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
+    retranslateUi();
 
     connect(ui->listWidget, &QListWidget::itemClicked, this, &PluginManagerForm::pluginClicked,
             Qt::UniqueConnection);

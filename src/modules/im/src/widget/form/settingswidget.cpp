@@ -13,16 +13,6 @@
 #include "settingswidget.h"
 
 
-#include "lib/storage/settings/translator.h"
-
-#include "src/nexus.h"
-
-#include "src/widget/contentlayout.h"
-#include "src/widget/form/settings/StorageSettingsForm.h"
-#include "src/widget/form/settings/avform.h"
-#include "src/widget/form/settings/generalform.h"
-#include "src/widget/widget.h"
-
 #include <QLabel>
 #include <QStyle>
 #include <QTabBar>
@@ -30,6 +20,15 @@
 #include <QWindow>
 
 #include <memory>
+
+#include "src/application.h"
+#include "src/nexus.h"
+#include "src/widget/contentlayout.h"
+#include "src/widget/form/settings/StorageSettingsForm.h"
+#include "src/widget/form/settings/avform.h"
+#include "src/widget/form/settings/generalform.h"
+#include "src/widget/widget.h"
+
 namespace module::im {
 SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
     //    IAudioSettings* audioSettings = Nexus::getProfile()->getSettings();
@@ -72,11 +71,15 @@ SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
     connect(settingsWidgets.get(), &QTabWidget::currentChanged, this,
             &SettingsWidget::onTabChanged);
 
-    settings::Translator::registerHandler(std::bind(&SettingsWidget::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 SettingsWidget::~SettingsWidget() {
-    settings::Translator::unregister(this);
+    
 }
 
 void SettingsWidget::setBodyHeadStyle(QString style) {

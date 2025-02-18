@@ -12,6 +12,7 @@
 
 #include "LoginWidget.h"
 
+#include <QDesktopServices>
 #include <QPaintEvent>
 #include <QShortcut>
 #include <QTranslator>
@@ -19,12 +20,11 @@
 #include <memory>
 
 #include "SettingManager.h"
-#include "base/logs.h"
-#include "base/widgets.h"
 #include "lib/backend/OkCloudService.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
 #include "ui_LoginWidget.h"
+#include "application.h"
 
 namespace UI {
 
@@ -74,13 +74,17 @@ LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, boo
     init();
 
     // translator
-    settings::Translator::registerHandler([&] { retranslateUi(); }, this);
     retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 LoginWidget::~LoginWidget() {
     qDebug() << __func__;
-    settings::Translator::unregister(this);
+    
     delete ui;
 }
 

@@ -110,7 +110,7 @@ OMainMenu::OMainMenu(QWidget* parent) : QFrame(parent), ui(new Ui::OMainMenu) {
 
 OMainMenu::~OMainMenu() {
     qDebug() << __func__;
-    settings::Translator::unregister(this);
+    
     delete ui;
 }
 

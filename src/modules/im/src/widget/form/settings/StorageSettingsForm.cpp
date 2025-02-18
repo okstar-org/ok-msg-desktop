@@ -12,7 +12,6 @@
 
 #include "StorageSettingsForm.h"
 #include <cmath>
-#include "lib/storage/settings/OkSettings.h"
 #include "ui_StorageSettingsForm.h"
 
 #include <QDebug>
@@ -25,19 +24,16 @@
 #include <QTime>
 #include <QVector>
 
-#include "lib/storage/settings/translator.h"
 #include "src/Bus.h"
 #include "src/application.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/core/core.h"
-#include "src/core/coreav.h"
-#include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
-#include "src/persistence/smileypack.h"
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
 
 namespace module::im {
 
@@ -57,15 +53,19 @@ StorageSettingsForm::StorageSettingsForm(SettingsWidget* myParent)
     const ok::base::RecursiveSignalBlocker signalBlocker(this);
 
     eventsInit();
-    settings::Translator::registerHandler(std::bind(&StorageSettingsForm::retranslateUi, this),
-                                          this);
+
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 
     auto bus = ok::Application::Instance()->bus();
     connect(bus, &ok::Bus::profileChanged, this, &StorageSettingsForm::onProfileChanged);
 }
 
 StorageSettingsForm::~StorageSettingsForm() {
-    settings::Translator::unregister(this);
+    
     delete bodyUI;
 }
 

@@ -40,7 +40,6 @@ GeneralForm::GeneralForm(QWidget* parent)
 
     QString locale0 = s.getTranslation();
     settings::Translator::translate(OK_Config_MODULE, locale0);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
 
 #ifndef UPDATE_CHECK_ENABLED
@@ -135,7 +134,6 @@ GeneralForm::GeneralForm(QWidget* parent)
 }
 
 GeneralForm::~GeneralForm() {
-    settings::Translator::unregister(this);
     delete ui;
 }
 

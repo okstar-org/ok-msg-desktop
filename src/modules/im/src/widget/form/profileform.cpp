@@ -26,7 +26,6 @@
 #include <QMouseEvent>
 #include <QWindow>
 
-#include "lib/storage/settings/translator.h"
 #include "lib/ui/gui.h"
 #include "lib/ui/widget/QRWidget.h"
 #include "lib/ui/widget/tools/CroppingLabel.h"
@@ -41,6 +40,7 @@
 #include "src/widget/form/settingswidget.h"
 #include "src/widget/widget.h"
 #include "ui_profileform.h"
+#include "src/application.h"
 
 namespace module::im {
 
@@ -162,12 +162,17 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     setStyleSheet(lib::settings::Style::getStylesheet("window/profile.css"));
 
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&ProfileForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
+
     connect(bodyUI->qrcodeButton, &QToolButton::clicked, this, &ProfileForm::showQRCode);
 }
 
 ProfileForm::~ProfileForm() {
-    settings::Translator::unregister(this);
+    
     delete bodyUI;
 }
 

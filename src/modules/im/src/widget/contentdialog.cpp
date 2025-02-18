@@ -18,10 +18,10 @@
 #include <QDragEnterEvent>
 #include <QGuiApplication>
 #include <QMimeData>
+#include <QScrollArea>
 #include <QShortcut>
 #include <QSplitter>
 
-#include "lib/storage/settings/translator.h"
 #include "src/core/core.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/model/chatroom/friendchatroom.h"
@@ -37,8 +37,8 @@
 #include "src/widget/form/chatform.h"
 #include "src/widget/friendwidget.h"
 #include "src/widget/groupwidget.h"
-#include "src/widget/tool/adjustingscrollarea.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
 
 namespace module::im {
 
@@ -132,11 +132,16 @@ ContentDialog::ContentDialog(QWidget* parent)
             &ContentDialog::onGroupchatPositionChanged);
     connect(splitter, &QSplitter::splitterMoved, this, &ContentDialog::saveSplitterState);
 
-    settings::Translator::registerHandler(std::bind(&ContentDialog::retranslateUi, this), this);
+    retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 ContentDialog::~ContentDialog() {
-    settings::Translator::unregister(this);
+    
 }
 
 void ContentDialog::closeEvent(QCloseEvent* event) {

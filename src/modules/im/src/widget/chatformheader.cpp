@@ -176,12 +176,16 @@ ChatFormHeader::ChatFormHeader(const ContactId& contactId, QWidget* parent)
 
     setContact(Nexus::getCore()->getFriendList().findFriend(contactId));
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 ChatFormHeader::~ChatFormHeader() {
-    settings::Translator::unregister(this);
 }
 
 void ChatFormHeader::setContact(const Contact* contact_) {

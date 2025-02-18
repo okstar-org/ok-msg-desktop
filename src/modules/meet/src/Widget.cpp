@@ -77,7 +77,6 @@ Widget::Widget(QWidget* parent)
 }
 
 Widget::~Widget() {
-    settings::Translator::unregister(this);
     delete ui;
 }
 
@@ -97,10 +96,13 @@ void Widget::doStart() {}
 void Widget::initTranslate() {
     QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_Meet_MODULE, locale);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_Meet_MODULE, locale0); });
+            [&](QString locale0) {
+                retranslateUi();
+                settings::Translator::translate(OK_Meet_MODULE, locale0);
+            });
 }
 
 void Widget::retranslateUi() {

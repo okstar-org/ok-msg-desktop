@@ -29,8 +29,8 @@ static QMutex lock;
 class Translator {
 public:
     static void translate(const QString& moduleName, const QString& localeName);
-    static void registerHandler(const std::function<void()>&, void* owner);
-    static void unregister(void* owner);
+    // static void registerHandler(const std::function<void()>&, void* owner);
+    // static void unregister(void* owner);
 
 private:
     //  static QVector<Callback> callbacks;

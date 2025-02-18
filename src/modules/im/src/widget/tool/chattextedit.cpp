@@ -12,13 +12,16 @@
 
 #include "chattextedit.h"
 
-#include "lib/storage/settings/translator.h"
 
 #include <QApplication>
 #include <QClipboard>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QMimeData>
+
+#include "Bus.h"
+#include "application.h"
+
 namespace module::im {
 
 ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
@@ -28,12 +31,16 @@ ChatTextEdit::ChatTextEdit(QWidget* parent) : QTextEdit(parent) {
 
     connect(this, &ChatTextEdit::textChanged, this, &ChatTextEdit::onTextChanged);
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
     retranslateUi();
 }
 
 ChatTextEdit::~ChatTextEdit() {
-    settings::Translator::unregister(this);
+    
 }
 
 void ChatTextEdit::keyPressEvent(QKeyEvent* event) {

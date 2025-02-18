@@ -242,18 +242,19 @@ Widget::Widget(QWidget* parent)  //
     updateIcons();
 
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&Widget::retranslateUi, this), this);
 
-#ifdef Q_OS_MAC
-    // Nexus::getInstance()->updateWindows();
-#endif
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 
     init();
 }
 
 Widget::~Widget() {
     qDebug() << __func__;
-    settings::Translator::unregister(this);
+    
     delete timer;
     delete ui;
 }
@@ -800,13 +801,15 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
             setStyleSheet(lib::settings::Style::getStylesheet("window/general.css"));
             connect(core, &Core::usernameSet, this, &Dialog::retranslateUi);
 
-            settings::Translator::registerHandler(std::bind(&Dialog::retranslateUi, this), this);
+            auto a = ok::Application::Instance();
+            connect(a->bus(), &ok::Bus::languageChanged,this,
+                    [&](QString locale0) {
+                        retranslateUi();
+                    });
             retranslateUi();
         }
 
-        ~Dialog() {
-            settings::Translator::unregister(this);
-        }
+        ~Dialog() = default;
 
     public slots:
 

@@ -17,6 +17,7 @@
 #include <QClipboard>
 #include <QFileDialog>
 #include <QKeyEvent>
+#include <src/chatlog/content/text.h>
 
 #include <QSplitter>
 #include <QStringBuilder>
@@ -24,34 +25,26 @@
 #include <QtGlobal>
 #include "ChatInputForm.h"
 #include "base/MessageBox.h"
-#include "base/files.h"
 #include "base/images.h"
 #include "lib/storage/settings/OkSettings.h"
-#include "lib/storage/settings/translator.h"
 #include "lib/ui/gui.h"
 #include "src/chatlog/chatlinecontentproxy.h"
 #include "src/chatlog/chatlog.h"
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/chatlog/content/simpletext.h"
-#include "src/chatlog/content/timestamp.h"
 #include "src/core/core.h"
-#include "src/lib/session/profile.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/grouplist.h"
 #include "src/nexus.h"
 #include "src/persistence/settings.h"
 #include "src/persistence/smileypack.h"
-#include "src/video/genericnetcamview.h"
 #include "src/widget/contentdialog.h"
 #include "src/widget/contentlayout.h"
-#include "src/widget/emoticonswidget.h"
 #include "src/widget/form/chatform.h"
 #include "src/widget/form/loadhistorydialog.h"
-#include "src/widget/tool/chattextedit.h"
-#include "src/widget/tool/flyoutoverlaywidget.h"
 #include "src/widget/widget.h"
+#include "src/application.h"
 
 /**
  * @class GenericChatForm
@@ -265,13 +258,17 @@ GenericChatForm::GenericChatForm(const ContactId* contact_,
     setLayout(mainLayout);
 
     reloadTheme();
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
     retranslateUi();
 }
 
 GenericChatForm::~GenericChatForm() {
     qDebug() << __func__;
-    settings::Translator::unregister(this);
+    
     //  delete searchForm;
 }
 

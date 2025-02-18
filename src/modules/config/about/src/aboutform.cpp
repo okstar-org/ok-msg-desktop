@@ -16,12 +16,11 @@
 #include <QDesktopServices>
 #include <QPushButton>
 #include <QTimer>
-#include "lib/storage/settings/translator.h"
+#include "Bus.h"
 #include "lib/ui/widget/GenericForm.h"
 #include "src/base/RecursiveSignalBlocker.h"
 #include "src/lib/storage/settings/style.h"
-
-#include <memory>
+#include "application.h"
 
 namespace module::config {
 
@@ -71,7 +70,16 @@ AboutForm::AboutForm(QWidget* parent)
 
     replaceVersions();
 
-    settings::Translator::registerHandler(std::bind(&AboutForm::retranslateUi, this), this);
+    retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
+}
+
+AboutForm::~AboutForm() {
+    delete bodyUI;
 }
 
 /**
@@ -152,10 +160,6 @@ QString AboutForm::createLink(QString path, QString text) const {
                  text);
 }
 
-AboutForm::~AboutForm() {
-    settings::Translator::unregister(this);
-    delete bodyUI;
-}
 
 /**
  * @brief Retranslate all elements in the form.

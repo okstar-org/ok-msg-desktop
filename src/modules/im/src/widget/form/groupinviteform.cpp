@@ -12,13 +12,11 @@
 
 #include "groupinviteform.h"
 
-#include "lib/storage/settings/translator.h"
+#include "Bus.h"
 #include "src/core/core.h"
 #include "src/model/groupinvite.h"
-#include "src/persistence/settings.h"
 #include "src/widget/contentlayout.h"
 #include "src/widget/form/groupinvitewidget.h"
-#include "ui_mainwindow.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -30,6 +28,8 @@
 #include <QWindow>
 
 #include <algorithm>
+#include "application.h"
+
 
 namespace module::im {
 
@@ -63,11 +63,15 @@ GroupInviteForm::GroupInviteForm()
     headLayout->addWidget(headLabel);
 
     retranslateUi();
-    settings::Translator::registerHandler(std::bind(&GroupInviteForm::retranslateUi, this), this);
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 GroupInviteForm::~GroupInviteForm() {
-    settings::Translator::unregister(this);
+    
 }
 
 /**

@@ -70,7 +70,7 @@ Widget::Widget(QWidget* parent) : lib::ui::OPage(parent), view{nullptr}
 }
 
 Widget::~Widget() {
-    settings::Translator::unregister(this);
+
 }
 
 void Widget::start() {}
@@ -89,7 +89,7 @@ void Widget::doStart() {}
 void Widget::initTranslate() {
     QString locale = lib::settings::OkSettings::getInstance().getTranslation();
     settings::Translator::translate(OK_Classroom_MODULE, locale);
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+
     retranslateUi();
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
             [](QString locale0) { settings::Translator::translate(OK_Classroom_MODULE, locale0); });

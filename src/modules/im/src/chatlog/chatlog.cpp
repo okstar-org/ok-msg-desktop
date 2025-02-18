@@ -11,13 +11,6 @@
  */
 
 #include "chatlog.h"
-#include "../persistence/settings.h"
-#include "chatlinecontent.h"
-#include "chatlinecontentproxy.h"
-#include "chatmessage.h"
-#include "content/filetransferwidget.h"
-#include "lib/storage/settings/translator.h"
-#include "src/lib/storage/settings/style.h"
 
 #include <QAction>
 #include <QApplication>
@@ -27,11 +20,22 @@
 #include <QScrollBar>
 #include <QShortcut>
 #include <QTimer>
-
 #include <algorithm>
 #include <cassert>
+
+#include "../persistence/settings.h"
+#include "Bus.h"
+#include "chatlinecontent.h"
+#include "chatlinecontentproxy.h"
+#include "chatmessage.h"
+#include "content/filetransferwidget.h"
+#include "src/lib/storage/settings/style.h"
+
+
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
+#include "application.h"
+
 /**
  * @var ChatLog::repNameAfter
  * @brief repetition interval sender name (sec)
@@ -144,15 +148,19 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
         copySelectedText(true);
     });
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
     retranslateUi();
+
+    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
+            [&](QString locale0) {
+                retranslateUi();
+            });
+
 
     auto s = Nexus::getProfile()->getSettings();
     connect(s, &Settings::emojiFontPointSizeChanged, this, &ChatLog::forceRelayout);
 }
 
 ChatLog::~ChatLog() {
-    settings::Translator::unregister(this);
 
     // Remove chatlines from scene
     for (const IChatItem::Ptr& l : lines) l->removeFromScene();

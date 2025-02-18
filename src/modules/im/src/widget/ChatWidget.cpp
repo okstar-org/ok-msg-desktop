@@ -147,11 +147,14 @@ void ChatWidget::init() {
 
     connect(bus, &ok::Bus::profileChanged, this, &ChatWidget::onProfileChanged);
 
-    settings::Translator::registerHandler([this] { retranslateUi(); }, this);
+    connect(bus, &ok::Bus::languageChanged,
+            [&](QString locale0) {
+                retranslateUi();
+            });
 }
 
 void ChatWidget::deinit() {
-    settings::Translator::unregister(this);
+
 
     disconnect(ui->nameLabel, &lib::ui::CroppingLabel::clicked, this, &ChatWidget::on_nameClicked);
 
