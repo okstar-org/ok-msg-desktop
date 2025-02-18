@@ -28,7 +28,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | Meet           | Latest Build Status                                                                                                                                                                                        |
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    |
-| 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg) |
+| 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu.yml/badge.svg) |
 | 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)        |
 | 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)        |
 
@@ -67,9 +67,14 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 <img src="docs/assets/design.png" width="1100" />
 
-# 🏢 系统架构
+# 🏢 System Architecture Diagram
 
 <img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
+
+# 🏢 Client Architecture Diagram
+
+<img src="docs/assets/client-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
+
 
 # 🌏 Multi-Language Support
 
