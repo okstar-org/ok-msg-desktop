@@ -98,3 +98,42 @@ lib--ui--PopupMenuComboBox > QToolButton:hover {
 #avatarLabel{
     background-color: #E3E7EA;
 }
+
+/* 固定高度，修改完根据下面公式同步修改尺寸 */
+AudioVolumnSlider{
+    max-height: 20px;
+    min-height: 20px;
+    border: 0px solid;
+    background: transparent;
+    qproperty-custom_style: true;
+}
+
+/* heigth = 8 - 1*2 + 6*2 = 18  handle完整高度 = 槽高度-槽边框+上下边距 */
+/* width = height - 1*2 = 16  圆形宽=高 高-边框，大概这么算吧 实际有点误差 */
+/* 左右边距 = slider宽度 / 2 = 8 主要是控制槽的起点和终点能落在handle中心 */
+AudioVolumnSlider::handle:horizontal {
+    margin: -6px -8px;
+    width: 16px;
+    border: 1px solid rgb(0, 183, 255);
+    border-radius: 9px;
+    background: white;
+}
+
+/* height = 20 - 6*2 = 8 槽高度=外部高度-减上下边距 */
+/* 边距与handle边距相反 */
+AudioVolumnSlider::groove{
+    margin: 6px 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-color: rgb(0, 183, 255);
+    background: rgba(0, 183, 255, 0.2);
+}
+AudioVolumnSlider::groove:on{
+    border-color:  rgb(0, 183, 255);
+    background: rgb(0, 183, 255);
+}
+AudioVolumnSlider::groove:off{
+    border-color: rgb(144, 144, 144);
+    background: rgba(144, 144, 144, 0.2);
+}
