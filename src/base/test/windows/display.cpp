@@ -13,7 +13,7 @@
 //
 // Created by gaojie on 25-1-23.
 //
-#if !defined(Q_OS_WIN)
+#if !defined(WIN32)
 #error "This file is only meant to be compiled for Windows system!"
 #endif
 

@@ -89,7 +89,6 @@ if (WIN32)
 endif ()
 
 # Google Test
-message(STATUS "Test files: ${${PROJECT_NAME}_TEST_RESOURCES}")
 add_executable(${PROJECT_NAME}Tests
 		${${PROJECT_NAME}_TEST_RESOURCES}
 		${${PROJECT_NAME}_SOURCES}
@@ -97,7 +96,7 @@ add_executable(${PROJECT_NAME}Tests
 
 # 链接gtest和gtest_main库
 target_link_libraries(${PROJECT_NAME}Tests
-		PRIVATE gtest
+                PRIVATE gtest
 		PRIVATE gtest_main
 		${PLATFORM_LIBS}
 		PRIVATE ${Qt5Core_LIBRARIES}

@@ -94,8 +94,8 @@ endif ()
 
 # Google Test
 FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/*.cpp)
-
 message(STATUS "Test files: ${${PROJECT_NAME}_TEST_RESOURCES}")
+
 add_executable(${PROJECT_NAME}Tests
                 ${${PROJECT_NAME}_TEST_RESOURCES}
 )

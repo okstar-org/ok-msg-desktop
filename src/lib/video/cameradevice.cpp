@@ -162,7 +162,7 @@ bool CameraDevice::open(const VideoDevice& dev, AVDictionary** options, std::str
         qWarning() << "Was opened!";
         return false;
     }
-    qDebug() << __func__ << std::format("device:{} url:{}", dev.name.toStdString(), dev.url.toStdString()).c_str();
+//    qDebug() << __func__ << std::format("device:{} url:{}", dev.name.toStdString(), dev.url.toStdString()).c_str();
 
     auto format = getDefaultInputFormat(dev.type);
     int ret = avformat_open_input(&context, dev.url.toStdString().c_str(), format, options);
@@ -395,11 +395,11 @@ QVector<VideoDevice> CameraDevice::getDeviceList() {
             }
         }
 
-                //屏幕
+        //屏幕
         if (iformat->name == QString("gdigrab")){
             QString url = "gdigrab#desktop";
             QString name = "Desktop";
-            devices.push_back(VideoDevice{.type = type, .name = name, .url=dev});
+            devices.push_back(VideoDevice{.type = type, .name = name, .url = url});
         }
 #endif  // Q_OS_WIN
 
@@ -529,8 +529,7 @@ bool CameraDevice::setVideoMode(const VideoMode &mode_)
 
     mode = mode_;
 
-            //设置视频大小
-    // options = nullptr;
+    //设置视频大小
     auto videoSize = std::format("{}x{}", mode.width, mode.height);
     // qDebug() << "videoSize: " << QString::fromStdString(videoSize);
     if(av_dict_set(&options, "video_size", videoSize.c_str(), 0)){

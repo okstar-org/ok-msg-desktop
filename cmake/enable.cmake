@@ -25,7 +25,7 @@ endif()
 
 # Enable platform module（ON/OFF）
 set(ENABLE_Platform ON)
-message(STATUS "Enable meet: ${ENABLE_Platform}")
+message(STATUS "Enable platform: ${ENABLE_Platform}")
 if(ENABLE_Platform)
 	add_definitions(-DENABLE_Platform)
 endif()
