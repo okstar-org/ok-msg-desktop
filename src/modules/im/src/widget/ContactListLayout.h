@@ -30,6 +30,7 @@ public:
 
     void removeFriendWidget(FriendWidget* widget);
     int indexOfFriendWidget(GenericChatItemWidget* widget, bool online) const;
+    void sortFriendWidget(GenericChatItemWidget* widget);
 
     int friendOnlineCount() const;
     int friendTotalCount() const;

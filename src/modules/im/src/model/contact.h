@@ -38,12 +38,12 @@ public:
     void setName(const QString& name);
     const QString& getName() const {
         return name;
-    };
+    }
 
     void setAlias(const QString& name);
     const QString& getAlias() const {
         return alias;
-    };
+    }
     bool hasAlias() const {
         return !alias.isEmpty();
     }

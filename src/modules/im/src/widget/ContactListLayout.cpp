@@ -40,6 +40,15 @@ int ContactListLayout::indexOfFriendWidget(GenericChatItemWidget* widget, bool o
     return itemLayout->indexOfSortedWidget(widget);
 }
 
+void ContactListLayout::sortFriendWidget(GenericChatItemWidget* widget)
+{
+    auto* layout = itemLayout->getLayout();
+
+    layout->removeWidget(widget);
+
+    itemLayout->addSortedWidget(widget);
+}
+
 int ContactListLayout::friendOnlineCount() const {
     return itemLayout->getLayout()->count();
 }

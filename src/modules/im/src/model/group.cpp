@@ -66,9 +66,9 @@ Group::Group(const GroupId groupId_, const QString& name, bool isAvGroupchat,
     // in groupchats, we only notify on messages containing your name <-- dumb
     // sound notifications should be on all messages, but system popup
     // notification on naming is appropriate
-    hasNewMessages = 0;
-    userWasMentioned = 0;
-    connect(profile, &Profile::contactAliasChanged, [this](QString cId, QString alias) {
+    hasNewMessages = false;
+    userWasMentioned = false;
+    connect(profile, &Profile::contactAliasChanged, this, [this](QString cId, QString alias) {
         if (cId == getIdAsString()) {
             setAlias(alias);
         }

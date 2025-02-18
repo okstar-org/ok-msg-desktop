@@ -92,6 +92,10 @@ FriendWidget* ContactListWidget::addFriend(const FriendId& friendId) {
             &ContactListWidget::updateFriendActivity);
     connect(fw, &FriendWidget::friendClicked, this, &ContactListWidget::slot_friendClicked);
 
+    connect(fw->getFriend(), &Friend::displayedNameChanged, fw, [&, fw](){
+        listLayout->sortFriendWidget(fw);
+    });
+
     friendWidgets.insert(friendId.toString(), fw);
     listLayout->addWidget(fw);
 
@@ -170,6 +174,10 @@ GroupWidget* ContactListWidget::addGroup(const GroupId& groupId, const QString& 
 
     connect(gw, &GroupWidget::chatroomWidgetClicked, this, &ContactListWidget::slot_groupClicked);
     connect(gw, &GroupWidget::removeGroup, this, &ContactListWidget::do_groupDeleted);
+
+    connect(gw->getGroup(), &Group::displayedNameChanged, gw, [&, gw](){
+        listLayout->sortFriendWidget(gw);
+    });
 
     return gw;
 }
