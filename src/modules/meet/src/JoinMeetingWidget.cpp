@@ -35,7 +35,7 @@ JoinMeetingWidget::JoinMeetingWidget(QWidget* parent) : QWidget(parent) {
     confirmButton->setCursor(Qt::PointingHandCursor);
     optionWidget->addFooterButton(confirmButton);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(idEdit);
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(idEdit, Qt::AlignHCenter);

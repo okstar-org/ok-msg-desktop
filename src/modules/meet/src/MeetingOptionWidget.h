@@ -16,6 +16,8 @@
 #include <QMenu>
 #include <QPointer>
 
+#include <lib/ui/widget/OMediaConfigWidget.h>
+
 
 #include "Defines.h"
 #include "base/compatiblerecursivemutex.h"
@@ -45,78 +47,18 @@ class VideoFrame;
 }  // namespace lib::video
 
 namespace module::meet {
-class CameraVideoOutputWidget;
+
 /**
  * 选项配置控件
  */
-class MeetingOptionWidget : public QWidget {
+class MeetingOptionWidget : public lib::ui::OMediaConfigWidget {
     Q_OBJECT
-
 public:
     explicit MeetingOptionWidget(QWidget* parent = nullptr);
-    void addFooterButton(QPushButton* button);
-
-    void retranslateUi();
-
-    [[nodiscard]] inline const lib::ortc::CtrlState& getCtrlState() const {
-        return ctrlState;
-    }
-
+    void retranslateUi() override;
 signals:
     // 状态改变事件
     void stateChanged();
-
-public slots:
-    void audioSelected(QAction* action);
-    void videoSelected(QAction* action);
-
-    void doOpenVideo();
-    void doCloseVideo();
-
-    void doOpenAudio();
-    void doCloseAudio();
-
-protected:
-    void showEvent(QShowEvent* e) override;
-    void hideEvent(QHideEvent* e) override;
-
-private:
-    void initDeviceInfo();
-    void updateAudioVideoIcon(bool audio, bool video, bool spk);
-
-    RoundedPixmapLabel* avatarLabel = nullptr;
-
-    lib::ui::PopupMenuComboBox* micSpeakSetting = nullptr;
-    lib::ui::PopupMenuComboBox* cameraSetting = nullptr;
-    lib::ui::PopupMenuComboBox* volumnSetting = nullptr;
-
-    QSlider* volumnSlider = nullptr;
-
-    QHBoxLayout* buttonLayout = nullptr;
-
-    lib::ortc::CtrlState ctrlState;
-
-    // 音频设备
-    QMenu* audioMenu = nullptr;
-    QActionGroup* aGroup = nullptr;
-    QString selectedAudio;
-
-    // audio
-    lib::audio::IAudioControl* audioControl;
-    std::unique_ptr<lib::audio::IAudioSource> audioSource;
-    std::unique_ptr<lib::audio::IAudioSink> audioSink;
-
-    // 视频设备
-    QMenu* videoMenu = nullptr;
-    QActionGroup* vGroup = nullptr;
-    QString selectedVideo;
-    QVector<lib::video::VideoDevice> vDeviceList;
-
-
-    QStackedLayout* videoOutLayout = nullptr;
-    CameraVideoOutputWidget* cameraOutput = nullptr;
-    CompatibleRecursiveMutex mutex;
-
 };
 
 }  // namespace module::meet

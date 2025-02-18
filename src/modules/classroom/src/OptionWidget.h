@@ -14,55 +14,22 @@
 
 #include <QPointer>
 #include <QWidget>
-#include "Defines.h"
-#include "lib/ortc/ok_rtc.h"
+#include "lib/ui/widget/OMediaConfigWidget.h"
 
-class QPushButton;
-class QSlider;
-class QHBoxLayout;
-
-class RoundedPixmapLabel;
-
-namespace lib::ui {
-class PopupMenuComboBox;
-}
 
 namespace module::classroom {
 
 /**
  * 选项配置控件
  */
-class OptionWidget : public QWidget {
+class OptionWidget : public lib::ui::OMediaConfigWidget {
     Q_OBJECT
 public:
     explicit OptionWidget(QWidget* parent = nullptr);
-    ~OptionWidget();
+    ~OptionWidget() override = default;
 
-    void addFooterButton(QPushButton* button);
+    void retranslateUi() override;
 
-    void retranslateUi();
-
-    inline const lib::ortc::CtrlState& getCtrlState() const {
-        return ctrlState;
-    }
-
-protected:
-    void showEvent(QShowEvent* event) override;
-
-private:
-    void updateAudioVideoIcon(bool audio, bool video, bool spk);
-
-    RoundedPixmapLabel* avatarLabel = nullptr;
-
-    lib::ui::PopupMenuComboBox* micSpeakSetting = nullptr;
-    lib::ui::PopupMenuComboBox* cameraSetting = nullptr;
-    lib::ui::PopupMenuComboBox* volumeSetting = nullptr;
-
-    QSlider* volumeSlider = nullptr;
-
-    QHBoxLayout* buttonLayout = nullptr;
-
-    lib::ortc::CtrlState ctrlState;
 signals:
     // 状态改变事件
     void stateChanged();
