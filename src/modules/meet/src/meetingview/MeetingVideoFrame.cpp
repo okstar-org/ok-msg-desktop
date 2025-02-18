@@ -37,13 +37,16 @@
 
 namespace module::meet {
 
-MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState ctrlState,
+MeetingVideoFrame::MeetingVideoFrame(const QString& name,
+                                     const lib::ortc::DeviceConfig& conf,
+                                     lib::ortc::CtrlState ctrlState,
                                      QWidget* parent)
         : QWidget(parent)
         , username(name)
         , callDurationTimer(nullptr)
         , timeElapsed(nullptr)
-        , ctrlState(ctrlState) {
+        , ctrlState(ctrlState)
+{
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -70,7 +73,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name, lib::ortc::CtrlState c
     auto profile = ok::Application::Instance()->getProfile();
     meet = new lib::messenger::MessengerMeet(profile->getMessenger());
     meet->addHandler(this);
-    createMeet(name);
+    createMeet(name, conf);
 
     callDurationTimer = new QTimer(this);
     connect(callDurationTimer, &QTimer::timeout, this, &MeetingVideoFrame::updateDuration);
@@ -120,7 +123,7 @@ void MeetingVideoFrame::creatTopToolBar() {
     topToolBar->addWidget(duraionLabel);
     topToolBar->addSeparator();
 
-    QWidget* stretch = new QWidget(topToolBar);
+    auto* stretch = new QWidget(topToolBar);
     stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(stretch);
 
@@ -184,7 +187,7 @@ void MeetingVideoFrame::creatBottomBar() {
     middleLayout->addWidget(leaveButton);
 
     // 右侧部分
-    QHBoxLayout* rightLayout = new QHBoxLayout();
+    auto* rightLayout = new QHBoxLayout();
     securityButton = new QToolButton(bottomBar);
     securityButton->setIcon(QIcon(":/meet/image/security.svg"));
     moreOptionButon = new QToolButton(bottomBar);
@@ -193,7 +196,7 @@ void MeetingVideoFrame::creatBottomBar() {
     rightLayout->addWidget(securityButton);
     rightLayout->addWidget(moreOptionButon);
 
-    QHBoxLayout* barLayout = new QHBoxLayout(bottomBar);
+    auto* barLayout = new QHBoxLayout(bottomBar);
     barLayout->setContentsMargins(0, 0, 0, 0);
     barLayout->addLayout(leftLayout, 1);
     barLayout->addLayout(middleLayout, 0);
@@ -296,9 +299,9 @@ void MeetingVideoFrame::stopCounter() {
  * 创建会议
  * @param name
  */
-void MeetingVideoFrame::createMeet(const QString& name) {
+void MeetingVideoFrame::createMeet(const QString& name, const lib::ortc::DeviceConfig& conf) {
     qDebug() << __func__ << name;
-    meet->create(stdstring(name));
+    meet->create(stdstring(name), conf);
 }
 
 void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,

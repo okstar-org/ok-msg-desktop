@@ -137,7 +137,9 @@ void Widget::joinMeeting(const QString& no) {
  * 创建会议
  * @param name
  */
-void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState) {
+void Widget::createMeeting(const QString& name,
+                           const lib::ortc::DeviceConfig& conf,
+                           const lib::ortc::CtrlState& ctrlState) {
     qDebug() << __func__;
 
     QMutexLocker locker(&mutex);
@@ -147,7 +149,7 @@ void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrl
     }
     if (!view) {
         setState(MeetingState::CreatingMeeting);
-        view = new MeetingVideoFrame(name, ctrlState);
+        view = new MeetingVideoFrame(name, conf, ctrlState);
 
         // TODO 暂时关闭即退出
         connect(view.data(), &MeetingVideoFrame::destroyed, this, [this]() {

@@ -26,11 +26,10 @@
 #include "IM.h"
 #include "base/basic_types.h"
 #include "base/jsons.h"
-#include "src/base/uuid.h"
 
 namespace lib::messenger {
 
-Participant IMMeet::toParticipant(const gloox::Meet::Participant& participant) const {
+Participant toParticipant(const gloox::Meet::Participant& participant) {
     Participant p{.email = (participant.email),
                   .nick = (participant.nick),
                   .resource = (participant.resource),
@@ -106,8 +105,11 @@ IMMeet::~IMMeet() {
     }
 }
 
-const std::string& IMMeet::create(const std::string& name) {
+const std::string& IMMeet::create(const std::string& name,
+                                    const lib::ortc::DeviceConfig& conf_) {
     qDebug() << __func__ << name.c_str();
+
+    conf = conf_;
 
     std::map<std::string, std::string> props;
     props.insert(std::pair("startAudioMuted", "9"));
@@ -116,7 +118,6 @@ const std::string& IMMeet::create(const std::string& name) {
 
     gloox::JID room(name + "@conference." + im->host());
     meet = meetManager->createMeet(room, resource, props);
-
     return meet->getUid();
 }
 
@@ -182,8 +183,8 @@ void IMMeet::handleHostPresence(const gloox::JID& from, const gloox::Presence& p
 }
 
 void IMMeet::handleHostMessage(const gloox::JID& from, const gloox::Message& msg) {
-    auto message = (msg.body());
-    auto participant = (from.resource());
+    auto message = msg.body();
+    auto& participant = from.resource();
 
     qDebug() << __func__ << qstring(from.full()) << "msg:" << message.c_str();
     if (participant.empty()) {
@@ -309,6 +310,11 @@ void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& m
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
     rtc->CreateAnswer((peerId.toString()), map);
+
+    if(!conf.videoName.empty()){
+        //Switch to the specified device
+        rtc->switchVideoDevice(conf.videoName);
+    }
 
     // auto& map = cav.getSsrcBundle();
     // rtc->addSource((peerId.toString()), map);

@@ -44,7 +44,8 @@ public:
      * @param name
      * @return
      */
-    const std::string& create(const std::string& name);
+    const std::string& create(const std::string& name,
+                             const lib::ortc::DeviceConfig& conf);
 
     /**
      * 解散会议
@@ -219,13 +220,14 @@ private:
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
     std::string resource;
+    lib::ortc::DeviceConfig conf;
 
     // signals:
     // ice
 
     // public slots:
     void onSelfVCard(const IMVCard& vCard);
-    Participant toParticipant(const gloox::Meet::Participant& participant) const;
+    // Participant toParticipant(const gloox::Meet::Participant& participant) ;
 };
 
 }  // namespace lib::messenger

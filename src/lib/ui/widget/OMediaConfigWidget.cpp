@@ -132,7 +132,7 @@ void OMediaConfigWidget::addFooterButton(QPushButton *button)
 void OMediaConfigWidget::initDeviceInfo() {
     QMutexLocker locker(&mutex);
 
-            // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
+    // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
 
     auto alist = ok::Application::Instance()->getAudioControl()->inDeviceNames();

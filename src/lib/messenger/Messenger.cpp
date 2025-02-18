@@ -382,8 +382,8 @@ MessengerMeet::~MessengerMeet() {
     delete meet;
 }
 
-void MessengerMeet::create(const std::string& room) {
-    meet->create(room);
+void MessengerMeet::create(const std::string& room, const lib::ortc::DeviceConfig& conf) {
+    meet->create(room, conf);
 }
 
 void MessengerMeet::addHandler(MessengerMeetHandler* hdr) {

@@ -461,6 +461,17 @@ struct CtrlState {
     bool enableSpk = true;
 };
 
+/**
+ * 设备信息
+ * @brief The Device configurations
+ */
+struct DeviceConfig {
+    // audio name
+    std::string audioName;
+    // video name
+    std::string videoName;
+};
+
 class OkRTC {
 public:
     virtual ~OkRTC() = default;

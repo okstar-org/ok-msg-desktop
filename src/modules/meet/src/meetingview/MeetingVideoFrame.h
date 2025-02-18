@@ -39,11 +39,12 @@ class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHa
     Q_OBJECT
 public:
     explicit MeetingVideoFrame(const QString& name,
+                               const lib::ortc::DeviceConfig& conf,
                                lib::ortc::CtrlState ctrlState,
                                QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
-    void createMeet(const QString& name);
+    void createMeet(const QString& name, const lib::ortc::DeviceConfig& conf);
     void retranslateUi();
 
     void startCounter();

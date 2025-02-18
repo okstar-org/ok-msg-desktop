@@ -29,11 +29,6 @@ class MeetingOptionWidget;
  */
 class StartMeetingWidget : public QWidget {
     Q_OBJECT
-signals:
-    void requstStartMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState);
-    void requstDisbandMeeting();
-    void requstShareMeeting();
-
 public:
     explicit StartMeetingWidget(QWidget* parent = nullptr);
     QString getName();
@@ -60,6 +55,12 @@ private:
      * 主框架
      */
     Widget* widget;
-    //    MeetingState meetingState = MeetingState::NoMeeting;
+
+signals:
+    void requstStartMeeting(const QString& name,
+                            const lib::ortc::DeviceConfig& conf,
+                            const lib::ortc::CtrlState& ctrlState);
+    void requstDisbandMeeting();
+    void requstShareMeeting();
 };
 }  // namespace module::meet

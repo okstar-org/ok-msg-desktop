@@ -79,7 +79,9 @@ private:
      * 开始会议
      * @param name 会议名称
      */
-    void createMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState);
+    void createMeeting( const QString& name,
+                        const lib::ortc::DeviceConfig& conf,
+                        const lib::ortc::CtrlState& ctrlState);
 
     /**
      * 解散会议（销毁）

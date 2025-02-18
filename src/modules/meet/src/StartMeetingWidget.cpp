@@ -15,7 +15,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include "Defines.h"
-#include "Meet.h"
 #include "MeetingOptionWidget.h"
 #include "Widget.h"
 #include "base/shadowbackground.h"
@@ -23,7 +22,7 @@
 namespace module::meet {
 
 static QPushButton* createButton(const QString& text, QWidget* parent, const QString& id) {
-    QPushButton* button = new QPushButton(text, parent);
+    auto* button = new QPushButton(text, parent);
     button->setObjectName(id);
     button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button->setCursor(Qt::PointingHandCursor);
@@ -49,7 +48,7 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
         if (n.isEmpty()) {
             return;
         }
-        emit requstStartMeeting(n, optionWidget->getCtrlState());
+        emit requstStartMeeting(n, optionWidget->getConf(), optionWidget->getCtrlState());
     });
 
     shareButton = createButton(tr("Share"), optionWidget, "share");
@@ -61,7 +60,7 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
     optionWidget->addFooterButton(shareButton);
     optionWidget->addFooterButton(confirmButton);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(meetingNameEdit);
     mainLayout->addWidget(optionWidget, 1);
     mainLayout->setAlignment(meetingNameEdit, Qt::AlignHCenter);

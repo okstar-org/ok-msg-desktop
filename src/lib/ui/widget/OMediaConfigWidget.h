@@ -52,6 +52,10 @@ public:
         return ctrlState;
     }
 
+    [[nodiscard]] inline const lib::ortc::DeviceConfig& getConf()const {
+        return conf;
+    }
+
     void addFooterButton(QPushButton* button);
 
 protected:
@@ -69,6 +73,7 @@ protected:
     QHBoxLayout* buttonLayout = nullptr;
 
     lib::ortc::CtrlState ctrlState;
+    lib::ortc::DeviceConfig conf;
 
             // audio
     QMenu* audioMenu = nullptr;
