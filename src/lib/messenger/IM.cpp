@@ -1477,10 +1477,8 @@ void IM::handleItemUpdated(const gloox::JID& jid) {
     auto data = item->data();
     qDebug() << "ask" << data->ask().c_str() << "sub" << data->sub().c_str();
 
-    if (data->sub() == "both") {
-        for (auto handler : friendHandlers) {
-            handler->onFriendAliasChanged(IMContactId(jid.bareJID()), (data->name()));
-        }
+    for (auto handler : friendHandlers) {
+        handler->onFriendAliasChanged(IMContactId(jid.bareJID()), (data->name()));
     }
 }
 

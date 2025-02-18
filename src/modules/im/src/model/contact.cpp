@@ -117,6 +117,7 @@ void Contact::setAlias(const QString& alias_) {
     qDebug() << __func__ << alias_;
 
     if (alias_.isEmpty()) {
+        alias = QString();
         emit displayedNameChanged(getDisplayedName());
     } else {
         if (alias_ != getDisplayedName()) emit displayedNameChanged(alias_);
