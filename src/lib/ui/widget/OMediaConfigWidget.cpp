@@ -293,12 +293,8 @@ void OMediaConfigWidget::doOpenAudio()
             [&,ac](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 // 音频帧 pcm
                 auto v = ac->getInputVol(pcm, samples);
-                qDebug() << "Input audio volume is: " << v ;
+                // 显示音频跳动
                 volumnSlider->setRealVolume(v*100);
-
-                        // QMutexLocker locker(&mutex);
-                        // if(audioSink)
-                        // audioSink->playAudioBuffer(pcm, samples, chans, rate);
             });
 }
 

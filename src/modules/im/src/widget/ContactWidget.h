@@ -50,7 +50,7 @@ public:
     [[__nodiscard__]] ContentLayout* getContentLayout() const override {
         // MUST to be initialized.
         assert(contentLayout);
-        return contentLayout.get();
+        return contentLayout;
     }
 
     void reloadTheme();
@@ -127,8 +127,8 @@ private:
     std::unique_ptr<AboutFriendForm> friendAbout;
     std::unique_ptr<AboutGroupForm> groupAbout;
 
-    std::unique_ptr<QWidget> contentWidget;
-    std::unique_ptr<ContentLayout> contentLayout;
+    QWidget* contentWidget;
+    ContentLayout* contentLayout;
 
     AddFriendForm* addForm;
 

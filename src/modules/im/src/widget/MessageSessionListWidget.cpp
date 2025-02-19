@@ -117,6 +117,7 @@ MessageSessionWidget* MessageSessionListWidget::createMessageSession(const Conta
     connectSessionWidget(*sw);
 
     listLayout->addWidget(sw);
+
     sessionWidgets.insert(sw->getContactId().toString(), sw);
 
     auto his = Nexus::getProfile()->getHistory();

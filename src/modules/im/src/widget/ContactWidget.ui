@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  - Copyright (c) 2022 船山信息 chuanshaninfo.com
-  - The project is licensed under Mulan PubL v2.
-  - You can use this software according to the terms and conditions of the Mulan
-  - PubL v2. You may obtain a copy of Mulan PubL v2 at:
-  -          http://license.coscl.org.cn/MulanPubL-2.0
-  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-  - EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-  - MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-  - See the Mulan PubL v2 for more details.
-  -->
-
 <ui version="4.0">
  <class>ContactWidget</class>
  <widget class="QWidget" name="ContactWidget">
@@ -186,7 +174,7 @@
           </widget>
          </item>
          <item>
-          <widget class="module::im::NotificationScrollArea" name="friendList">
+          <widget class="module::im::NotificationScrollArea" name="friendList" native="true">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -202,45 +190,9 @@
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
-           </property>
-           <property name="widgetResizable">
+           <property name="widgetResizable" stdset="0">
             <bool>true</bool>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>300</width>
-              <height>429</height>
-             </rect>
-            </property>
-            <property name="autoFillBackground">
-             <bool>true</bool>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
           </widget>
          </item>
         </layout>
@@ -253,16 +205,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>NotificationScrollArea</class>
-   <extends>QScrollArea</extends>
-   <header location="global">src/widget/notificationscrollarea.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>lib::ui::RoundedMaskContainer</class>
    <extends>QFrame</extends>
    <header location="global">lib/ui/widget/tools/RoundedMaskContainer.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>module::im::NotificationScrollArea</class>
+   <extends>QWidget</extends>
+   <header>src/modules/im/src/widget/notificationscrollarea.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -46,15 +46,15 @@ ContactWidget::ContactWidget(QWidget* parent)
     ui->searchContactsContainer->setAutoFillBackground(false);
 
     // 右侧内容容器
-    contentWidget = std::make_unique<QWidget>(this);
+    contentWidget = new QWidget(this);
     contentWidget->setObjectName("ContactContentWidget");
     contentWidget->setContentsMargins(8, 8, 8, 8);
-    contentLayout = std::make_unique<ContentLayout>(contentWidget.get());
+    contentLayout = new ContentLayout(contentWidget);
 
     // 左侧朋友列表
     contactListWidget = new ContactListWidget(this, false);
-    contactListWidget->setGeometry(0, 0, 400, 400);
     contactListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
+    ui->friendList->setWidget(contactListWidget);
 
     // 点击事件 - 打开联系人详情
     connect(contactListWidget, &ContactListWidget::friendClicked, [&](const FriendWidget* w) {
@@ -65,17 +65,14 @@ ContactWidget::ContactWidget(QWidget* parent)
         showGroupDetails(w->getGroup());
     });
 
-    ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
-    ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
-    ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)contactListWidget);
-
-    ui->mainSplitter->addWidget(contentWidget.get());
+    ui->mainSplitter->addWidget(contentWidget);
     ui->mainSplitter->setSizes(QList<int>() << 240 << 500);
     ui->mainSplitter->setStretchFactor(1, 1);
     ui->mainSplitter->setChildrenCollapsible(false);
 
     ui->searchContact->setPlaceholderText(tr("Search Contacts"));
     connect(ui->searchContact, &QLineEdit::textChanged, this, &ContactWidget::searchContacts);
+
     ui->addBtn->setCursor(Qt::PointingHandCursor);
     connect(ui->addBtn, &QPushButton::released, this, &ContactWidget::do_openAddForm);
 
@@ -97,7 +94,6 @@ ContactWidget::ContactWidget(QWidget* parent)
 ContactWidget::~ContactWidget() {
     qDebug() << __func__;
     deinit();
-    
     delete ui;
 }
 

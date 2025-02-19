@@ -77,26 +77,26 @@ QLabel {
     background-color: #474545;
 }
 
-MessageSessionWidget{
+module--im--MessageSessionWidget{
     border: 0px solid;
     border-radius: 5px;
 }
 
-MessageSessionWidget:hover{
-    background-color:#2b2b2b;
+module--im--MessageSessionWidget:hover{
+    background-color: @themeLight;
 }
 
-MessageSessionWidget:selected{
-    background-color:#333333;
+module--im--MessageSessionWidget:selected{
+    background-color: @themeLight;
 }
 
-MessageSessionWidget QLabel#nameLabel{
+module--im--MessageSessionWidget QLabel#nameLabel{
     color: #e8e8e8;
 }
 
-MessageSessionWidget QLabel#lastMessageLabel:!active{
+module--im--MessageSessionWidget QLabel#lastMessageLabel:!active{
     color: #b3b1b3;
 }
-MessageSessionWidget QLabel#lastMessageLabel:active{
+module--im--MessageSessionWidget QLabel#lastMessageLabel:active{
     color: #b3b1b3;
 }

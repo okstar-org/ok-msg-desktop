@@ -24,7 +24,6 @@ ContactListLayout::ContactListLayout(QWidget* parent) : QVBoxLayout(parent) {
     itemLayout = new GenericChatItemLayout(parent);
     setSpacing(0);
     setMargin(0);
-
     itemLayout->getLayout()->setSpacing(0);
     itemLayout->getLayout()->setMargin(0);
     addLayout(itemLayout->getLayout());

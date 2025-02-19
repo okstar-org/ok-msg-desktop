@@ -96,21 +96,17 @@ ChatWidget::ChatWidget(QWidget* parent)
     layout()->setSpacing(0);
 
     // 右侧容器
-    contentWidget = std::make_unique<QWidget>(this);
+    contentWidget = new QWidget(this);
     contentWidget->setObjectName("ChatContentWidget");
-    contentLayout = new ContentLayout(contentWidget.get());
+    contentLayout = new ContentLayout(contentWidget);
     contentWidget->setLayout(contentLayout);
 
-    // 左侧
-    sessionListWidget = std::make_unique<MessageSessionListWidget>(this, contentLayout, false);
-    sessionListWidget->setGeometry(0, 0, 400, 400);
+    // 左侧列表
+    sessionListWidget = new MessageSessionListWidget(this, contentLayout, false);
     sessionListWidget->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
+    ui->sessionList->setWidget(sessionListWidget);
 
-    ui->scrollAreaWidgetContents->setGeometry(0, 0, 200, 500);
-    ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
-    ui->scrollAreaWidgetContents->layout()->addWidget((QWidget*)sessionListWidget.get());
-
-    ui->mainSplitter->addWidget(contentWidget.get());
+    ui->mainSplitter->addWidget(contentWidget);
     ui->mainSplitter->setSizes(QList<int>() << 240 << 500);
     ui->mainSplitter->setStretchFactor(1, 1);
     ui->mainSplitter->setChildrenCollapsible(false);
@@ -499,28 +495,27 @@ void ChatWidget::onConnected() {
 void ChatWidget::onGroupClicked() {}
 
 void ChatWidget::reloadTheme() {
-     auto chat = lib::settings::Style::getStylesheet("window/chat.css");
+    auto chat = lib::settings::Style::getStylesheet("window/chat.css");
     setStyleSheet(chat);
 
-    QString statusPanelStyle = lib::settings::Style::getStylesheet("window/statusPanel.css");
+    auto statusPanelStyle = lib::settings::Style::getStylesheet("window/statusPanel.css");
     ui->statusHead->setStyleSheet(statusPanelStyle);
-    ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));
-    ui->statusButton->setStyleSheet(
-            lib::settings::Style::getStylesheet("statusButton/statusButton.css"));
+
+    auto statusButton = lib::settings::Style::getStylesheet("statusButton/statusButton.css");
+    ui->statusButton->setStyleSheet(statusButton);
+
+    auto friendList = lib::settings::Style::getStylesheet("friendList/friendList.css");
+    ui->sessionList->setStyleSheet(friendList);
+    ui->sessionList->setAutoFillBackground(false);
+    ui->sessionList->viewport()->setAutoFillBackground(false);
+
     sessionListWidget->reDraw();
+    sessionListWidget->reloadTheme();
 
     if (contentLayout != nullptr) {
         contentLayout->reloadTheme();
     }
 
-    //  for (IMFriend *f : FriendList::getAllFriends()) {
-    //    contactListWidget->getFriend(f->getPublicKey())->reloadTheme();
-    //  }
-
-    sessionListWidget->reloadTheme();
-
-    ui->friendList->setAutoFillBackground(false);
-    ui->friendList->viewport()->setAutoFillBackground(false);
 }
 
 void ChatWidget::setupSearch() {

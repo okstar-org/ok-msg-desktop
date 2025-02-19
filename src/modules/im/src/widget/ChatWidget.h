@@ -64,10 +64,10 @@ protected:
 
 private:
     Ui::ChatWidget* ui;
-    std::unique_ptr<QWidget> contentWidget;
+    QWidget* contentWidget;
     ContentLayout* contentLayout;
-    std::unique_ptr<MessageSessionListWidget> sessionListWidget;
-    CircleWidget* circleWidget;
+    MessageSessionListWidget* sessionListWidget;
+
 
     QAction* statusOnline;
     QAction* statusAway;
