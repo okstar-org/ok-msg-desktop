@@ -10,8 +10,8 @@
  * See the Mulan PubL v2 for more details.
  */
 
-ContactWidget,
-AddFriendForm
+module--im--ContactWidget,
+module--im--AddFriendForm
 {
     background: @groundBase;
     border: 0px solid;
@@ -24,7 +24,7 @@ QWidget#ContactContentWidget
     border-radius: 10px;
 }
 
-RoundedMaskContainer#statusPanel
+lib--ui--RoundedMaskContainer#statusPanel
 {
     background: @groundBase;
     qproperty-radius: 10;

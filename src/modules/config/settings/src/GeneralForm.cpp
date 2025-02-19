@@ -38,7 +38,7 @@ GeneralForm::GeneralForm(QWidget* parent)
     // 先获取当前语言
     auto& s = lib::settings::OkSettings::getInstance();
 
-    QString locale0 = s.getTranslation();
+    const QString& locale0 = s.getTranslation();
     settings::Translator::translate(OK_Config_MODULE, locale0);
     retranslateUi();
 

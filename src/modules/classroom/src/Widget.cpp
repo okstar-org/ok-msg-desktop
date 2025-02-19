@@ -92,7 +92,7 @@ void Widget::initTranslate() {
 
     retranslateUi();
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_Classroom_MODULE, locale0); });
+            [](const QString& locale0) { settings::Translator::translate(OK_Classroom_MODULE, locale0); });
 }
 
 void Widget::retranslateUi() {

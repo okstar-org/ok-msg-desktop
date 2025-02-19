@@ -94,24 +94,4 @@ void Translator::translate(const QString& moduleName, const QString& localeName)
     }
 }
 
-// /**
- // * @brief Register a function to be called when the UI needs to be retranslated.
- // * @param f Function, wich will called.
- // * @param owner Widget to retanslate.
- // */
-// void Translator::registerHandler(const std::function<void()>& f, void* owner) {
-//     QMutexLocker locker{&lock};
-//     callbacks.push_back({owner, f});
-// }
-
-// /**
-//  * @brief Unregisters all handlers of an owner.
-//  * @param owner Owner to unregister.
-//  */
-// void Translator::unregister(void* owner) {
-//     QMutexLocker locker{&lock};
-//     callbacks.erase(std::remove_if(begin(callbacks), end(callbacks),
-//                                    [&](const Callback& c) { return c.first == owner; }),
-//                     end(callbacks));
-// }
 }  // namespace settings

@@ -148,7 +148,7 @@ void ChatWidget::init() {
     connect(bus, &ok::Bus::profileChanged, this, &ChatWidget::onProfileChanged);
 
     connect(bus, &ok::Bus::languageChanged,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 }
@@ -499,7 +499,9 @@ void ChatWidget::onConnected() {
 void ChatWidget::onGroupClicked() {}
 
 void ChatWidget::reloadTheme() {
-    setStyleSheet(lib::settings::Style::getStylesheet("window/chat.css"));
+     auto chat = lib::settings::Style::getStylesheet("window/chat.css");
+    setStyleSheet(chat);
+
     QString statusPanelStyle = lib::settings::Style::getStylesheet("window/statusPanel.css");
     ui->statusHead->setStyleSheet(statusPanelStyle);
     ui->friendList->setStyleSheet(lib::settings::Style::getStylesheet("friendList/friendList.css"));

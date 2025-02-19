@@ -50,7 +50,7 @@ class QPushButton;
 class QSplitter;
 class QTimer;
 
-class MaskablePixmapWidget;
+
 
 namespace module::im {
 
@@ -63,7 +63,6 @@ class FilesForm;
 class Friend;
 class FriendChatroom;
 class ContactListWidget;
-// class FriendWidget;
 class GenericChatroomWidget;
 class Group;
 class GroupChatForm;
@@ -107,7 +106,7 @@ public:
     bool newMessageAlert(QWidget* currentWindow, bool isActive, bool sound = true,
                          bool notify = true);
 
-    void init();
+
     void setCentralWidget(QWidget* widget, const QString& widgetName);
     QString getUsername();
     Camera* getCamera();

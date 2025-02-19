@@ -109,7 +109,6 @@ MainWindow::MainWindow(std::shared_ptr<lib::session::AuthSession> session, QWidg
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this, [&](const QString& locale0) {
         retranslateUi();
-        settings::Translator::translate(OK_UIMainWindow_MODULE, locale);
     });
 
     qDebug() << __func__ << " has be created.";

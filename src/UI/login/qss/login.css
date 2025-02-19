@@ -68,11 +68,18 @@ QScrollBar::handle:vertical {
 }
 
 QPushButton#loginBtn {
-    color: rgb(204, 0, 0);
+    color: white;
+    background-color: #203864;
     font-size: 16px;
     font-weight: bold;
     border-radius: 2px;
 }
+
+QLabel#signUp, QLabel#findPwd{
+    color: blue; text-decoration: underline;
+}
+
+QLabel#signUp:hover, QLabel#findPwd:hover { color: rgba(32, 56, 100); }
 
 QLabel#login_header {
     font-size: 24px;

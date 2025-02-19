@@ -60,7 +60,7 @@ Widget::Widget(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui::WorkPlatfor
 
     retranslateUi();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
                 settings::Translator::translate(OK_Platform_MODULE, locale0);
             });

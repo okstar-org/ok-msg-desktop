@@ -203,8 +203,6 @@ void Nexus::do_logout(const QString& profileName) {
 void Nexus::showMainGUI() {
     assert(profile);
 
-    m_widget->init();
-
     // Connections
     // connect(profile.get(), &Profile::selfAvatarChanged, m_widget, &Widget::onSelfAvatarLoaded);
     // connect(profile.get(), &Profile::coreChanged, [&](Core& core) { emit coreChanged(core); });

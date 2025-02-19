@@ -9,32 +9,14 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PubL v2 for more details.
  */
-
-Widget#activeWindow
+QPushButton
 {
-    background-color: #DFDFDF;
-    border: 2px solid #ABABAB;
+  border-radius: 5px;
+	background-color: #2A67F6;
+	padding: 2px;
+	width: 50px;
+	height: 26px;
 }
-
-Widget#inactiveWindow
-{
-    background-color: #f4f4f4;
-    border: 2px solid #ABABAB;
-}
-/*
-Widget#titleBar
-{
-    border: 10px solid #ABABAB;
-    border-top: 0px solid transparent;
-    background-color: #DFDFDF;
-}
-
-Widget#titleBarInactive
-{
-    border: 5px solid #ABABAB;
-    border-top: 0px solid transparent;
-    background-color: #F1F1F1;
-}*/
 
 QToolButton#tbMenu
 {
@@ -82,3 +64,29 @@ QPushButton#restoreButton
 QPushButton#restoreButton:hover {image: url("@getImagePath(window/restoreButtonHover.png)");}
 QPushButton#restoreButton:pressed {image: url("@getImagePath(window/restoreButtonPressed.png)");}
 QPushButton#restoreButton:focus {outline: none;}
+
+module--im--Widget#activeWindow
+{
+    background-color: #DFDFDF;
+    border: 2px solid #ABABAB;
+}
+
+module--im--Widget#inactiveWindow
+{
+    background-color: #f4f4f4;
+    border: 2px solid #ABABAB;
+}
+/*
+Widget#titleBar
+{
+    border: 10px solid #ABABAB;
+    border-top: 0px solid transparent;
+    background-color: #DFDFDF;
+}
+
+Widget#titleBarInactive
+{
+    border: 5px solid #ABABAB;
+    border-top: 0px solid transparent;
+    background-color: #F1F1F1;
+}*/

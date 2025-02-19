@@ -38,7 +38,6 @@
 #include "ContactListWidget.h"
 #include "application.h"
 #include "base/MessageBox.h"
-#include "base/Page.h"
 #include "base/SvgUtils.h"
 #include "base/images.h"
 
@@ -46,8 +45,6 @@
 #include "contentlayout.h"
 #include "form/groupchatform.h"
 #include "friendwidget.h"
-#include "groupwidget.h"
-#include "lib/audio/audio.h"
 #include "lib/storage/settings/OkSettings.h"
 #include "lib/storage/settings/translator.h"
 #include "lib/ui/gui.h"
@@ -55,14 +52,10 @@
 #include "src/chatlog/content/filetransferwidget.h"
 #include "src/core/core.h"
 #include "src/core/coreav.h"
-#include "src/core/corefile.h"
-#include "src/lib/session/profile.h"
 #include "src/lib/storage/settings/style.h"
-#include "src/lib/ui/widget/tools/MaskablePixmap.h"
 #include "src/model/friend.h"
 #include "src/model/friendlist.h"
 #include "src/model/group.h"
-#include "src/model/groupinvite.h"
 #include "src/model/grouplist.h"
 #include "src/model/profile/profileinfo.h"
 #include "src/model/status.h"
@@ -77,7 +70,6 @@
 #include "src/widget/form/groupinviteform.h"
 #include "src/widget/form/profileform.h"
 #include "src/widget/form/settingswidget.h"
-#include "tool/removefrienddialog.h"
 #include "ui_mainwindow.h"
 
 namespace module::im {
@@ -186,11 +178,6 @@ Widget::Widget(QWidget* parent)  //
     //  ui->statusButton->setEnabled(false);
 
     auto& settings = lib::settings::OkSettings::getInstance();
-
-    settings::Translator::translate(OK_IM_MODULE, settings.getTranslation());
-    connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [](QString locale0) { settings::Translator::translate(OK_IM_MODULE, locale0); });
-
     lib::settings::Style::setThemeColor(settings.getThemeColor());
 
     onStatusSet(Status::Offline);
@@ -235,37 +222,12 @@ Widget::Widget(QWidget* parent)  //
     //    connect(groupInviteForm, &GroupInviteForm::groupInviteAccepted, this,
     //            &Widget::onGroupInviteAccepted);
 
-    reloadTheme();
-    connect(ok::Application::Instance()->bus(), &ok::Bus::themeColorChanged, this,
-            [&]() { reloadTheme(); });
-
-    updateIcons();
-
-    retranslateUi();
-
-    auto a = ok::Application::Instance();
-    connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
-                retranslateUi();
-            });
-
-    init();
-}
-
-Widget::~Widget() {
-    qDebug() << __func__;
-    
-    delete timer;
-    delete ui;
-}
-
-void Widget::init() {
     connect(this, &Widget::toSendMessage, [&]() { ui->tabWidget->setCurrentIndex(0); });
     connect(this, &Widget::toShowDetails, [&]() { ui->tabWidget->setCurrentIndex(1); });
     // 显示转发消息对话框
     connect(this, &Widget::toForwardMessage, this, &Widget::showForwardMessageDialog);
 
-    // 添加好友到群聊
+            // 添加好友到群聊
     connect(this, &Widget::toAddMember, this, &Widget::showAddMemberDialog);
 
 #if UPDATE_CHECK_ENABLED
@@ -273,6 +235,29 @@ void Widget::init() {
     connect(updateCheck.get(), &UpdateCheck::updateAvailable, this, &Widget::onUpdateAvailable);
     updateCheck->checkForUpdate();
 #endif
+
+
+    updateIcons();
+
+
+    retranslateUi();
+    auto a = ok::Application::Instance();
+    connect(a->bus(), &ok::Bus::languageChanged,this,
+            [&](const QString& locale0) {
+                retranslateUi();
+            });
+
+    reloadTheme();
+    connect(a->bus(), &ok::Bus::themeColorChanged, this,
+            [&]() { reloadTheme(); });
+
+}
+
+Widget::~Widget() {
+    qDebug() << __func__;
+    
+    delete timer;
+    delete ui;
 }
 
 bool Widget::eventFilter(QObject* obj, QEvent* event) {
@@ -803,7 +788,7 @@ ContentLayout* Widget::createContentDialog(DialogType type) const {
 
             auto a = ok::Application::Instance();
             connect(a->bus(), &ok::Bus::languageChanged,this,
-                    [&](QString locale0) {
+                    [&](const QString& locale0) {
                         retranslateUi();
                     });
             retranslateUi();
@@ -1012,6 +997,10 @@ void Widget::reloadTheme() {
 }
 
 void Widget::retranslateUi() {
+    auto& settings = lib::settings::OkSettings::getInstance();
+    auto locale = settings.getTranslation();
+    settings::Translator::translate(OK_IM_MODULE, locale);
+
     ui->retranslateUi(this);
     ui->tabWidget->setTabText(0, tr("Chat"));
     ui->tabWidget->setTabText(1, tr("Contacts"));

@@ -151,7 +151,7 @@ ChatLog::ChatLog(QWidget* parent) : QGraphicsView(parent), scrollBarValue{0} {
     retranslateUi();
 
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 

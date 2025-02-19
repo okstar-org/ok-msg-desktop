@@ -54,24 +54,14 @@ QToolButton#qrcodeButton:hover{
     background-color: #e7e8f4;
 }
 
-
-.QPushButton
+QPushButton
 {
-    color: #e8e8e8;
-    background: #262626;
-    border:0px solid;
-    border-radius: 3px;
-    padding: 6px 10px;
-}
-
-.QPushButton:hover
-{
-    background: #303030;
-}
-
-.QPushButton:pressed
-{
-    background: #202020;
+    border-radius: 5px;
+    background-color: #2A67F6;
+    padding: 2px;
+    width: 50px;
+    height: 26px;
+    color: #ffffff;
 }
 
 QLineEdit{

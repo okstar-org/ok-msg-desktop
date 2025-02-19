@@ -15,6 +15,7 @@
 #include "src/nexus.h"
 #include "src/persistence/profile.h"
 #include "src/persistence/settings.h"
+#include "src/application.h"
 
 #include <QApplication>
 #include <QBuffer>
@@ -199,7 +200,7 @@ void ProfileInfo::logout() {
 void ProfileInfo::exit() {
     auto username = getNickname();
     qDebug() << __func__ << username;
-    emit Nexus::getInstance() -> exit(username);
+    emit ok::Application::Instance()->exit();
 }
 
 /**

@@ -10,10 +10,6 @@
  * See the Mulan PubL v2 for more details.
  */
 
-ChatWidget {
-    background: @groundBase;
-    border: 0px solid;
-}
 
 QWidget#ChatContentWidget
 {
@@ -25,12 +21,6 @@ QWidget#ChatContentWidget
 QWidget#searchContactsContainer
 {
     background: @groundBase; 
-}
-
-RoundedMaskContainer#statusPanel{
-    background: @groundBase;
-    qproperty-radius: 10;
-    border: 0px solid;
 }
 
 QWidget#ContentSeperator{
@@ -50,15 +40,27 @@ QSplitter::handle
     background: black;
 }
 
-ChatLog QScrollBar::handle
+
+lib--ui--RoundedMaskContainer#statusPanel{
+    background: @groundBase;
+    qproperty-radius: 10;
+    border: 0px solid;
+}
+
+module--im--ChatWidget {
+    background: @groundBase;
+    border: 0px solid;
+}
+
+module--im--ChatLog QScrollBar::handle
 {
     background-color: #343232;
 }
-ChatLog QScrollBar::handle:hover
+module--im--ChatLog QScrollBar::handle:hover
 {
     background-color: #3e3c3c;
 }
-ChatLog QScrollBar::handle:pressed
+module--im--ChatLog QScrollBar::handle:pressed
 {
     background-color: #474545;
 }

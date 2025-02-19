@@ -61,23 +61,14 @@ QLabel{
     color: #19171b;
 }
 
-.QPushButton
+QPushButton
 {
-    color: #19171b;
-    background: white;
-    border:0px solid;
-    border-radius: 3px;
-    padding: 6px 10px;
-}
-
-.QPushButton:hover
-{
-    background: #f3f5f7;
-}
-
-.QPushButton:pressed
-{
-    background: #e9ebed;
+    border-radius: 5px;
+    background-color: #2A67F6;
+    padding: 2px;
+    width: 50px;
+    height: 26px;
+    color: #ffffff;
 }
 
 QLineEdit

@@ -51,7 +51,7 @@ GeneralForm::GeneralForm(SettingsWidget* myParent)
 
     auto bus = ok::Application::Instance()->bus();
     connect(bus, &ok::Bus::languageChanged,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
     connect(bus, &ok::Bus::profileChanged, this, &GeneralForm::onProfileChanged);

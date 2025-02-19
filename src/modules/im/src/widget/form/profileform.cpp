@@ -118,8 +118,8 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
             bodyUI->email->setText(vCard.emails.at(vCard.emails.size() - 1).number);
     });
 
-    connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
     connect(bodyUI->exitButton, &QPushButton::clicked, this, &ProfileForm::onExitClicked);
+    connect(bodyUI->logoutButton, &QPushButton::clicked, this, &ProfileForm::onLogoutClicked);
 
     for (QComboBox* cb : findChildren<QComboBox*>()) {
         cb->installEventFilter(this);
@@ -164,7 +164,7 @@ ProfileForm::ProfileForm(IProfileInfo* profileInfo, QWidget* parent)
     retranslateUi();
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 
@@ -265,7 +265,7 @@ void ProfileForm::onSelfAvatarLoaded(const QPixmap& pic) {
 
 QString ProfileForm::getSupportedImageFilter() {
     QString res;
-    for (auto type : QImageReader::supportedImageFormats()) {
+    for (const auto& type : QImageReader::supportedImageFormats()) {
         res += QString("*.%1 ").arg(QString(type));
     }
     return tr("Images (%1)", "filetype filter").arg(res.left(res.size() - 1));
@@ -372,7 +372,7 @@ void ProfileForm::onDeletePassClicked() {
 
 void ProfileForm::onChangePassClicked() {
     const QString title = tr("Please enter a new password.");
-    SetPasswordDialog* dialog = new SetPasswordDialog(title, QString{}, nullptr);
+    auto* dialog = new SetPasswordDialog(title, QString{}, nullptr);
     if (dialog->exec() == QDialog::Rejected) {
         return;
     }

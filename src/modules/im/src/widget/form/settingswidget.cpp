@@ -28,6 +28,7 @@
 #include "src/widget/form/settings/avform.h"
 #include "src/widget/form/settings/generalform.h"
 #include "src/widget/widget.h"
+#include "lib/storage/settings/translator.h"
 
 namespace module::im {
 SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
@@ -73,7 +74,7 @@ SettingsWidget::SettingsWidget(QWidget* parent) : QWidget(parent, Qt::Window) {
 
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 }
@@ -109,14 +110,20 @@ void SettingsWidget::onTabChanged(int index) {
     settingsWidgets->setCurrentIndex(index);
 }
 
-void SettingsWidget::onUpdateAvailable(void) {
+void SettingsWidget::onUpdateAvailable() {
     settingsWidgets->tabBar()->setProperty("update-available", true);
     settingsWidgets->tabBar()->style()->unpolish(settingsWidgets->tabBar());
     settingsWidgets->tabBar()->style()->polish(settingsWidgets->tabBar());
 }
 
 void SettingsWidget::retranslateUi() {
-    for (size_t i = 0; i < cfgForms.size(); ++i)
-        settingsWidgets->setTabText(i, cfgForms[i]->getFormName());
+    auto& settings = lib::settings::OkSettings::getInstance();
+    auto locale = settings.getTranslation();
+    settings::Translator::translate(OK_IM_MODULE, locale);
+
+    for (size_t i = 0; i < cfgForms.size(); ++i){
+        auto n = cfgForms[i]->getFormName();
+        settingsWidgets->setTabText(i, n);
+    }
 }
 }  // namespace module::im

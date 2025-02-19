@@ -121,7 +121,7 @@ ChatForm::ChatForm(const FriendId* chatFriend,
 
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
     retranslateUi();

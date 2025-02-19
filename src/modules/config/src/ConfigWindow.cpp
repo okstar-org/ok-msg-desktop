@@ -57,7 +57,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui:
     retranslateUi();
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 }

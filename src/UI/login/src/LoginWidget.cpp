@@ -77,7 +77,7 @@ LoginWidget::LoginWidget(std::shared_ptr<lib::session::AuthSession> session, boo
     retranslateUi();
     auto a = ok::Application::Instance();
     connect(a->bus(), &ok::Bus::languageChanged,this,
-            [&](QString locale0) {
+            [&](const QString& locale0) {
                 retranslateUi();
             });
 }
@@ -138,15 +138,9 @@ void LoginWidget::init() {
             [&](int code, const QString& error) { onError(code, error); });
 
     // 4. UI
-    ui->signUp->setStyleSheet(
-            "QLabel { color: blue; text-decoration: underline; } "
-            "QLabel:hover { color: red; }");
     ui->signUp->setCursor(Qt::PointingHandCursor);
     ui->signUp->installEventFilter(this);
 
-    ui->findPwd->setStyleSheet(
-            "QLabel { color: blue; text-decoration: underline; } "
-            "QLabel:hover { color: red; }");
     ui->findPwd->setCursor(Qt::PointingHandCursor);
     ui->findPwd->installEventFilter(this);
 
