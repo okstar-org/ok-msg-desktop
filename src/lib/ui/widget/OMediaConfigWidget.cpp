@@ -15,6 +15,7 @@
 #include "application.h"
 #include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
+#include "AudioVolumnSlider.h"
 
 #include <QMenu>
 #include <QPushButton>
@@ -69,7 +70,7 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
         updateAudioVideoIcon(false, false, true);
     });
 
-    volumnSlider = new QSlider(Qt::Horizontal, volumnSetting);
+    volumnSlider = new AudioVolumnSlider(volumnSetting);
     volumnSlider->setRange(0, 100);
     volumnSetting->setWidget(volumnSlider);
 

@@ -16,6 +16,7 @@
 #include <QGridLayout>
 #include <QMimeData>
 #include <QTimer>
+#include <QShortcut>
 #include <cassert>
 #include "Bus.h"
 #include "ChatWidget.h"
@@ -67,6 +68,13 @@ MessageSessionListWidget::MessageSessionListWidget(MainLayout* parent,
     auto w = Widget::getInstance();
     connect(w, &Widget::toDeleteChat, this, &MessageSessionListWidget::do_deleteSession);
     connect(w, &Widget::toClearHistory, this, &MessageSessionListWidget::do_clearHistory);
+
+    new QShortcut(QKeySequence(Qt::Key_Up), this, [this](){
+        cycleMessageSession(true);
+    });
+    new QShortcut(QKeySequence(Qt::Key_Down), this, [this](){
+        cycleMessageSession(false);
+    });
 }
 
 MessageSessionListWidget::~MessageSessionListWidget() {
@@ -262,127 +270,47 @@ void MessageSessionListWidget::search(const QString& searchString) {
     listLayout->search(searchString);
 }
 
+void MessageSessionListWidget::cycleMessageSession(bool forward)
+{
+    for (auto sw : sessionWidgets) {
+        if(sw->isActive())
+        {
+            QLayout* layout = listLayout->getLayoutOnline();
+            int idx = layout->indexOf(sw);
+            int nextIdx = -1;
+
+            if(forward)
+            {
+                if(idx > 0)
+                {
+                    nextIdx = idx -1;
+                }
+            }
+            else
+            {
+                if(idx < layout->count() - 1)
+                {
+                    nextIdx = idx + 1;
+                }
+            }
+
+            if(nextIdx != -1)
+            {
+                auto* widget = qobject_cast<MessageSessionWidget*>(layout->itemAt(nextIdx)->widget());
+
+                emit widget->chatroomWidgetClicked(widget);
+            }
+
+            break;
+        }
+    }
+}
+
 void MessageSessionListWidget::onFriendWidgetRenamed(FriendWidget* friendWidget) {
     //    const Friend* contact = friendWidget->getFriend();
     //    auto status = contact->getStatus();
     //    listLayout->removeFriendWidget(friendWidget);
     //    listLayout->addFriendWidget(friendWidget, status);
-}
-
-void MessageSessionListWidget::cycleContacts(GenericChatroomWidget* activeChatroomWidget,
-                                             bool forward) {
-    if (!activeChatroomWidget) {
-        return;
-    }
-
-    int index = -1;
-    FriendWidget* friendWidget = qobject_cast<FriendWidget*>(activeChatroomWidget);
-
-    if (mode == SortingMode::Activity) {
-        if (!friendWidget) {
-            return;
-        }
-
-        const auto activityTime = getActiveTimeFriend(friendWidget->getFriend());
-        index = static_cast<int>(ok::base::getTimeBucket(activityTime));
-        QWidget* widget = activityLayout->itemAt(index)->widget();
-        //    CategoryWidget *categoryWidget = qobject_cast<CategoryWidget *>(widget);
-        //    if (categoryWidget == nullptr ||
-        //        categoryWidget->cycleContacts(friendWidget, forward)) {
-        //      return;
-        //    }
-
-        index += forward ? 1 : -1;
-
-        for (;;) {
-            // Bounds checking.
-            if (index < 0) {
-                index = LAST_TIME;
-                continue;
-            } else if (index > LAST_TIME) {
-                index = 0;
-                continue;
-            }
-
-            auto* widget = activityLayout->itemAt(index)->widget();
-            //      categoryWidget = qobject_cast<CategoryWidget *>(widget);
-
-            //      if (categoryWidget != nullptr) {
-            //        if (!categoryWidget->cycleContacts(forward)) {
-            // Skip empty or finished categories.
-            //          index += forward ? 1 : -1;
-            //          continue;
-            //        }
-            //      }
-
-            break;
-        }
-
-        return;
-    }
-
-    QLayout* currentLayout = nullptr;
-    //  CircleWidget *circleWidget = nullptr;
-
-    if (friendWidget != nullptr) {
-        const FriendId& pk = friendWidget->getFriend()->getPublicKey();
-        uint32_t circleId = Nexus::getProfile()->getSettings()->getFriendCircleID(pk);
-        //    circleWidget = CircleWidget::getFromID(circleId);
-        //    if (circleWidget != nullptr) {
-        //      if (circleWidget->cycleContacts(friendWidget, forward)) {
-        //        return;
-        //      }
-
-        //      //      index = circleLayout->indexOfSortedWidget(circleWidget);
-        //      //      currentLayout = circleLayout->getLayout();
-        //    } else {
-        currentLayout = listLayout->getLayoutOnline();
-        index = listLayout->indexOfFriendWidget(friendWidget, true);
-        if (index == -1) {
-            index = listLayout->indexOfFriendWidget(friendWidget, false);
-        }
-    }
-    //  }
-
-    index += forward ? 1 : -1;
-
-    for (;;) {
-        // Bounds checking.
-        if (index < 0) {
-            currentLayout = nextLayout(currentLayout, forward);
-            index = currentLayout->count() - 1;
-            continue;
-        } else if (index >= currentLayout->count()) {
-            currentLayout = nextLayout(currentLayout, forward);
-            index = 0;
-            continue;
-        }
-
-        // Go to the actual next index.
-        if (currentLayout == listLayout->getLayoutOnline()) {
-            GenericChatroomWidget* chatWidget =
-                    qobject_cast<GenericChatroomWidget*>(currentLayout->itemAt(index)->widget());
-
-            if (chatWidget != nullptr) emit chatWidget->chatroomWidgetClicked(chatWidget);
-
-            return;
-        }
-        //    else if (currentLayout == circleLayout->getLayout()) {
-        //      circleWidget =
-        //          qobject_cast<CircleWidget
-        //          *>(currentLayout->itemAt(index)->widget());
-        //      if (circleWidget != nullptr) {
-        //        if (!circleWidget->cycleContacts(forward)) {
-        //           Skip empty or finished circles.
-        //          index += forward ? 1 : -1;
-        //          continue;
-        //        }
-        //      }
-        //      return;
-        //    } else {
-        //      return;
-        //    }
-    }
 }
 
 void MessageSessionListWidget::dragEnterEvent(QDragEnterEvent* event) {

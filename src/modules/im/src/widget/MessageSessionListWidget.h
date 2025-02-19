@@ -72,7 +72,7 @@ public:
 
     void search(const QString& searchString);
 
-    void cycleContacts(GenericChatroomWidget* activeChatroomWidget, bool forward);
+    void cycleMessageSession(bool forward);
 
     void updateActivityTime(const QDateTime& date);
     void reDraw();
