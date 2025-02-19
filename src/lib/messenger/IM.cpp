@@ -1092,7 +1092,7 @@ void IM::cacheJoinRoom(const std::string& jid, const std::string& name) {
     gloox::JID roomJid(jid);
     auto roomId = (roomJid.bare());
     auto room = new gloox::MUCRoom(_client.get(), roomJid, this, this);
-    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {})));
+    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {}, {})));
 
     for (auto handler : groupHandlers) {
         handler->onGroup(roomId, name.empty() ? (roomJid.username()) : (name));
