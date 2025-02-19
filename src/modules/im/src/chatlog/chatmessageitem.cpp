@@ -20,8 +20,10 @@
 #include "content/spinner.h"
 #include "content/text.h"
 #include "src/nexus.h"
-#include "src/persistence/settings.h"
 #include "src/widget/widget.h"
+#include "src/persistence/profile.h"
+#include "src/persistence/settings.h"
+
 
 namespace module::im {
 ChatMessageBox::ChatMessageBox(const QPixmap& avatar,

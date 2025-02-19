@@ -13,15 +13,6 @@
 #include "aboutfriendform.h"
 #include "ui_aboutfriendform.h"
 
-#include "base/SvgUtils.h"
-#include "lib/ui/gui.h"
-#include "src/core/core.h"
-#include "src/lib/session/profile.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/nexus.h"
-#include "src/persistence/settings.h"
-#include "src/widget/widget.h"
-
 #include <QFileDialog>
 
 #include <QAbstractButton>
@@ -30,6 +21,18 @@
 #include <QPushButton>
 #include <QStyledItemDelegate>
 #include <QSvgRenderer>
+
+
+#include "lib/ui/gui.h"
+#include "src/core/core.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/nexus.h"
+#include "src/persistence/settings.h"
+#include "src/widget/widget.h"
+#include "src/persistence/profile.h"
+#include "src/model/friend.h"
+
+
 namespace module::im {
 AboutFriendForm::AboutFriendForm(const Friend* fw, QWidget* parent)
         : QWidget(parent)

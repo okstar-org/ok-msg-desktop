@@ -41,6 +41,7 @@
 #include "src/widget/widget.h"
 #include "ui_profileform.h"
 #include "src/application.h"
+#include "src/persistence/profile.h"
 
 namespace module::im {
 

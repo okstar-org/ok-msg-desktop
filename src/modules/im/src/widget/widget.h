@@ -20,17 +20,12 @@
 #include <QPointer>
 #include <QSystemTrayIcon>
 
-#include "genericchatitemwidget.h"
 
-#include "lib/audio/iaudiocontrol.h"
-#include "lib/audio/iaudiosink.h"
 #include "src/core/core.h"
 #include "src/core/toxfile.h"
 #include "src/core/toxid.h"
 #include "src/model/FriendId.h"
-#include "src/model/friendmessagedispatcher.h"
 #include "src/model/groupid.h"
-#include "src/model/groupmessagedispatcher.h"
 #include "ui_mainwindow.h"
 #if DESKTOP_NOTIFICATIONS
 #include "src/platform/desktop_notifications/desktopnotify.h"

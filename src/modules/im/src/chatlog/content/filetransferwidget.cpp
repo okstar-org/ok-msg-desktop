@@ -13,15 +13,7 @@
 #include "filetransferwidget.h"
 #include "ui_filetransferwidget.h"
 
-#include "lib/ui/gui.h"
-#include "src/core/core.h"
-#include "src/core/corefile.h"
-#include "src/lib/storage/settings/style.h"
-#include "src/nexus.h"
-#include "src/persistence/settings.h"
-#include "src/widget/widget.h"
 
-#include <libexif/exif-loader.h>
 
 #include <QBuffer>
 #include <QClipboard>
@@ -34,14 +26,21 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QVariantAnimation>
-#include <application.h>
-
 #include <math.h>
 #include <cassert>
+#include <libexif/exif-loader.h>
 
-#include <base/files.h>
-
-#include <lib/audio/player.h>
+#include "base/files.h"
+#include "lib/audio/player.h"
+#include "src/persistence/profile.h"
+#include "src/application.h"
+#include "lib/ui/gui.h"
+#include "src/core/core.h"
+#include "src/core/corefile.h"
+#include "src/lib/storage/settings/style.h"
+#include "src/nexus.h"
+#include "src/persistence/settings.h"
+#include "src/widget/widget.h"
 
 namespace module::im {
 

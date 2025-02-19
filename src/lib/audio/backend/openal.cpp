@@ -633,10 +633,10 @@ void OpenAL::doInput() {
     //capture samples to input buffer.
 
     int bytesToAllocate = curSamples * channels * ( 16 / 8);
-    printf("Bytes to allocate:%d\n", bytesToAllocate);
+    // printf("Bytes to allocate:%d\n", bytesToAllocate);
 
     // ALCvoid *buffer = (ALCvoid *)malloc(bytesToAllocate);
-    int16_t *buffer = new int16_t[bytesToAllocate];
+    auto *buffer = new int16_t[bytesToAllocate];
     captureSamples(alInDev, buffer, curSamples);
 
     // applyGain(inputBuffer, AUDIO_FRAME_SAMPLE_COUNT_TOTAL, gainFactor);

@@ -27,16 +27,14 @@
 
 #include "src/core/coreav.h"
 #include "src/model/FriendId.h"
-
-#include <src/model/contact.h>
+#include "src/model/contact.h"
 #include "src/model/friend.h"
-
 #include "src/model/friendlist.h"
 #include "src/widget/tool/callconfirmwidget.h"
-
 #include "Bus.h"
 #include "application.h"
 #include "base/Styles.h"
+#include "src/persistence/profile.h"
 #include "src/nexus.h"
 #include "widget.h"
 

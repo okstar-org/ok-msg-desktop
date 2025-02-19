@@ -27,7 +27,9 @@
 #include "base/widgets.h"
 #include "src/lib/storage/settings/style.h"
 #include "src/model/friendlist.h"
+#include "src/model/friend.h"
 #include "src/widget/widget.h"
+#include "src/core/coreav.h"
 
 namespace module::im {
 

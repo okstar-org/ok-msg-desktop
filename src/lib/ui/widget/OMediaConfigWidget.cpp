@@ -290,10 +290,11 @@ void OMediaConfigWidget::doOpenAudio()
 
     audioSource = ac->makeSource();
     connect(audioSource.get(), &lib::audio::IAudioSource::frameAvailable, this,
-            [ac](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
+            [&,ac](const int16_t* pcm, size_t samples, uint8_t chans, uint32_t rate) {
                 // 音频帧 pcm
-                qDebug() << "Input audio volume is: " << ac->getInputVol(pcm, samples);
-
+                auto v = ac->getInputVol(pcm, samples);
+                qDebug() << "Input audio volume is: " << v ;
+                volumnSlider->setRealVolume(v*100);
 
                         // QMutexLocker locker(&mutex);
                         // if(audioSink)
