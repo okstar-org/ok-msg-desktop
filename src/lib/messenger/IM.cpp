@@ -894,7 +894,7 @@ bool IM::handleMUCRoomCreation(gloox::MUCRoom* room) {
 
     // 添加到缓存
     auto roomId = (room->jid().bare());
-    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {})));
+    m_roomMap.insert(std::make_pair(roomId, new IMRoomInfo(room, {}, {})));
 
     // 群聊增加
     for (auto handler : groupHandlers) {
