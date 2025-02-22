@@ -32,7 +32,8 @@ bool ShouldBeDesktopCapture(const std::string& uniqueKey);
 
 class DesktopCaptureSourceHelper {
 public:
-    DesktopCaptureSourceHelper(DesktopCaptureSource source, DesktopCaptureSourceData data);
+    DesktopCaptureSourceHelper(DesktopCaptureSource source,
+                               DesktopCaptureSourceData data);
     ~DesktopCaptureSourceHelper();
 
     void setOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink) const;

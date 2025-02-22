@@ -78,7 +78,7 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     buttonLayout->setContentsMargins(0, 0, 0, 0);
     buttonLayout->setSpacing(10);
 
-    QHBoxLayout* footerLayout = new QHBoxLayout();
+    auto* footerLayout = new QHBoxLayout();
     footerLayout->setContentsMargins(0, 0, 0, 0);
     footerLayout->setSpacing(10);
     footerLayout->addWidget(micSpeakSetting);
@@ -164,6 +164,7 @@ void OMediaConfigWidget::initDeviceInfo() {
         auto act = new QAction(a.name, videoMenu);
         act->setData(a.name);
         act->setCheckable(true);
+        act->setProperty("type", QVariant::fromValue<lib::video::VideoType>(a.type));
         // 如果存在以选择视频设备，则勾选当前的
         if (act->text() == selectedVideo) {
             act->setChecked(true);
@@ -181,6 +182,7 @@ void OMediaConfigWidget::initDeviceInfo() {
         auto f = videoMenu->actions().first();
         f->setChecked(true);
         selectedVideo = f->text();
+        selectedVideoType = f->property("type").value<lib::video::VideoType>();
     }
 }
 
@@ -305,4 +307,19 @@ void OMediaConfigWidget::doCloseAudio()
     audioSource.reset();
 }
 
+const lib::ortc::DeviceConfig OMediaConfigWidget::getConf() {
+
+    auto a = lib::ortc::DeviceConfig{.audioName = selectedAudio.toStdString(),
+                                     .videoName = selectedVideo.toStdString()};
+    switch (selectedVideoType) {
+        case lib::video::VideoType::Camera:
+            a.videoType = lib::ortc::VideoType::Camera;
+        case lib::video::VideoType::Desktop:
+            a.videoType = lib::ortc::VideoType::Desktop;
+        case video::VideoType::File:
+        case video::VideoType::Stream:
+            break;
+    }
+    return a;
 }
+}  // namespace lib::ui

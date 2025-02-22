@@ -69,9 +69,10 @@ Widget::Widget(QWidget* parent)
     initTranslate();
     reloadTheme();
 
-    connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting, this, &Widget::createMeeting);
-    connect(startMeetWidget, &StartMeetingWidget::requstDisbandMeeting, this,
-            &Widget::destroyMeeting);
+    connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting,   //
+            this, &Widget::createMeeting);
+    connect(startMeetWidget, &StartMeetingWidget::requstDisbandMeeting, //
+            this, &Widget::destroyMeeting);
     connect(startMeetWidget, &StartMeetingWidget::requstShareMeeting, this, &Widget::shareMeeting);
     connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
 }

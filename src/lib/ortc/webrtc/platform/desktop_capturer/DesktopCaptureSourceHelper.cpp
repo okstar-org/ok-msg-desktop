@@ -340,24 +340,30 @@ DesktopCaptureSource DesktopCaptureSourceForKey(const std::string& uniqueKey) {
     if (uniqueKey == "desktop_capturer_pipewire") {
         return DesktopCaptureSource(0, "pipewire", false);
     }
+
     const auto windowPrefix = std::string("desktop_capturer_window_");
     const auto isWindow = (uniqueKey.find(windowPrefix) == 0);
     DesktopCaptureSourceManager manager(isWindow ? DesktopCaptureType::Window
                                                  : DesktopCaptureType::Screen);
     const auto sources = manager.sources();
+    const auto desktopIdx = std::stoll(uniqueKey.substr(std::string("Desktop ").size()));
+    if(desktopIdx < 0 || desktopIdx >= sources.size()){
+        return DesktopCaptureSource::Invalid();
+    }
+    return sources.at(desktopIdx);
 
     // "desktop_capturer_window_".size() == "desktop_capturer_screen_".size()
-    const auto keyId = std::stoll(uniqueKey.substr(windowPrefix.size()));
-    for (const auto& source : sources) {
-        if (source.uniqueId() == keyId) {
-            return source;
-        }
-    }
-    return DesktopCaptureSource::Invalid();
+    // const auto keyId = std::stoll(uniqueKey.substr(windowPrefix.size()));
+    // for (const auto& source : sources) {
+    //     // if (source.uniqueId() == keyId) {
+    //         return source;
+    //     // }
+    // }
+    // return DesktopCaptureSource::Invalid();
 }
 
 bool ShouldBeDesktopCapture(const std::string& uniqueKey) {
-    return (uniqueKey.find("desktop_capturer_") == 0);
+    return (uniqueKey.find("desktop") == 0 || uniqueKey.find("Desktop") == 0 );
 }
 
 DesktopCaptureSourceHelper::DesktopCaptureSourceHelper(DesktopCaptureSource source,

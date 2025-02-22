@@ -37,19 +37,33 @@ VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
         std::function<void(VideoState)> stateUpdated,
         std::shared_ptr<PlatformContext> platformContext, std::pair<int, int>& outResolution)
         : _source(source), _sink(GetSink(source)), _stateUpdated(stateUpdated) {
+
+#ifdef OK_RTC_UWP_DESKTOP
+    // Windows uwp
+    if (deviceId == "GraphicsCaptureItem")
+    {
+        auto uwpContext = std::static_pointer_cast<UwpContext>(platformContext);
+        _screenCapturer = std::make_un                                            ique<UwpScreenCapturer>(_sink, uwpContext->item);
+        _screenCapturer->setState(VideoState::Active);
+        outResolution = _screenCapturer->resolution();
+    }
+    else
+#else
+    // Linux
     if (const auto source = DesktopCaptureSourceForKey(deviceId)) {
         const auto data = DesktopCaptureSourceData{
-                {1280, 720},                               /*.aspectSize = */
-                24.,                                       /*.fps = */
-                (deviceId != "desktop_capturer_pipewire"), /*.captureMouse = */
-        };
+                                                   /*.aspectSize = */{ 1280, 720 },
+                                                   /*.fps = */24.,
+                                                   /*.captureMouse = */(deviceId != "desktop_capturer_pipewire"),
+                                                   };
         _desktopCapturer = std::make_unique<DesktopCaptureSourceHelper>(source, data);
         _desktopCapturer->setOutput(_sink);
         _desktopCapturer->start();
-        outResolution = {1280, 960};
-    } else if (!ShouldBeDesktopCapture(deviceId)) {
-        _cameraCapturer =
-                std::make_unique<VideoCameraCapturer>(signalingThread, workerThread, _sink);
+        outResolution = { 1280, 960 };
+    } else if (!ShouldBeDesktopCapture(deviceId))
+#endif
+    {
+        _cameraCapturer = std::make_unique<VideoCameraCapturer>(signalingThread, workerThread, _sink);
         _cameraCapturer->setDeviceId(deviceId);
         _cameraCapturer->setState(VideoState::Active);
         outResolution = _cameraCapturer->resolution();

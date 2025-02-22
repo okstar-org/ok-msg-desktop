@@ -81,7 +81,7 @@ IM::IM(std::string host,
     qDebug() << "resource:" << _resource.c_str();
 }
 
-IM::~IM() {}
+IM::~IM() = default;
 
 std::unique_ptr<gloox::Client> IM::makeClient() {
     //    qDebug() << __func__;

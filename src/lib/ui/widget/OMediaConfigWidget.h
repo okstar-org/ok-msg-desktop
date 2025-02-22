@@ -51,9 +51,7 @@ public:
         return ctrlState;
     }
 
-    [[nodiscard]] inline const lib::ortc::DeviceConfig& getConf()const {
-        return conf;
-    }
+    const lib::ortc::DeviceConfig getConf();
 
     void addFooterButton(QPushButton* button);
 
@@ -72,7 +70,7 @@ protected:
     QHBoxLayout* buttonLayout = nullptr;
 
     lib::ortc::CtrlState ctrlState;
-    lib::ortc::DeviceConfig conf;
+
 
             // audio
     QMenu* audioMenu = nullptr;
@@ -86,6 +84,7 @@ protected:
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
     QString selectedVideo;
+    lib::video::VideoType selectedVideoType;
     QVector<lib::video::VideoDevice> vDeviceList;
     QStackedLayout* videoOutLayout = nullptr;
     OVideoOutputWidget* cameraOutput = nullptr;

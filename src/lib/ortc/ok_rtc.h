@@ -39,8 +39,8 @@ struct Dtls {
 
 struct Sctp {
     std::string protocol;
-    uint32_t port;
-    uint32_t streams;
+    uint32_t port = 0;
+    uint32_t streams = 0;
 };
 
 /**
@@ -133,6 +133,7 @@ struct HdrExt {
 typedef std::vector<HdrExt> HdrExts;
 
 enum class VideoType { Camera, Desktop };
+
 struct Source {
     std::string ssrc;
     std::string name;
@@ -470,6 +471,8 @@ struct DeviceConfig {
     std::string audioName;
     // video name
     std::string videoName;
+    // video type
+    VideoType videoType;
 };
 
 class OkRTC {
@@ -505,6 +508,14 @@ public:
                                   const OIceUdp& oIceUdp) = 0;
 
     virtual void setEnable(CtrlState state) = 0;
+
+    /**
+     * Set video device for rtc
+     * @brief setVideoDevice
+     * @param type
+     * @param device
+     */
+    virtual void setVideoDevice(VideoType type, const std::string& device) = 0;
 
     // 0-100
     virtual void setSpeakerVolume(uint32_t vol) = 0;

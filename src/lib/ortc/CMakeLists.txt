@@ -10,8 +10,7 @@ if (ok-rtc_FOUND)
 	elseif (UNIX)
 		add_definitions(-DWEBRTC_POSIX=1 -DWEBRTC_LINUX=1 -DABSL_USES_STD_STRING_VIEW=1)
 	endif ()
-
-        set(webrtc_LIB ok-rtc::ok-rtc)
+	set(webrtc_LIB ok-rtc::ok-rtc)
 endif ()
 
 #ok-gloox
@@ -84,3 +83,28 @@ target_link_libraries(${PROJECT_NAME}
 if (WIN32)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
+
+
+# Google Test
+FILE(GLOB ${PROJECT_NAME}_TEST_RESOURCES test/*.cpp)
+message(STATUS "Test files: ${${PROJECT_NAME}_TEST_RESOURCES}")
+
+add_executable(${PROJECT_NAME}Tests
+	              ${${PROJECT_NAME}_TEST_RESOURCES}
+								${${PROJECT_NAME}_SOURCES}
+)
+
+# 链接gtest和gtest_main库
+target_link_libraries(${PROJECT_NAME}Tests
+	              PRIVATE ${webrtc_LIB}
+								PRIVATE gtest
+								PRIVATE gtest_main
+								PRIVATE ${Qt5Core_LIBRARIES}
+								PRIVATE ${Qt5Gui_LIBRARIES}
+								PRIVATE ${Qt5Svg_LIBRARIES}
+								PRIVATE ${Qt5Xml_LIBRARIES}
+)
+
+
+# 添加测试到CTest（如果你使用CTest）
+add_test(NAME Run${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME}Tests)

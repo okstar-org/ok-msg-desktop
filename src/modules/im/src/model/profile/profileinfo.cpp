@@ -122,25 +122,25 @@ const QString& ProfileInfo::getFullName() const {
  * @param src Source string.
  * @return Sanitized string.
  */
-static QString sanitize(const QString& src) {
-    QString name = src;
-    // these are pretty much Windows banned filename characters
-    QList<QChar> banned{'/', '\\', ':', '<', '>', '"', '|', '?', '*'};
-    for (QChar c : banned) {
-        name.replace(c, '_');
-    }
+// static QString sanitize(const QString& src) {
+//     QString name = src;
+//     // these are pretty much Windows banned filename characters
+//     QList<QChar> banned{'/', '\\', ':', '<', '>', '"', '|', '?', '*'};
+//     for (QChar c : banned) {
+//         name.replace(c, '_');
+//     }
 
-    // also remove leading and trailing periods
-    if (name[0] == '.') {
-        name[0] = '_';
-    }
+//     // also remove leading and trailing periods
+//     if (name[0] == '.') {
+//         name[0] = '_';
+//     }
 
-    if (name.endsWith('.')) {
-        name[name.length() - 1] = '_';
-    }
+//     if (name.endsWith('.')) {
+//         name[name.length() - 1] = '_';
+//     }
 
-    return name;
-}
+//     return name;
+// }
 
 /**
  * @brief Dangerous way to find out if a path is writable.

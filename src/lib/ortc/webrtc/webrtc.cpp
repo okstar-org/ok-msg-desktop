@@ -253,7 +253,7 @@ bool WebRTC::start() {
     peer_connection_factory->SetOptions(options);
 
     initAudioDevice();
-    initVideoDevice(0);
+    initVideoDevice();
 
     RTC_LOG(LS_INFO) << "WebRTC has be started.";
     return true;
@@ -302,6 +302,12 @@ void WebRTC::removeRTCHandler(OkRTCHandler* hand) {
     _handlers.erase(std::remove_if(_handlers.begin(), _handlers.end(),
                                    [&](OkRTCHandler* h) { return h == hand; }),
                     _handlers.end());
+}
+
+void WebRTC::setVideoDevice(VideoType type, const std::string &device)
+{
+    vDeviceType = type;
+    vDeviceName = device;
 }
 
 const std::vector<OkRTCHandler*>& WebRTC::getHandlers() {
@@ -807,16 +813,25 @@ void WebRTC::linkAudioDevice(Conductor* c) {
     c->addLocalAudioTrack(audioSource.get(), streamId, trackId);
 }
 
-void WebRTC::initVideoDevice(int selected) {
-    auto devId = getVideoDeviceId(selected);
-    if (devId.empty()) {
-        RTC_LOG(LS_WARNING) << "Unable to select device: " << selected;
-        return;
+void WebRTC::initVideoDevice() {
+    std::string devId;
+
+    if(vDeviceName.empty()){
+        //Default use device that index is 0
+        int selected = 0;
+        devId = getVideoDeviceId(selected);
+        if (devId.empty()) {
+            RTC_LOG(LS_WARNING) << "Unable to select device: " << selected;
+            return;
+        }
+    }else{
+        devId = vDeviceName;
     }
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
-
-    worker_thread->BlockingCall([=, this]() { videoCapture = getVideoCapture(devId); });
+    worker_thread->BlockingCall([=, this]() {
+        videoCapture = getVideoCapture(devId, vDeviceType == VideoType::Desktop );
+    });
 
     if (!videoSink) {
         videoSink = std::make_shared<VideoSink>(_handlers, "", "");
@@ -838,7 +853,7 @@ void WebRTC::linkVideoDevice(Conductor* c) {
 }
 
 std::string WebRTC::getVideoDeviceId(int selected) {
-    int num_devices = deviceInfo->NumberOfDevices();
+    auto num_devices = deviceInfo->NumberOfDevices();
     RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
     if (selected >= num_devices) {
         RTC_LOG(LS_INFO) << "Out of selected device index: " << selected;
@@ -1014,7 +1029,7 @@ size_t WebRTC::getVideoSize() {
     return vdi->NumberOfDevices();
 }
 
-std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string& deviceId) {
+std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string& deviceId,  bool isScreenCapture) {
     RTC_LOG(LS_INFO) << __FUNCTION__ << " deviceId: " << deviceId;
 
     if (deviceId.empty()) {
@@ -1030,7 +1045,8 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string
 
     videoCapture = VideoCaptureInterface::Create(signaling_thread.get(),  //
                                                  worker_thread.get(),     //
-                                                 deviceId);
+                                                 deviceId,
+                                                 isScreenCapture);
     return videoCapture;
 }
 

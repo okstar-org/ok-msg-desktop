@@ -10,17 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef VIDEOMODE_H
-#define VIDEOMODE_H
+#pragma once
 
 #include <cstdint>
-#include <format>
 #include <QString>
 #include <QRect>
+#include <QObject>
 
 
 namespace lib::video {
 
+//Video source type
 enum class VideoType {
     //摄像头
     Camera,
@@ -31,6 +31,7 @@ enum class VideoType {
     //流
     Stream
 };
+
 
 struct VideoMode {
     int width = 0;
@@ -66,4 +67,7 @@ struct VideoDevice{
 };
 
 }  // namespace lib::video
-#endif  // VIDEOMODE_H
+
+Q_DECLARE_METATYPE(lib::video::VideoType);
+
+

@@ -104,11 +104,11 @@ MessageSessionListWidget::~MessageSessionListWidget() {
 MessageSessionWidget* MessageSessionListWidget::createMessageSession(const ContactId& contactId,
                                                                      const QString& sid,
                                                                      ChatType type) {
-    qDebug() << __func__ << "contactId:" << contactId.toString();
+    // qDebug() << __func__ << "contactId:" << contactId.toString();
 
     auto sw = getMessageSession(contactId.toString());
     if (sw) {
-        qWarning() << "Message session is existing.";
+        // qWarning() << "Message session is existing.";
         return sw;
     }
 

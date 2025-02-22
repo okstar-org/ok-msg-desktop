@@ -18,9 +18,9 @@
 #include <QTimerEvent>
 #include <QObject>
 #include <QThread>
-#include <algorithm>
 
 namespace base {
+
 namespace {
 QObject* TimersAdjuster() {
     static QObject adjuster;

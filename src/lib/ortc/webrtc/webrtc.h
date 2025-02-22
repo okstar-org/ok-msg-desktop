@@ -92,7 +92,7 @@ public:
 
     size_t getVideoSize() override;
 
-    std::shared_ptr<VideoCaptureInterface> getVideoCapture(const std::string& deviceId);
+    std::shared_ptr<VideoCaptureInterface> getVideoCapture(const std::string& deviceId, bool isScreenCapture);
     void destroyVideoCapture();
 
     bool quit(const std::string& peerId) override;
@@ -109,6 +109,8 @@ public:
 
     void addRTCHandler(OkRTCHandler* hand) override;
     void removeRTCHandler(OkRTCHandler* hand) override;
+
+    void setVideoDevice(VideoType type, const std::string& device) override;
 
     void switchVideoDevice(const std::string& deviceId) override;
 
@@ -210,7 +212,7 @@ private:
 
     void linkAudioDevice(Conductor* c);
 
-    void initVideoDevice(int selected);
+    void initVideoDevice();
 
     void linkVideoDevice(Conductor* c);
 
@@ -241,9 +243,10 @@ private:
     // 视频源
     std::shared_ptr<VideoCaptureInterface> videoCapture;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack;
-
     // sink
     std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> videoSink;
+    std::string vDeviceName;
+    VideoType vDeviceType;
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory;
 };

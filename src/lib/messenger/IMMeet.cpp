@@ -80,12 +80,7 @@ IMMeet::IMMeet(IM* im) : IMJingle(im), meetManager(nullptr), meet(nullptr) {
     // qRegisterMetaType
     qRegisterMetaType<ortc::OJingleContentMap>("const ortc::OJingleContentMap&");
 
-    ortc::OkRTCManager* rtcManager = ortc::OkRTCManager::getInstance();
-    //    rtcManager->setIceServerers(im->getExternalServiceDiscovery());
 
-    auto rtc = rtcManager->createRtc(ortc::Mode::meet, resource);
-    rtc->addRTCHandler(this);
-    rtc->start();
 }
 
 IMMeet::~IMMeet() {
@@ -105,8 +100,7 @@ IMMeet::~IMMeet() {
     }
 }
 
-const std::string& IMMeet::create(const std::string& name,
-                                    const lib::ortc::DeviceConfig& conf_) {
+const std::string& IMMeet::create(const std::string& name, const lib::ortc::DeviceConfig& conf_) {
     qDebug() << __func__ << name.c_str();
 
     conf = conf_;
@@ -118,7 +112,16 @@ const std::string& IMMeet::create(const std::string& name,
 
     gloox::JID room(name + "@conference." + im->host());
     meet = meetManager->createMeet(room, resource, props);
-    return meet->getUid();
+    auto& meetId = meet->getUid();
+
+
+    auto* rtcManager = ortc::OkRTCManager::getInstance();
+    auto* rtc = rtcManager->createRtc(ortc::Mode::meet, resource);
+    rtc->setVideoDevice(conf.videoType, conf.videoName);
+    rtc->addRTCHandler(this);
+    rtc->start();
+
+    return meetId;
 }
 
 void IMMeet::disband() {
@@ -309,12 +312,12 @@ void IMMeet::doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& m
     qDebug() << __func__;
     auto rtcManager = ortc::OkRTCManager::getInstance();
     auto rtc = rtcManager->getRtc();
-    rtc->CreateAnswer((peerId.toString()), map);
-
     if(!conf.videoName.empty()){
         //Switch to the specified device
         rtc->switchVideoDevice(conf.videoName);
     }
+    rtc->CreateAnswer((peerId.toString()), map);
+
 
     // auto& map = cav.getSsrcBundle();
     // rtc->addSource((peerId.toString()), map);
