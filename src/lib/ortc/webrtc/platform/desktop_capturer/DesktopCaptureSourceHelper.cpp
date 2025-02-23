@@ -66,7 +66,7 @@ public:
 
     void runAsync(std::function<void()> method) { _thread->PostTask(std::move(method)); }
     void runDelayed(int delayMs, std::function<void()> method) {
-        //        _thread->PostDelayedTask(std::move(method), delayMs);
+        _thread->PostDelayedTask(std::move(method), webrtc::TimeDelta::Millis(delayMs));
     }
 
 private:
@@ -265,24 +265,12 @@ void DesktopSourceRenderer::start() {
     if (!_capturer || _isRunning) {
         return;
     }
-    //    ++GlobalCount;
-    // #ifdef WEBRTC_MAC
-    //    NSLog(@"current capture count: %d", GlobalCount);
-    // #endif // WEBRTC_MAC
-
     _isRunning = true;
     _timerGuard = std::make_shared<bool>(true);
     loop();
 }
 
 void DesktopSourceRenderer::stop() {
-    //    if (_isRunning) {
-    //        GlobalCount--;
-    //
-    // #ifdef WEBRTC_MAC
-    //        NSLog(@"current capture count: %d", GlobalCount);
-    // #endif // WEBRTC_MAC
-    //    }
     _isRunning = false;
     _timerGuard = nullptr;
 }
@@ -291,7 +279,6 @@ void DesktopSourceRenderer::loop() {
     if (!_capturer || !_isRunning) {
         return;
     }
-
     _capturer->CaptureFrame();
     const auto guard = std::weak_ptr<bool>(_timerGuard);
     _scheduler.runDelayed(_delayMs, [this, guard] {
@@ -299,7 +286,7 @@ void DesktopSourceRenderer::loop() {
             loop();
         }
     });
-}
+ }
 
 void DesktopSourceRenderer::setOnFatalError(std::function<void()> error) {
     if (_fatalError) {

@@ -21,6 +21,7 @@
 
 #include <stdint.h>
 #include <algorithm>
+#include <iostream>
 #include <memory>
 
 namespace lib::ortc {
@@ -172,6 +173,8 @@ void VideoCameraCapturer::destroy() {
 }
 
 void VideoCameraCapturer::OnFrame(const webrtc::VideoFrame& frame) {
+    std::cout << __func__ << std::endl;
+
     if (_state != VideoState::Active) {
         return;
     } else if (_aspectRatio <= 0.001) {

@@ -830,7 +830,7 @@ void WebRTC::initVideoDevice() {
 
     RTC_LOG(LS_INFO) << "Get video device:" << devId;
     worker_thread->BlockingCall([=, this]() {
-        videoCapture = getVideoCapture(devId, vDeviceType == VideoType::Desktop );
+        videoCapture = getVideoCapture(devId, vDeviceType == VideoType::Desktop);
     });
 
     if (!videoSink) {
