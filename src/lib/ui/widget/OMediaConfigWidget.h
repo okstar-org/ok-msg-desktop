@@ -55,6 +55,13 @@ public:
 
     void addFooterButton(QPushButton* button);
 
+    inline const QStringList& getAudioDeviceList(){
+        return aDeviceList;
+    }
+
+    inline const QVector<lib::video::VideoDevice> & getVideoDeviceList(){
+        return vDeviceList;
+    }
 protected:
     void initDeviceInfo();
     void updateAudioVideoIcon(bool audio, bool video, bool spk);
@@ -72,15 +79,16 @@ protected:
     lib::ortc::CtrlState ctrlState;
 
 
-            // audio
+    // audio
     QMenu* audioMenu = nullptr;
     QActionGroup* aGroup = nullptr;
     QString selectedAudio;
     lib::audio::IAudioControl* audioControl;
     std::unique_ptr<lib::audio::IAudioSource> audioSource;
     std::unique_ptr<lib::audio::IAudioSink> audioSink;
+    QStringList aDeviceList;
 
-            // video
+    // video
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
     QString selectedVideo;

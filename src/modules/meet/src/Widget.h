@@ -23,6 +23,7 @@
 #include "base/resources.h"
 #include "lib/ortc/ok_rtc.h"
 #include "lib/ui/widget/OPage.h"
+#include "lib/video/videomode.h"
 
 #include <QPointer>
 
@@ -80,6 +81,8 @@ private:
      * @param name 会议名称
      */
     void createMeeting( const QString& name,
+                        const QStringList& aDeviceList,
+                        const QVector<lib::video::VideoDevice>& vDeviceList,
                         const lib::ortc::DeviceConfig& conf,
                         const lib::ortc::CtrlState& ctrlState);
 

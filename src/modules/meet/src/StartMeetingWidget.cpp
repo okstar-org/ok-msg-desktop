@@ -48,7 +48,10 @@ StartMeetingWidget::StartMeetingWidget(QWidget* parent) : QWidget(parent) {
         if (n.isEmpty()) {
             return;
         }
-        emit requstStartMeeting(n, optionWidget->getConf(), optionWidget->getCtrlState());
+        emit requstStartMeeting(n,
+                                optionWidget->getAudioDeviceList(),
+                                optionWidget->getVideoDeviceList(),
+                                optionWidget->getConf(), optionWidget->getCtrlState());
     });
 
     shareButton = createButton(tr("Share"), optionWidget, "share");

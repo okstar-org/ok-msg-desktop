@@ -19,11 +19,20 @@
 #include <mutex>
 #include "base/jid.h"
 #include "lib/messenger/Messenger.h"
+#include "lib/video/videomode.h"
 
 class QToolBar;
 class QToolButton;
 class QLabel;
 class QElapsedTimer;
+class QMenu;
+class QActionGroup;
+
+namespace lib::audio {
+class IAudioControl;
+class IAudioSource;
+class IAudioSink;
+}
 
 namespace lib::ui {
 class PopupMenuComboBox;
@@ -39,6 +48,8 @@ class MeetingVideoFrame : public QWidget, public lib::messenger::MessengerMeetHa
     Q_OBJECT
 public:
     explicit MeetingVideoFrame(const QString& name,
+                               const QStringList& aDeviceList,
+                               const QVector<lib::video::VideoDevice>& vDeviceList,
                                const lib::ortc::DeviceConfig& conf,
                                lib::ortc::CtrlState ctrlState,
                                QWidget* parent = nullptr);
@@ -116,7 +127,6 @@ private:
     lib::ui::PopupMenuComboBox* inviteButton = nullptr;
 
     QToolButton* leaveButton = nullptr;
-
     QToolButton* securityButton = nullptr;
     QToolButton* moreOptionButon = nullptr;
 
@@ -134,6 +144,22 @@ private:
 
     // 控制状态
     lib::ortc::CtrlState ctrlState;
+
+    // audio
+    QMenu* audioMenu = nullptr;
+    QActionGroup* aGroup = nullptr;
+    QString selectedAudio;
+    lib::audio::IAudioControl* audioControl;
+    std::unique_ptr<lib::audio::IAudioSource> audioSource;
+    std::unique_ptr<lib::audio::IAudioSink> audioSink;
+    QStringList aDeviceList;
+
+    // video
+    QMenu* videoMenu = nullptr;
+    QActionGroup* vGroup = nullptr;
+    QString selectedVideo;
+    lib::video::VideoType selectedVideoType;
+    QVector<lib::video::VideoDevice> vDeviceList;
 
 public slots:
     void doLeaveMeet();

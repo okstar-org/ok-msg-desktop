@@ -15,6 +15,7 @@
 #include <QWidget>
 #include "Defines.h"
 #include "lib/ortc/ok_rtc.h"
+#include "lib/video/videomode.h"
 
 class QLineEdit;
 class QPushButton;
@@ -58,6 +59,8 @@ private:
 
 signals:
     void requstStartMeeting(const QString& name,
+                            const QStringList& aDeviceList,
+                            const QVector<lib::video::VideoDevice>& vDeviceList,
                             const lib::ortc::DeviceConfig& conf,
                             const lib::ortc::CtrlState& ctrlState);
     void requstDisbandMeeting();

@@ -141,10 +141,11 @@ void Widget::joinMeeting(const QString& no) {
  * @param name
  */
 void Widget::createMeeting(const QString& name,
+                           const QStringList& aDeviceList,
+                           const QVector<lib::video::VideoDevice>& vDeviceList,
                            const lib::ortc::DeviceConfig& conf,
                            const lib::ortc::CtrlState& ctrlState) {
     qDebug() << __func__;
-
     QMutexLocker locker(&mutex);
     if (!currentMeetingName.isEmpty()) {
         qWarning() << "Existing meeting:" << this->currentMeetingName;
@@ -152,7 +153,7 @@ void Widget::createMeeting(const QString& name,
     }
     if (!view) {
         setState(MeetingState::CreatingMeeting);
-        view = new MeetingVideoFrame(name, conf, ctrlState);
+        view = new MeetingVideoFrame(name,aDeviceList, vDeviceList, conf, ctrlState);
 
         // TODO 暂时关闭即退出
         connect(view.data(), &MeetingVideoFrame::destroyed, this, [this]() {

@@ -16,12 +16,11 @@
 #include "MeetingVideosLayout.h"
 #include "VideoLayoutPicker.h"
 #include "application.h"
-#include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "lib/messenger/Messenger.h"
 #include "lib/storage/settings/style.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
-#include "modules/im/src/core/core.h"
 #include "modules/im/src/nexus.h"
+#include "lib/audio/iaudiosource.h"
 
 #include <QAction>
 #include <QApplication>
@@ -38,6 +37,8 @@
 namespace module::meet {
 
 MeetingVideoFrame::MeetingVideoFrame(const QString& name,
+                                     const QStringList& aDeviceList,
+                                     const QVector<lib::video::VideoDevice>& vDeviceList,
                                      const lib::ortc::DeviceConfig& conf,
                                      lib::ortc::CtrlState ctrlState,
                                      QWidget* parent)
@@ -46,6 +47,8 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name,
         , callDurationTimer(nullptr)
         , timeElapsed(nullptr)
         , ctrlState(ctrlState)
+        , aDeviceList(aDeviceList)
+        , vDeviceList(vDeviceList)
 {
     setAttribute(Qt::WA_StyledBackground);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -140,22 +143,39 @@ void MeetingVideoFrame::creatBottomBar() {
     bottomBar->setObjectName("bottomBar");
 
     // 左侧部分
-    QHBoxLayout* leftLayout = new QHBoxLayout();
+    auto* leftLayout = new QHBoxLayout();
     msgButton = new QToolButton(bottomBar);
     msgButton->setIcon(QIcon(":/meet/image/message.svg"));
     leftLayout->addWidget(msgButton);
     leftLayout->addStretch(1);
 
     // 中间部分
-    QHBoxLayout* middleLayout = new QHBoxLayout();
+    auto* middleLayout = new QHBoxLayout();
     audioSettingButton = new lib::ui::PopupMenuComboBox(bottomBar);
-    // audioSettingButton->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     audioSettingButton->setCursor(Qt::PointingHandCursor);
 
+    aGroup = new QActionGroup(this);
+    aGroup->setExclusive(true);
+
+    audioMenu = new QMenu(this);
+    audioSettingButton->setMenu(audioMenu);
+    // connect(aGroup, &QActionGroup::triggered, this, &OMediaConfigWidget::audioSelected);
     connect(audioSettingButton->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableMic = !ctrlState.enableMic;
         syncAudioVideoState();
     });
+
+    for (auto& a : aDeviceList) {
+        auto act = new QAction(a, audioMenu);
+        act->setCheckable(true);
+        // 如果存在以选择音频设备，则勾选当前的
+        if (act->text() == selectedAudio) {
+            act->setChecked(true);
+        }
+        audioMenu->addAction(act);
+        aGroup->addAction(act);
+    }
+
 
     videoSettingButton = new lib::ui::PopupMenuComboBox(bottomBar);
     // videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
@@ -166,11 +186,33 @@ void MeetingVideoFrame::creatBottomBar() {
         syncAudioVideoState();
     });
 
+    videoMenu = new QMenu(this);
+    vGroup = new QActionGroup(this);
+    vGroup->setExclusive(true);
+
+    videoSettingButton->setMenu(videoMenu);
+    // connect(vGroup, &QActionGroup::triggered, this, &OMediaConfigWidget::videoSelected);
+
+    for (auto& a : vDeviceList) {
+        auto act = new QAction(a.name, videoMenu);
+        act->setData(a.name);
+        act->setCheckable(true);
+        act->setProperty("type", QVariant::fromValue<lib::video::VideoType>(a.type));
+        // 如果存在以选择视频设备，则勾选当前的
+        if (act->text() == selectedVideo) {
+            act->setChecked(true);
+        }
+        videoMenu->addAction(act);
+        vGroup->addAction(act);
+    }
+
     sharedDeskButton = new lib::ui::PopupMenuComboBox(bottomBar);
     sharedDeskButton->iconButton()->setIcon(QIcon(":/meet/image/share_screen.svg"));
     sharedDeskButton->iconButton()->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
     recoardButton = new lib::ui::PopupMenuComboBox(bottomBar);
     recoardButton->iconButton()->setIcon(QIcon(":/meet/image/record.svg"));
+
     inviteButton = new lib::ui::PopupMenuComboBox(bottomBar);
     inviteButton->iconButton()->setIcon(QIcon(":/meet/image/invite_user.svg"));
 

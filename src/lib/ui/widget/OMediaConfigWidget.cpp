@@ -97,7 +97,7 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     mainLayout->addLayout(videoOutLayout, 1);
     mainLayout->addLayout(footerLayout);
 
-            // 初始化设备控件
+    // 初始化设备控件
     audioMenu = new QMenu(this);
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
@@ -136,11 +136,9 @@ void OMediaConfigWidget::initDeviceInfo() {
     // 保持QAction只有QMenu作为parent，没有添加到其他QWidget，clear会自动释放
     audioMenu->clear();
 
-    auto alist = ok::Application::Instance()->getAudioControl()->inDeviceNames();
-
+    aDeviceList = ok::Application::Instance()->getAudioControl()->inDeviceNames();
     QSet<QString> item_set;
-    for (auto& a : alist) {
-        qDebug() << "audio device:" << a;
+    for (auto& a : aDeviceList) {
         if (item_set.contains(a)) {
             continue;
         }
@@ -151,7 +149,6 @@ void OMediaConfigWidget::initDeviceInfo() {
         if (act->text() == selectedAudio) {
             act->setChecked(true);
         }
-
         audioMenu->addAction(act);
         aGroup->addAction(act);
     }
@@ -160,7 +157,6 @@ void OMediaConfigWidget::initDeviceInfo() {
     //    item_set.clear();
     vDeviceList = lib::video::CameraDevice::getDeviceList();
     for (auto& a : vDeviceList) {
-        qDebug() << "video device:" << a.name;
         auto act = new QAction(a.name, videoMenu);
         act->setData(a.name);
         act->setCheckable(true);
