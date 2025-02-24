@@ -930,12 +930,10 @@ void IM::handleMUCError(gloox::MUCRoom* room, gloox::StanzaError error) {
 
 void IM::handleMUCInfo(gloox::MUCRoom* room,               //
                        int features,                       //
-                       const std::string& name,            //
+                       const std::string& roomName,            //
                        const gloox::DataForm* infoForm) {  //
 
     auto roomId = room->jid().full();
-    auto roomName = name;
-
     qDebug() << __func__ << roomId.c_str() << roomName.c_str();
 
     IMGroup groupInfo;

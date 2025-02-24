@@ -103,8 +103,8 @@ target_link_libraries(${PROJECT_NAME}Tests
 								PRIVATE ${Qt5Gui_LIBRARIES}
 								PRIVATE ${Qt5Svg_LIBRARIES}
 								PRIVATE ${Qt5Xml_LIBRARIES}
+								PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
-
 
 # 添加测试到CTest（如果你使用CTest）
 add_test(NAME Run${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME}Tests)
