@@ -130,6 +130,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - [Desktop Contributors](https://github.com/okstar-org/ok-msg-desktop/graphs/contributors)
 - [Android Contributors](https://github.com/okstar-org/ok-msg-android/graphs/contributors)
 - [iOS Contributors](https://github.com/okstar-org/ok-msg-ios/graphs/contributors)
+- [Backend Contributors](https://github.com/okstar-org/ok-stack-backend/graphs/contributors)
 
 # 💰 Support（赞助商）
 
