@@ -815,7 +815,7 @@ void IM::handleMUCParticipantPresence(gloox::MUCRoom* room,                     
 }
 
 void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool priv) {
-    auto msgId = msg.id();
+    auto& msgId = msg.id();
     auto roomId = room->jid().full();
     auto from = msg.from().full();
     auto body = msg.body();
@@ -888,13 +888,13 @@ void IM::handleMUCMessage(gloox::MUCRoom* room, const gloox::Message& msg, bool 
 }
 
 bool IM::handleMUCRoomCreation(gloox::MUCRoom* room) {
-    qDebug() << "handleMUCRoomCreation" << room->jid().full().c_str();
+    qDebug() << __func__ << room->jid().full().c_str();
 
     room->requestRoomConfig();
 
     // 添加到缓存
     auto roomId = (room->jid().bare());
-    auto roominfo = new IMRoomInfo(room);
+    auto roominfo = new IMRoomInfo();
     roominfo->room = room;
     m_roomMap.insert(std::make_pair(roomId, roominfo));
 
