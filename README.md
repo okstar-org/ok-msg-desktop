@@ -1,6 +1,6 @@
 <h1 align="center">OkMSG Desktop</h1>
 
-# 🎁 项目介绍
+# 🎁 Introduction（项目介绍）
 
 OkMSG是由OkStar(okstar.org)
 社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
@@ -16,12 +16,10 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
 - 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
 
-# 🧭 功能介绍
+# 🧭 Product Introduction（功能介绍）
 
-- 聊天模块
-  - 具备单聊、群聊；
-  - 支持文字、音视频、文件传输等基本功能；
-  - 消息端到端加密。
+- 产品说明书：https://kdocs.cn/l/cgnF1Tof5xIw
+- 功能导图：https://kdocs.cn/l/co5VeNMQcDkX
 
 # 🖥️ Support platform（支持平台）
 
@@ -32,7 +30,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)        |
 | 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)        |
 
-# ⚙️ Buildings
+# ⚙️ Buildings（构建）
 
 本项目目前支持Windows、Linux、macOS环境开发
 
@@ -47,7 +45,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md)     |
 | 🍎 macOS-arm64 | [Build on macOS(arm64) ](docs/buildings/macos-arm64.md) |
 
-# Downloads
+# Downloads（下载）
 
 - Support：Windows(x64), macOS(x64/m1), Ubuntu (x64), Fedora (x64)
 - Download: https://github.com/okstar-org/ok-msg-desktop/releases
@@ -57,7 +55,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 - Flatpak: https://flathub.org/apps/org.okstar.ok-msg
 
-# 🖼️ 界面展示
+# 🖼️ Showcase（界面展示）
 
 - Login window
 
@@ -67,16 +65,16 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 <img src="docs/assets/design.png" width="1100" />
 
-# 🏢 System Architecture Diagram
+# 🏢 System Architecture Diagram（系统架构图）
 
 <img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
-# 🏢 Client Architecture Diagram
+# 🏢 Client Architecture Diagram（客户端架构图）
 
 <img src="docs/assets/client-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
 
-# 🌏 Multi-Language Support
+# 🌏 Multi-Language Support（多语言）
 
 | Language         | Progress   | Percent |
 |------------------|------------|---------|
@@ -129,28 +127,23 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 # 🧑‍🤝‍🧑 贡献者
 
-> 欢迎加入参与社区建设
+- [Desktop Contributors](https://github.com/okstar-org/ok-msg-desktop/graphs/contributors)
+- [Android Contributors](https://github.com/okstar-org/ok-msg-android/graphs/contributors)
+- [iOS Contributors](https://github.com/okstar-org/ok-msg-ios/graphs/contributors)
 
-- [更多](https://github.com/okstar-org/ok-msg-desktop/contributors?ref=master)
+# 💰 Support（赞助商）
 
-# 💰 赞助商
+- [湖南船山信息科技有限公司](https://chuanshaninfo.com)
 
-- 湖南船山信息科技有限公司
-- Joy1024（个人）
-- 社区支持者们
 
-# 📦 欢迎体验
-
-- 下载地址：https://www.chuanshaninfo.com/download/OkMSG/
-
-# ☎️ 讨论组
+# ☎️ Discussion（讨论组）
 
 - 技术交流群，添加微信: `gaojiex1314`
 - 微信公众号，关注账号: `TheOkStar`
 - [Discord](https://discord.gg/nDceKgxnkV)
 - [Telegram](https://t.me/okstarorg)
 
-# ©️ 版权信息
+# ©️ Rights（版权信息）
 
 > 本软件已经申请软件著作权和商标。
 > 本项目采用双重授权，请按合规正确使用本项目！
@@ -160,7 +153,8 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - 国际：**[GPL-2.0](https://opensource.org/license/gpl-2-0/)**
 - 中国：**[木兰公共许可证, 第2版](https://opensource.org/license/mulanpsl-2-0/)**
 
-2.付费得到商业授权（试行）
+2.付费得到商业授权
 
 - [OkMSG软件合作伙伴合同-个人版](https://www.kdocs.cn/l/cgdtyImooeol)
 - [企业版软件授权，请移步👉 chuanshaninfo.com](https://www.chuanshaninfo.com/)
+- 购买请添加微信: `hncs-ceo`
