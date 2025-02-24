@@ -56,9 +56,9 @@ class MeetingOptionWidget : public lib::ui::OMediaConfigWidget {
 public:
     explicit MeetingOptionWidget(QWidget* parent = nullptr);
     void retranslateUi() override;
-signals:
-    // 状态改变事件
-    void stateChanged();
+// signals:
+//     // 状态改变事件
+//     void stateChanged();
 };
 
 }  // namespace module::meet

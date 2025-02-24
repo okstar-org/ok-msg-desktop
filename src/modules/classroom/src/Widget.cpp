@@ -109,13 +109,15 @@ void Widget::joinMeeting(const QString& no) {
  * @param name
  */
 void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrlState) {
-    qDebug() << __func__;
+    qDebug() << __func__ << name;
 
     QMutexLocker locker(&mutex);
+
     if (!currentMeetingName.isEmpty()) {
         qWarning() << "Existing meeting:" << this->currentMeetingName;
         return;
     }
+
     if (!view) {
         setState(RoomState::Creating);
         view = new RoomWindow(name, ctrlState);
@@ -134,7 +136,9 @@ void Widget::createMeeting(const QString& name, const lib::ortc::CtrlState& ctrl
         });
 
         connect(view.data(), &RoomWindow::roomCreated, this,
-                [this]() { setState(RoomState::Created); });
+                [this]() {
+                    setState(RoomState::Created);
+                });
 
         connect(view.data(), &RoomWindow::participantJoined, this,
                 [this](const lib::messenger::Participant& part) {

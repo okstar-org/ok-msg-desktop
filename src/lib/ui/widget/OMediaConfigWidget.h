@@ -40,6 +40,8 @@ namespace lib::ui {
 class PopupMenuComboBox;
 class RoundedPixmapLabel;
 
+
+
 class OMediaConfigWidget : public QWidget {
     Q_OBJECT
 public:
@@ -100,7 +102,7 @@ protected:
 
 signals:
     // 状态改变事件
-    void stateChanged();
+    // void stateChanged();
 
 public slots:
     void audioSelected(QAction* action);
@@ -108,8 +110,10 @@ public slots:
 
     void doOpenVideo();
     void doCloseVideo();
+    void closeVideo();
 
     void doOpenAudio();
     void doCloseAudio();
+    void closeAudio();
 };
 }

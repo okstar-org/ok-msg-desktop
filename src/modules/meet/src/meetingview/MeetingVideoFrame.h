@@ -87,7 +87,7 @@ protected:
 
 private:
     void creatTopToolBar();
-    void creatBottomBar();
+    void creatBottomBar(const lib::ortc::DeviceConfig& conf);
     void initConnection();
 
     void showLayoutPicker();
@@ -148,7 +148,7 @@ private:
     // audio
     QMenu* audioMenu = nullptr;
     QActionGroup* aGroup = nullptr;
-    QString selectedAudio;
+    // QString selectedAudio;
     lib::audio::IAudioControl* audioControl;
     std::unique_ptr<lib::audio::IAudioSource> audioSource;
     std::unique_ptr<lib::audio::IAudioSink> audioSink;
@@ -157,7 +157,7 @@ private:
     // video
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
-    QString selectedVideo;
+    // QString selectedVideo;
     lib::video::VideoType selectedVideoType;
     QVector<lib::video::VideoDevice> vDeviceList;
 

@@ -169,7 +169,9 @@ void Widget::createMeeting(const QString& name,
         });
 
         connect(view.data(), &MeetingVideoFrame::meetCreated, this,
-                [this](const QString& name) { setState(MeetingState::Created); });
+                [this](const QString& name) {
+                    setState(MeetingState::Created);
+                });
 
         connect(view.data(), &MeetingVideoFrame::participantJoined, this,
                 [this](const QString& name, const lib::messenger::Participant& part) {

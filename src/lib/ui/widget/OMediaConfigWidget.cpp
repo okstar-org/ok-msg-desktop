@@ -34,7 +34,6 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     avatarLabel->setImage(profile->getAvatar());
 
     micSpeakSetting = new lib::ui::PopupMenuComboBox(this);
-    // micSpeakSetting->iconButton()->setIcon(QIcon(":/meet/image/micphone.svg"));
     micSpeakSetting->setLabel(tr("Micphone"));
     micSpeakSetting->setCursor(Qt::PointingHandCursor);
     connect(micSpeakSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
@@ -48,7 +47,6 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     });
 
     cameraSetting = new lib::ui::PopupMenuComboBox(this);
-    // cameraSetting->iconButton()->setIcon(QIcon(":/meet/image/videocam.svg"));
     cameraSetting->setLabel(tr("Camera"));
     cameraSetting->setCursor(Qt::PointingHandCursor);
 
@@ -63,7 +61,6 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
     });
 
     volumnSetting = new lib::ui::PopupMenuComboBox(this);
-    // volumnSetting->iconButton()->setIcon(QIcon(":/meet/image/speaker.svg"));
     volumnSetting->iconButton()->setCursor(Qt::PointingHandCursor);
     connect(volumnSetting->iconButton(), &QToolButton::clicked, [&](bool checked) {
         ctrlState.enableSpk = !ctrlState.enableSpk;
@@ -275,6 +272,13 @@ void OMediaConfigWidget::doCloseVideo() {
     selectedVideo.clear();
 }
 
+void OMediaConfigWidget::closeVideo()
+{
+    ctrlState.enableCam=false;
+    updateAudioVideoIcon(false, true, false);
+    doCloseVideo();
+}
+
 void OMediaConfigWidget::doOpenAudio()
 {
     QMutexLocker locker(&mutex);
@@ -301,6 +305,12 @@ void OMediaConfigWidget::doCloseAudio()
     QMutexLocker locker(&mutex);
     audioSink.reset();
     audioSource.reset();
+}
+
+void OMediaConfigWidget::closeAudio()
+{
+    updateAudioVideoIcon(true, false, false);
+    doCloseAudio();
 }
 
 const lib::ortc::DeviceConfig OMediaConfigWidget::getConf() {

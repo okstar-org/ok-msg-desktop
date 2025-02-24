@@ -33,6 +33,8 @@ StartRoomWidget::StartRoomWidget(QWidget* parent) : OWidget(parent) {
     meetingNameEdit->setText("test");
     meetingNameEdit->setAlignment(Qt::AlignCenter);
     meetingNameEdit->setPlaceholderText(tr("Meeting Name"));
+
+    //Media option configurations
     optionWidget = new OptionWidget(this);
 
     confirmButton = createButton(tr("Start Meeting"), optionWidget, "confirm");
@@ -65,7 +67,14 @@ StartRoomWidget::StartRoomWidget(QWidget* parent) : OWidget(parent) {
 }
 
 StartRoomWidget::~StartRoomWidget() {}
-void StartRoomWidget::setMeetingState(RoomState state) {}
+
+void StartRoomWidget::setMeetingState(RoomState state) {
+    if(state == RoomState::Meeting){
+        optionWidget->doCloseAudio();
+        optionWidget->doCloseVideo();
+    }
+}
+
 void StartRoomWidget::focusInput() {}
 
 QString StartRoomWidget::getName() {

@@ -79,6 +79,10 @@ QString StartMeetingWidget::getName() {
 
 void StartMeetingWidget::setMeetingState(MeetingState state) {
     updateUi();
+    if(state == MeetingState::Created){
+        optionWidget->closeAudio();
+        optionWidget->closeVideo();
+    }
 }
 
 void StartMeetingWidget::focusInput() {

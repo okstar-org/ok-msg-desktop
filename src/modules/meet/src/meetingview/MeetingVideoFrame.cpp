@@ -54,7 +54,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name,
     setAttribute(Qt::WA_DeleteOnClose);
 
     creatTopToolBar();
-    creatBottomBar();
+    creatBottomBar(conf);
 
     videosLayout = new MeetingVideosContainer(this);
     videosLayout->setObjectName("videoLayout");
@@ -138,7 +138,7 @@ void MeetingVideoFrame::creatTopToolBar() {
     connect(layoutAction, &QAction::triggered, this, &MeetingVideoFrame::showLayoutPicker);
 }
 
-void MeetingVideoFrame::creatBottomBar() {
+void MeetingVideoFrame::creatBottomBar(const lib::ortc::DeviceConfig& conf) {
     bottomBar = new QFrame(this);
     bottomBar->setObjectName("bottomBar");
 
@@ -169,7 +169,7 @@ void MeetingVideoFrame::creatBottomBar() {
         auto act = new QAction(a, audioMenu);
         act->setCheckable(true);
         // 如果存在以选择音频设备，则勾选当前的
-        if (act->text() == selectedAudio) {
+        if (act->text() == qstring(conf.audioName)) {
             act->setChecked(true);
         }
         audioMenu->addAction(act);
@@ -199,7 +199,7 @@ void MeetingVideoFrame::creatBottomBar() {
         act->setCheckable(true);
         act->setProperty("type", QVariant::fromValue<lib::video::VideoType>(a.type));
         // 如果存在以选择视频设备，则勾选当前的
-        if (act->text() == selectedVideo) {
+        if (act->text() == qstring(conf.videoName)) {
             act->setChecked(true);
         }
         videoMenu->addAction(act);
