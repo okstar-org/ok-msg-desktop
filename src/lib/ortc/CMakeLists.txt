@@ -105,6 +105,9 @@ target_link_libraries(${PROJECT_NAME}Tests
 								PRIVATE ${Qt5Xml_LIBRARIES}
 								PRIVATE range-v3::meta range-v3::concepts range-v3::range-v3
 )
+if (WIN32)
+        set_property(TARGET ${PROJECT_NAME}Tests PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif ()
 
 # 添加测试到CTest（如果你使用CTest）
 add_test(NAME Run${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME}Tests)
