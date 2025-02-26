@@ -163,16 +163,17 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 
 # ©️ Rights（版权信息）
 
-> 本软件已经申请软件著作权和商标。
-> 本项目采用双重授权，请按合规正确使用本项目！
+> This software has applied for software copyright and trademark. 本软件已经申请软件著作权和商标。
+> This project adopts dual authorization, please use this project in compliance and correctly! 本项目采用双重授权，请按合规正确使用本项目！
 
-1.遵循软件分发协议
+1.License（授权协议）
 
-- 国际：**[GPL-2.0](https://opensource.org/license/gpl-2-0/)**
+- International：**[GPL-2.0](https://opensource.org/license/gpl-2-0/)**
 - 中国：**[木兰公共许可证, 第2版](https://opensource.org/license/mulanpsl-2-0/)**
 
-2.付费得到商业授权
+2.Payment for commercial license（付费得到商业授权）
 
 - [OkMSG软件合作伙伴合同-个人版](https://www.kdocs.cn/l/cgdtyImooeol)
 - [企业版软件授权，请移步👉 chuanshaninfo.com](https://www.chuanshaninfo.com/)
-- 购买请添加微信: `hncs-ceo`
+- 中国用户购买请添加微信: `hncs-ceo`
+- International users please use tg：`gaojie314` Or `TheOkStar` on X.com to contact me!
