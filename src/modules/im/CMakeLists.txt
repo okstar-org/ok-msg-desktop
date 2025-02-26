@@ -3,16 +3,7 @@ add_definitions(-DOK_${PROJECT_NAME}_MODULE="${PROJECT_NAME}")
 
 include_directories(${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-pkg_check_modules(exif REQUIRED libexif)
-pkg_check_modules(JPEG REQUIRED libjpeg)
 
-include_directories(${exif_INCLUDE_DIRS})
-include_directories(${JPEG_INCLUDE_DIRS})
-
-list(APPEND ALL_LIBRARIES
-		${JPEG_LINK_LIBRARIES}
-		${exif_LINK_LIBRARIES}
-)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ./src src/widget src/widget/form)
 
@@ -104,64 +95,6 @@ add_library(${PROJECT_NAME} STATIC
 		${${PROJECT_NAME}_RESOURCES}
 )
 
-if (WIN32)
-	set(PLATFORM_LIBS   # 3D
-			d3d11
-			# GDI图形API
-			gdi32
-			# DirectX
-			dxgi dxva2
-			# Windows Media
-			Winmm dmoGuids WMCodecDspUuid avrt
-			# Media Foundation API
-			Mf Mfplat Mfreadwrite mfuuid evr #Enhanced Video Renderer 视频渲染器
-			# DirectShow
-			amstrmid msdmo strmiids strmbase
-			# COM
-			Ole32 OleAut32 uuid OLDNAMES comsuppd
-			# Windows DWM API
-			dwmapi Shcore
-			# Shell Light-Weight Utility API
-			shlwapi
-			# IP Helper API
-			iphlpapi
-			# 核心API
-			kernel32 user32 Vfw32 shell32 advapi32
-	)
-
-	if (CMAKE_BUILD_TYPE MATCHES "Debug")
-		set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRTD)
-	else ()
-		set(PLATFORM_LIBS ${PLATFORM_LIBS} MSVCRT)
-	endif ()
-
-elseif (APPLE)
-
-	find_library(APPLICATION_SERVICES ApplicationServices)
-	find_library(CORE_FOUNDATION CoreFoundation)
-	find_library(CORE_SERVICES CoreServices)
-	find_library(COREGRAPHICS CoreGraphics)
-	find_library(CORE_AUDIO CoreAudio)
-	find_library(CORE_VIDEO CoreVIDEO)
-	find_library(CoreMedia CoreMedia)
-	find_library(AudioToolbox AudioToolbox)
-	find_library(VideoToolbox VideoToolbox)
-	find_library(OpenGL OpenGL)
-	find_library(IOKit IOKit)
-	find_library(AppKit AppKit)
-	find_library(IOSurface IOSurface)
-	find_library(AVFOUNDATION AVFoundation)
-	find_library(Foundation Foundation)
-	find_library(Metal Metal)
-
-	set(PLATFORM_LIBS ${AppKit} ${Metal} ${IOSurface} ${AudioToolbox} ${VideoToolbox}
-			${AVFOUNDATION} ${Foundation} ${IOKit} ${OpenGL}
-			${CoreMedia} ${CORE_AUDIO} ${CORE_VIDEO} ${COREGRAPHICS}
-			${CORE_FOUNDATION} ${APPLICATION_SERVICES} ${CORE_SERVICES})
-
-elseif (LINUX)
-	set(PLATFORM_LIBS z atomic X11)
-endif ()
 
 target_link_libraries(${PROJECT_NAME}
 		PRIVATE OkMessenger
@@ -175,9 +108,7 @@ target_link_libraries(${PROJECT_NAME}
 		PUBLIC ${Qt5Network_LIBRARIES}
 		PUBLIC ${Qt5Xml_LIBRARIES}
 		PUBLIC ${Qt5Svg_LIBRARIES}
-		PUBLIC ${CMAKE_REQUIRED_LIBRARIES}
-		PUBLIC ${ALL_LIBRARIES}
-		PUBLIC ${PLATFORM_LIBS}
+		PUBLIC ${CMAKE_REQUIRED_LIBRARIES}	
 		PUBLIC range-v3::meta range-v3::concepts range-v3::range-v3
 )
 

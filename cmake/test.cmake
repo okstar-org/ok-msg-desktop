@@ -13,8 +13,8 @@ endif()
 # 设置googletest的版本（可选）
 set(GOOGLETEST_VERSION "release-1.12.0") # 替换为你想要的版本
 FetchContent_Declare(googletest
-	              GIT_REPOSITORY https://github.com/google/googletest.git
-                GIT_TAG ${GOOGLETEST_VERSION} # 如果设置了版本
+                        GIT_REPOSITORY git@github.com:google/googletest.git
+                        GIT_TAG ${GOOGLETEST_VERSION} # 如果设置了版本
 )
 FetchContent_MakeAvailable(googletest)
 
