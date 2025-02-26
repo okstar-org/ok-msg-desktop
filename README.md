@@ -45,6 +45,41 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md)     |
 | 🍎 macOS-arm64 | [Build on macOS(arm64) ](docs/buildings/macos-arm64.md) |
 
+# 🖼️ Showcase（界面展示）
+
+- Functional Map（功能导图）
+<img src="docs/screenshot/FunctionalMap.jpg" width="1100"/>
+
+- Main window（主界面）
+<img src="docs/assets/design.png" width="1100" />
+
+- Profile（个人信息）
+<img src="docs/screenshot/Profile.png" width="1100" />
+
+- Message（消息）
+<img src="docs/screenshot/Message.png" width="1100" />
+
+- Call in（呼入）
+<img src="docs/screenshot/CallIn.png" width="1100" />
+
+- Contact（联系人）
+<img src="docs/screenshot/Contact.png" width="1100" />
+
+- Start meet（开始会议）
+<img src="docs/screenshot/StartMeet.png" width="1100" />
+
+- App. Center（应用中心）
+<img src="docs/screenshot/AppCenter.png" width="1100" />
+
+
+# 🏢 System Architecture Diagram（系统架构图）
+
+<img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
+
+# 🏢 Client Architecture Diagram（客户端架构图）
+
+<img src="docs/assets/client-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
+
 # Downloads（下载）
 
 - Support：Windows(x64), macOS(x64/m1), Ubuntu (x64), Fedora (x64)
@@ -54,24 +89,6 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="aligncenter" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"><br></a>
 
 - Flatpak: https://flathub.org/apps/org.okstar.ok-msg
-
-# 🖼️ Showcase（界面展示）
-
-- Login window
-
-<img src="docs/assets/login.png" width="1100"/>
-
-- Main window
-
-<img src="docs/assets/design.png" width="1100" />
-
-# 🏢 System Architecture Diagram（系统架构图）
-
-<img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
-
-# 🏢 Client Architecture Diagram（客户端架构图）
-
-<img src="docs/assets/client-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
 
 # 🌏 Multi-Language Support（多语言）
