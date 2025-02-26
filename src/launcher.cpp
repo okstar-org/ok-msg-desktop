@@ -63,7 +63,7 @@ int Launcher::startup() { return executeApplication(); }
 
 void Launcher::shutdown() {
     app->closeAllWindows();
-    qApp->exit(0);
+    app->exit(0);
 }
 
 }  // namespace ok

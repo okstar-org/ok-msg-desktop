@@ -95,9 +95,6 @@ void Widget::reloadTheme() {
 void Widget::doStart() {}
 
 void Widget::initTranslate() {
-    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
-    settings::Translator::translate(OK_Meet_MODULE, locale);
-
     retranslateUi();
     connect(ok::Application::Instance()->bus(), &ok::Bus::languageChanged,
             [&](const QString& locale0) {
@@ -107,6 +104,9 @@ void Widget::initTranslate() {
 }
 
 void Widget::retranslateUi() {
+    QString locale = lib::settings::OkSettings::getInstance().getTranslation();
+    settings::Translator::translate(OK_Meet_MODULE, locale);
+
     ui->retranslateUi(this);
 
     if (ui->tabWidget->count() >= 4) {
