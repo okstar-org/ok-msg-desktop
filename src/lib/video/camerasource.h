@@ -10,19 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef LIB_VIDEO_CAMERA_H
+#define LIB_VIDEO_CAMERA_H
 
 #include <QFuture>
 #include <QHash>
 #include <QRecursiveMutex>
 #include <QString>
 #include <QThread>
-
 #include <QVector>
-#include <atomic>
-#include <thread>
-#include <base/compatiblerecursivemutex.h>
+
+#include "base/compatiblerecursivemutex.h"
 #include "lib/video/videomode.h"
 #include "lib/video/videosource.h"
 

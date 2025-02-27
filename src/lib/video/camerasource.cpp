@@ -70,7 +70,7 @@ void CameraSource::setupDefault() {
     auto deviceName = CameraDevice::getDefaultDeviceName();
     qDebug() << "Setup default device:" << deviceName;
     bool isScreen = CameraDevice::isScreen(deviceName);
-    VideoMode mode = VideoMode(s->getScreenRegion());
+    auto mode = VideoMode(s->getScreenRegion());
     if (!isScreen) {
         mode = VideoMode(s->getCamVideoRes());
         mode.FPS = s->getCamVideoFPS();

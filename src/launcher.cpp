@@ -44,9 +44,8 @@ Launcher::Launcher(int argc, char* argv[]) : _argc(argc), _argv(argv) {
 }
 
 int Launcher::executeApplication() {
-    /**
-     * 创建应用实例
-     */
+
+    // Create app instance.
     app = new Application(_argc, _argv);
 
     // Windows platform plugins DLL
