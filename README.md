@@ -178,6 +178,10 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 基本用户授权|二次开发、仅限当前版本、不含新版本和更新、仅限自用不可商业化|终身|1万
 高级用户授权|二次开发、未来三个版本以及三年更新、仅限自用不可商业化|终身|3万
 旗舰用户授权|二次开发、未来三个版本以及三年更新、可再次商业化|终身|6万
+```
 购买请添加微信: `hncs-ceo`
-
-- International users please use tg：`gaojie314` Or `TheOkStar` on X.com to contact me!
+```
+### International users 
+Please contact me in the following two ways.
+- Telegram：`gaojie314` 
+- X.com: `TheOkStar`!
