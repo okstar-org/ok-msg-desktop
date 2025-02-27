@@ -103,6 +103,9 @@ public:
 
     void doStartRTC(const IMPeerId& peerId, const ortc::OJingleContentMap& cav) const;
 
+    inline const std::string& getResource(){
+        return resource;
+    }
 protected:
     void handleHostPresence(const gloox::JID& from, const gloox::Presence& presence) override;
 

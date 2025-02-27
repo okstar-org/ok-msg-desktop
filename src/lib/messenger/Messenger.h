@@ -538,6 +538,8 @@ public:
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);
 
+    const std::string& getResource();
+
 protected:
     void onCall(const IMPeerId& peerId,  //
                 const std::string& callId,  //

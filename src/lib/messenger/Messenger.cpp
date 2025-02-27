@@ -396,6 +396,10 @@ void MessengerMeet::removeHandler(MessengerMeetHandler* hdr) {
     meet->removeMeetHandler(hdr);
 }
 
+const std::string &MessengerMeet::getResource() {
+    return meet->getResource();
+}
+
 void MessengerMeet::onCall(const IMPeerId& peerId, const std::string& callId, bool audio,
                            bool video) {}
 

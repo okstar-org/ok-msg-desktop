@@ -25,6 +25,9 @@ MeetingVideoWidgetRender::MeetingVideoWidgetRender(QWidget* widget) : w(widget) 
 
 void MeetingVideoWidgetRender::setRenderEnable(bool enable) {
     _enable.store(enable);
+    if (w) {
+        w->update();
+    }
 }
 
 bool MeetingVideoWidgetRender::renderEnable() const {

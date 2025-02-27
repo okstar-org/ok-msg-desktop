@@ -431,8 +431,19 @@ void MeetingVideoFrame::syncAudioVideoState() {
     } else {
         videoSettingButton->iconButton()->setIcon(QIcon(":/meet/image/videocam_stop.svg"));
     }
+
+    //修改渲染界面
+    for (auto it = participantMap.begin(); it != participantMap.end(); it++) {
+        MeetingParticipant* p = *it;
+        if (stdstring(p->getResource()) == meet->getResource()) {
+            MeetingVideoWidgetRender* r = static_cast<MeetingVideoWidgetRender*>(p->videoRender());
+            r->setRenderEnable(ctrlState.enableCam);
+        }
+    }
+
     // 设置会议音视频开启和关闭
     meet->setCtrlState(ctrlState);
+
 }
 
 void MeetingVideoFrame::doLeaveMeet() {
@@ -444,7 +455,6 @@ void MeetingVideoFrame::updateDuration() {
     if (!timeElapsed) {
         return;
     }
-
     // 更新标签文本
     duraionLabel->setText(QTime::fromMSecsSinceStartOfDay(timeElapsed->elapsed()).toString("hh:mm:ss"));
 }

@@ -108,8 +108,7 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
                                      Qt::SmoothTransformation);
             temp.setDevicePixelRatio(this->devicePixelRatioF());
             QSize s = temp.size() / this->devicePixelRatioF();
-            QRect paintRect =
-                    QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, this->rect());
+            QRect paintRect = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, this->rect());
             painter.drawImage(paintRect.topLeft(), temp);
         }
         videoRender->end();
