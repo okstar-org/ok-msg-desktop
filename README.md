@@ -2,19 +2,13 @@
 
 # Introduction（项目介绍）
 
-OkMSG是由OkStar(okstar.org)
-社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
+OkMSG 是注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目。
 
-OkMSG is an enterprise communication collaboration tool developed and maintained by the OkStar (okstar. org) community
-that focuses on data security and protection. It supports independent private deployment and is an open-source project
-that integrates multiple functions such as instant messaging, voice, video calling, file sending, and meetings. It
-enables your enterprise to more effectively initiate collaboration, communicate effectively, control costs, explore new
-businesses, and help you accelerate business development.
+OkMSG is an enterprise communication collaboration tool
+that focuses on data security and protection.
 
-OkMSG的诞生主要解决企业信息化过程中面对的问题：
-
-- 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
-- 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
+- OkMSG，一种企业协作方式！
+- Respect privacy and be useful 好用且尊重隐私
 
 # Product Introduction（功能介绍）
 
