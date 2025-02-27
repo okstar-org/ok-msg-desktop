@@ -69,11 +69,16 @@ struct OVideoFrame {
     IDType sourceID;
     QImage image;
 
-    QSize getSize() const{
+    OVideoFrame(IDType frameID, IDType sourceID, QImage&& image)
+            :frameID(frameID), sourceID(sourceID), image(image){
+
+    }
+
+    [[nodiscard]] inline QSize getSize() const{
         return image.size();
     }
 
-    const QImage& getImage() const {
+    [[nodiscard]] inline const QImage& getImage() const {
         return image;
     }
 
@@ -81,8 +86,6 @@ struct OVideoFrame {
 
 
 class VideoFrame {
-public:
-
 
 public:
     VideoFrame(IDType sourceID, AVFrame* sourceFrame, QRect dimensions, int pixFmt,
