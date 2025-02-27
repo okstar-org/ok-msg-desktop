@@ -1,6 +1,6 @@
 <h1 align="center">OkMSG Desktop</h1>
 
-# 🎁 Introduction（项目介绍）
+# Introduction（项目介绍）
 
 OkMSG是由OkStar(okstar.org)
 社区开发和维护的注重数据安全与保护的企业通讯协同工具，支持独立私有化部署的集即时消息、语音、视频通话、发送文件、会议等多种功能于一身的开源项目，同时让您的企业更加有效开启协作、有效沟通，控制成本，开拓新业务，并帮助您加速发展业务。
@@ -16,12 +16,17 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 - 远程协同工具提高工作效率同时,如何保障企业数据安全和隐私、自主可控将成为企业最核心的问题。
 - 市面上现有产品同质化严重，市场需要一款有本质化差异的产品。
 
-# 🧭 Product Introduction（功能介绍）
+# Product Introduction（功能介绍）
 
 - 产品说明书：https://kdocs.cn/l/cgnF1Tof5xIw
 - 功能导图：https://kdocs.cn/l/co5VeNMQcDkX
 
-# 🖥️ Support platform（支持平台）
+# Usage scenario（使用场景）
+- 有数据安全与隐私合规要求：面向金融、政务、医疗、军工等领域受《网络安全法》《数据安全法》《个人信息保护法》等法规约束，要求数据本地化存储，避免敏感信息外泄的。
+- 有业务场景定制化的要求：企业需要IM工具与内部系统（如ERP、OA、CRM）深度集成，支持私有化部署的IM更易对接企业内部API及数据库的。
+- 有特殊功能需求的：如审计日志追溯、分级权限管理、文件加密传输等，公有云IM难以完全覆盖的。
+
+# Support platform（支持平台）
 
 | Meet           | Latest Build Status                                                                                                                                                                                        |
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -30,7 +35,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🍎 macOS-x64   | [![Build on macOS-x64](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-x64.yml/badge.svg)        |
 | 🍎 macOS-arm   | [![Build on macOS-arm](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/mac-arm.yml/badge.svg)        |
 
-# ⚙️ Buildings（构建）
+# Buildings（构建）
 
 本项目目前支持Windows、Linux、macOS环境开发
 
@@ -45,7 +50,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 | 🍎 macOS-x64   | [Build on macOS(x64) ](docs%2Fbuildings%2Fmacos.md)     |
 | 🍎 macOS-arm64 | [Build on macOS(arm64) ](docs/buildings/macos-arm64.md) |
 
-# 🖼️ Showcase（界面展示）
+# Showcase（界面展示）
 
 - Functional Map（功能导图）
 <img src="docs/screenshot/FunctionalMap.jpg" width="1100"/>
@@ -72,11 +77,11 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 <img src="docs/screenshot/AppCenter.png" width="1100" />
 
 
-# 🏢 System Architecture Diagram（系统架构图）
+# System Architecture Diagram（系统架构图）
 
 <img src="docs/assets/ok-msg-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
-# 🏢 Client Architecture Diagram（客户端架构图）
+# Client Architecture Diagram（客户端架构图）
 
 <img src="docs/assets/client-architecture-diagram.png" width="1000" alt="Architecture diagram"/>
 
@@ -91,7 +96,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - Flatpak: https://flathub.org/apps/org.okstar.ok-msg
 
 
-# 🌏 Multi-Language Support（多语言）
+# Multi-Language Support（多语言）
 
 | Language         | Progress   | Percent |
 |------------------|------------|---------|
@@ -107,7 +112,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 | 🇮🇹 Italy       | ######---- | 60%     |
 | 🇷🇺 Russia      | ######---- | 60%     |
 
-# ⛽ Thirty party（第三方库）
+# Thirty party（第三方库）
 
 - CMake ([New BSD License](https://github.com/Kitware/CMake/blob/master/Copyright.txt))
 - WebRTC ([New BSD License](https://github.com/desktop-app/tg_owt/blob/master/LICENSE))
@@ -122,14 +127,14 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - qTox([GPL v3](https://github.com/qTox/qTox/LICENSE))
 - gloox ([GPL v3](https://gitee.com/chuanshantech/ok-edu-gloox))
 
-# 🙏 感谢支持
+# Thanks（感谢）
 
 - 感谢社区成员的鼎力支持等
 - [感谢 JetBrains 对本项目的支持（Drive by JetBrains）](https://jb.gg/OpenSourceSupport) <img width="64" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg?_ga=2.83044246.1221182059.1672752920-1856866598.1665301971&_gl=1*3fzoi7*_ga*MTg1Njg2NjU5OC4xNjY1MzAxOTcx*_ga_9J976DJZ68*MTY3Mjc1MjkyMC40LjEuMTY3Mjc1NDM0Ni4wLjAuMA">
 
 > 欢迎大家 Clone 本项目，捐赠收入将用于对贡献者的奖励。
 
-# 🏭 社区建设
+# Community（社区建设）
 
 > 为了OkMSG项目能长期有序有质量发展，诚邀有梦想情怀人士加入，一起建设社区，
 > 目前规划需要如下方面人才：
@@ -138,30 +143,28 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - 文档、翻译、设计、品控
 - 支持、推广、投资、项目管理
 
-> 社区模式：敬请期待。。。
+> 加入社区，请加微信:`gaojiex1314`
 
-- 欢迎加入 [OkStar 社区](http://okstar.org)
-
-# 🧑‍🤝‍🧑 贡献者
+# Contributors（贡献者）
 
 - [Desktop Contributors](https://github.com/okstar-org/ok-msg-desktop/graphs/contributors)
 - [Android Contributors](https://github.com/okstar-org/ok-msg-android/graphs/contributors)
 - [iOS Contributors](https://github.com/okstar-org/ok-msg-ios/graphs/contributors)
 - [Backend Contributors](https://github.com/okstar-org/ok-stack-backend/graphs/contributors)
 
-# 💰 Support（赞助商）
+# Support（赞助商）
 
 - [湖南船山信息科技有限公司](https://chuanshaninfo.com)
 
 
-# ☎️ Discussion（讨论组）
+# Discussion（讨论组）
 
 - 技术交流群，添加微信: `gaojiex1314`
 - 微信公众号，关注账号: `TheOkStar`
 - [Discord](https://discord.gg/nDceKgxnkV)
 - [Telegram](https://t.me/okstarorg)
 
-# ©️ Rights（版权信息）
+# Rights（版权信息）
 
 > This software has applied for software copyright and trademark. 本软件已经申请软件著作权和商标。
 > This project adopts dual authorization, please use this project in compliance and correctly! 本项目采用双重授权，请按合规正确使用本项目！
@@ -172,16 +175,36 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 - 中国：**[木兰公共许可证, 第2版](https://opensource.org/license/mulanpsl-2-0/)**
 
 ## Payment for commercial license（付费得到商业授权）
-### 中国用户
+### China customers（中国用户）
 授权类型| 授权功能| 时间 | 价格
 -------|-------|------|-------
 基本用户授权|二次开发、仅限当前版本、不含新版本和更新、仅限自用不可商业化|终身|1万
 高级用户授权|二次开发、未来三个版本以及三年更新、仅限自用不可商业化|终身|3万
 旗舰用户授权|二次开发、未来三个版本以及三年更新、可再次商业化|终身|6万
+
 ```
 购买请添加微信: `hncs-ceo`或`gaojiex1314`
 ```
-### International users 
+### International users
+
+- Basic users price is $2,500
+    - Permit software modification and extension
+    - For personal or enterpise
+    - Non-commercial redistribution allowed
+    - Current version only
+
+- Advance users price is $7,500
+    - Permit software modification and extension
+    - For personal or enterpise 
+    - Non-commercial redistribution allowed
+    - It is allowed to use the updates of the next 3 major versions. 
+    
+- Ultimate users price is $1,5000
+    - Permit software modification and extension
+    - For personal or enterpise 
+    - Commercial redistribution allowed
+    - It is allowed to use the updates of the next 3 major versions. 
+
 Please contact me in the following two ways.
 - Telegram：`gaojie314` 
 - X.com: `TheOkStar`
