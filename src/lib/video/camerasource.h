@@ -17,6 +17,8 @@
 #include <QHash>
 #include <QRecursiveMutex>
 #include <QString>
+#include <QThread>
+
 #include <QVector>
 #include <atomic>
 #include <thread>
@@ -57,9 +59,9 @@ private:
     CameraDevice* device;
 
     //cpp 20 jthread
-    std::unique_ptr<std::jthread> deviceThread;
+    // std::unique_ptr<std::jthread> deviceThread;
 
-    // QThread* deviceThread;
+    QThread* deviceThread;
     // QFuture<void> streamFuture;
 
 
@@ -72,7 +74,8 @@ public slots:
     void openDevice();
     void closeDevice();
     void setupDevice(const QString& deviceName_, const VideoMode& mode);
-
+    void stream();
 };
+
 }  // namespace lib::video
 #endif  // CAMERA_H

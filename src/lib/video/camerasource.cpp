@@ -21,8 +21,8 @@
 
 #include <QReadLocker>
 #include <QWriteLocker>
+#include <QThread>
 #include <QtConcurrent/QtConcurrentRun>
-#include <functional>
 #include "cameradevice.h"
 #include "camerasource.h"
 #include "lib/storage/settings/OkSettings.h"
@@ -31,24 +31,18 @@
 
 namespace lib::video {
 
-
 CameraSource::CameraSource(const VideoDevice &dev)
         : dev(dev)
         , mode(VideoMode())
         , device(new CameraDevice(dev, this))
+        , deviceThread(nullptr)
 {
     qDebug() << __func__ << "Created.";
 
     qRegisterMetaType<VideoMode>("VideoMode");
     qRegisterMetaType<std::shared_ptr<lib::video::OVideoFrame>>(
             "std::shared_ptr<lib::video::OVideoFrame>");
-
-    // deviceThread->setObjectName("Device thread");
-    // deviceThread->start();
-    // moveToThread(deviceThread);
 }
-
-
 
 CameraSource::~CameraSource() {
     qDebug() << __func__;
@@ -56,7 +50,6 @@ CameraSource::~CameraSource() {
     delete device;
     qDebug() << __func__ << "Destroyed.";
 }
-
 
 /**
  * @brief Creates the instance.
@@ -108,6 +101,11 @@ void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& Mode
 
 }
 
+void CameraSource::stream()
+{
+    device->stream();
+}
+
 QVector<VideoMode> CameraSource::getVideoModes()
 {
     QMutexLocker locker{&mutex};
@@ -145,7 +143,7 @@ void CameraSource::openDevice() {
     auto deviceName = dev.name;
     qDebug() << "Opening device" << deviceName;
 
-    // We need to create a new CameraDevice(Enable camera light)
+            // We need to create a new CameraDevice(Enable camera light)
     bool opened = device->open();
     if (!opened) {
         qWarning() << "Failed to open device:" << deviceName;
@@ -153,14 +151,16 @@ void CameraSource::openDevice() {
         return;
     }
 
-    //Make device thread
+            //Make device thread
     if(!deviceThread){
-        deviceThread = std::make_unique<std::jthread>([&](){
-            device->stream();
-        });
+        deviceThread = new QThread(this);
+        deviceThread->setObjectName("Camera thread");
+        connect(deviceThread, &QThread::started, this, &CameraSource::stream);
+        moveToThread(deviceThread);
+        deviceThread->start();
     }
 
-    // Device is opened
+            // Device is opened
     emit deviceOpened();
 }
 
@@ -177,17 +177,17 @@ void CameraSource::closeDevice() {
         return;
     }
 
-    //stop device
+            //stop device
     if (device) {
         device->stop();
     }
 
-    //destroy device thread(auto wait thread on destroy).
+            //destroy device thread(auto wait thread on destroy).
     qDebug() << "Stop the device thread";
-    deviceThread.reset();
-
+    deviceThread->exit();
+    deviceThread->wait();
+    deviceThread = nullptr;
     emit deviceClosed();
-
 }
 
 }  // namespace lib::video
