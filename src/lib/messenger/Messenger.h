@@ -507,7 +507,9 @@ public:
      * 创建会议
      * @param room
      */
-    void create(const std::string& room, const lib::ortc::DeviceConfig& conf);
+    void create(const std::string& room,
+                const lib::ortc::DeviceConfig& conf,
+                lib::ortc::CtrlState state);
 
     /**
      * 离开会议

@@ -55,7 +55,9 @@ public:
                                QWidget* parent = nullptr);
     ~MeetingVideoFrame() override;
     void reloadTheme();
-    void createMeet(const QString& name, const lib::ortc::DeviceConfig& conf);
+    void createMeet(const QString& name,
+                    const lib::ortc::DeviceConfig& conf,
+                    lib::ortc::CtrlState state);
     void retranslateUi();
 
     void startCounter();

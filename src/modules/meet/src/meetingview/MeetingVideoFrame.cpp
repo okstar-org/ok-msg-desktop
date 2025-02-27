@@ -76,7 +76,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name,
     auto profile = ok::Application::Instance()->getProfile();
     meet = new lib::messenger::MessengerMeet(profile->getMessenger());
     meet->addHandler(this);
-    createMeet(name, conf);
+    createMeet(name, conf, ctrlState);
 
     callDurationTimer = new QTimer(this);
     connect(callDurationTimer, &QTimer::timeout, this, &MeetingVideoFrame::updateDuration);
@@ -341,9 +341,11 @@ void MeetingVideoFrame::stopCounter() {
  * 创建会议
  * @param name
  */
-void MeetingVideoFrame::createMeet(const QString& name, const lib::ortc::DeviceConfig& conf) {
+void MeetingVideoFrame::createMeet(const QString& name,
+                                   const lib::ortc::DeviceConfig& conf,
+                                   lib::ortc::CtrlState state) {
     qDebug() << __func__ << name;
-    meet->create(stdstring(name), conf);
+    meet->create(stdstring(name), conf, state);
 }
 
 void MeetingVideoFrame::onMeetCreated(const ok::base::Jid& jid,

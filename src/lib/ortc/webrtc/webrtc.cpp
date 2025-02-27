@@ -133,7 +133,7 @@ std::unique_ptr<cricket::VideoContentDescription> addVideoSsrcBundle(
 
 WebRTC::WebRTC(Mode mode, std::string res)
         : mode(mode), peer_connection_factory(nullptr), resource(std::move(res)) {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
+    RTC_LOG(LS_INFO) << __func__;
 
     _rtcConfig.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
     _rtcConfig.enable_implicit_rollback = false;
@@ -160,11 +160,11 @@ WebRTC::WebRTC(Mode mode, std::string res)
     signaling_thread->SetName("signaling_thread", this);
     RTC_LOG(LS_INFO) << "Signaling thread is started=>" << signaling_thread->Start();
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " be created, resource is: " << resource;
+    RTC_LOG(LS_INFO) << __func__ << " be created, resource is: " << resource;
 }
 
 WebRTC::~WebRTC() {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " destroy...";
+    RTC_LOG(LS_INFO) << __func__ << " destroy...";
 
     worker_thread->BlockingCall([this]() { destroyVideoCapture(); });
 
@@ -182,11 +182,11 @@ WebRTC::~WebRTC() {
         deviceInfo.reset();
     });
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " destroyed.";
+    RTC_LOG(LS_INFO) << __func__ << " destroyed.";
 }
 
 bool WebRTC::start() {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "Starting the WebRTC...";
+    RTC_LOG(LS_INFO) << __func__ << "Starting the WebRTC...";
 
     // lock
     std::lock_guard<std::recursive_mutex> lock(mutex);
@@ -228,10 +228,10 @@ bool WebRTC::start() {
     worker_thread->BlockingCall([&]() {
         adm = webrtc::AudioDeviceModule::Create(webrtc::AudioDeviceModule::kPlatformDefaultAudio,
                                                 webrtc::CreateDefaultTaskQueueFactory().get());
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " ADM: " << adm.get();
+        RTC_LOG(LS_INFO) << __func__ << " ADM: " << adm.get();
 
         deviceInfo.reset(webrtc::VideoCaptureFactory::CreateDeviceInfo());
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " DeviceInfo: " << deviceInfo.get();
+        RTC_LOG(LS_INFO) << __func__ << " DeviceInfo: " << deviceInfo.get();
     });
 
     peer_connection_factory =
@@ -769,7 +769,7 @@ Conductor* WebRTC::createConductor(const std::string& peerId, const std::string&
         return conductor;
     }
 
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
+    RTC_LOG(LS_INFO) << __func__ << "peer:" << peerId << " sid:" << sId << " video:" << video;
 
     std::lock_guard<std::recursive_mutex> lock(mutex);
 
@@ -803,7 +803,7 @@ void WebRTC::initAudioDevice() {
 }
 
 void WebRTC::linkAudioDevice(Conductor* c) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << "AddTrack audio source:" << audioSource.get();
+    RTC_LOG(LS_INFO) << __func__ << "AddTrack audio source:" << audioSource.get();
 
     // a=msid:<stream-id> <track-id> <mslabel>
     // f1b4629b-video-0-2 c5858a0f-fae0-4241-8eea-20eb6f91f902-2
@@ -814,30 +814,12 @@ void WebRTC::linkAudioDevice(Conductor* c) {
 }
 
 void WebRTC::initVideoDevice() {
-    std::string devId;
 
     if(vDeviceName.empty()){
-        //Default use device that index is 0
-        int selected = 0;
-        devId = getVideoDeviceId(selected);
-        if (devId.empty()) {
-            RTC_LOG(LS_WARNING) << "Unable to select device: " << selected;
-            return;
-        }
-    }else{
-        devId = vDeviceName;
+        RTC_LOG(LS_WARNING) << __func__ << "Empty video device name!";
+        return;
     }
 
-    RTC_LOG(LS_INFO) << "Get video device:" << devId;
-    worker_thread->BlockingCall([=, this]() {
-        videoCapture = getVideoCapture(devId, vDeviceType == VideoType::Desktop);
-    });
-
-    if (!videoSink) {
-        videoSink = std::make_shared<VideoSink>(_handlers, "", "");
-    }
-
-    videoCapture->setOutput(videoSink);
 }
 
 void WebRTC::linkVideoDevice(Conductor* c) {
@@ -854,9 +836,9 @@ void WebRTC::linkVideoDevice(Conductor* c) {
 
 std::string WebRTC::getVideoDeviceId(int selected) {
     auto num_devices = deviceInfo->NumberOfDevices();
-    RTC_LOG(LS_INFO) << "Get number of video devices:" << num_devices;
+    RTC_LOG(LS_INFO) << __func__ << "Get number of video devices:" << num_devices;
     if (selected >= num_devices) {
-        RTC_LOG(LS_INFO) << "Out of selected device index: " << selected;
+        RTC_LOG(LS_WARNING) << __func__ << "Out of selected device index: " << selected;
         return {};
     }
 
@@ -895,7 +877,7 @@ void WebRTC::setRemoteDescription(const std::string& peerId, const OJingleConten
 
 void WebRTC::setTransportInfo(const std::string& peerId, const std::string& sId,
                               const ortc::OIceUdp& iceUdp) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId << " sId:" << sId;
+    RTC_LOG(LS_INFO) << __func__ << " peerId:" << peerId << " sId:" << sId;
 
     auto conductor = getConductor(peerId);
 
@@ -943,6 +925,36 @@ void WebRTC::setTransportInfo(const std::string& peerId, const std::string& sId,
 
 void WebRTC::setEnable(CtrlState state) {
     RTC_LOG(LS_INFO) << __func__;
+    std::lock_guard<std::mutex> lock(mtx);
+
+    if(state.enableCam){
+        if(vDeviceName.empty()){
+            RTC_LOG(LS_WARNING) << "Empty device name!";
+            return;
+        }
+
+        //enable video
+        RTC_LOG(LS_INFO) << "Creating video capture:" << vDeviceName;
+        worker_thread->BlockingCall([&]() {
+            videoCapture = getVideoCapture(vDeviceName, vDeviceType == VideoType::Desktop);
+        });
+
+        if (!videoSink) {
+            videoSink = std::make_shared<VideoSink>(_handlers, "", "");
+        }
+
+        videoCapture->setOutput(videoSink);
+
+    }else{
+        //disbale video
+        if(videoSink){
+            videoSink.reset();
+        }
+        if(videoCapture){
+            videoCapture.reset();
+        }
+    }
+
     for (auto it : _pcMap) {
         it.second->setEnable(state.enableMic, state.enableCam);
         it.second->setRemoteMute(!state.enableSpk);
@@ -1010,7 +1022,7 @@ void WebRTC::SessionTerminate(const std::string& peerId) {
 }
 
 void WebRTC::CreateAnswer(const std::string& peerId, const OJingleContentMap& av) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << peerId;
+    RTC_LOG(LS_INFO) << __func__ << " peerId:" << peerId;
     auto conductor = createConductor(peerId, av.sessionId, av.isVideo());
     auto sdp = convertSdpToDown(av);
     conductor->setRemoteDescription(sdp.release());
@@ -1030,7 +1042,7 @@ size_t WebRTC::getVideoSize() {
 }
 
 std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string& deviceId,  bool isScreenCapture) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " deviceId: " << deviceId;
+    RTC_LOG(LS_INFO) << __func__ << " deviceId: " << deviceId;
 
     if (deviceId.empty()) {
         RTC_LOG(LS_WARNING) << "Empty deviceId!";
@@ -1051,7 +1063,7 @@ std::shared_ptr<VideoCaptureInterface> WebRTC::getVideoCapture(const std::string
 }
 
 void WebRTC::destroyVideoCapture() {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
+    RTC_LOG(LS_INFO) << __func__;
     videoCapture.reset();
 }
 
@@ -1073,7 +1085,7 @@ void WebRTC::onLocalDescriptionSet(const webrtc::SessionDescriptionInterface* sd
                                    const std::string& peerId) {
     std::string str;
     sdp->ToString(&str);
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " sdp:\n" << str;
+    RTC_LOG(LS_INFO) << __func__ << " sdp:\n" << str;
 
     auto o_sdp = convertSdpToUp(sdp);
     if (o_sdp->getContents().empty()) return;
@@ -1088,7 +1100,7 @@ void WebRTC::onDescriptionSet(const webrtc::SessionDescriptionInterface* sdp,
 
 cricket::TransportInfo WebRTC::convertTransportToDown(const std::string& name,
                                                       const OIceUdp& iceUdp) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << name;
+    RTC_LOG(LS_INFO) << __func__ << " : " << name;
     cricket::TransportInfo ti;
     ti.content_name = name;
     ti.description.ice_ufrag = iceUdp.ufrag;

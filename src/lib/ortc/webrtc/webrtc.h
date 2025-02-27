@@ -217,6 +217,7 @@ private:
     void linkVideoDevice(Conductor* c);
 
     std::recursive_mutex mutex;
+    std::mutex mtx;
 
     // 模式
     Mode mode;

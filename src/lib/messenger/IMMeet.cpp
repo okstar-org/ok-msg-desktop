@@ -100,10 +100,14 @@ IMMeet::~IMMeet() {
     }
 }
 
-const std::string& IMMeet::create(const std::string& name, const lib::ortc::DeviceConfig& conf_) {
-    qDebug() << __func__ << name.c_str();
+const std::string& IMMeet::create(const std::string& name_,
+                                  const lib::ortc::DeviceConfig& conf_,
+                                  lib::ortc::CtrlState state_) {
+    qDebug() << __func__ << name_.c_str();
 
+    name = name_;
     conf = conf_;
+    state= state_;
 
     std::map<std::string, std::string> props;
     props.insert(std::pair("startAudioMuted", "9"));
@@ -118,6 +122,7 @@ const std::string& IMMeet::create(const std::string& name, const lib::ortc::Devi
     auto* rtcManager = ortc::OkRTCManager::getInstance();
     auto* rtc = rtcManager->createRtc(ortc::Mode::meet, resource);
     rtc->setVideoDevice(conf.videoType, conf.videoName);
+    rtc->setEnable(state);
     rtc->addRTCHandler(this);
     rtc->start();
 

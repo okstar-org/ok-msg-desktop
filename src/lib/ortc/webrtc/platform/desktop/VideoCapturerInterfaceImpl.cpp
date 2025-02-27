@@ -71,7 +71,7 @@ VideoCapturerInterfaceImpl::VideoCapturerInterfaceImpl(
 }
 
 VideoCapturerInterfaceImpl::~VideoCapturerInterfaceImpl() {
-    RTC_LOG(LS_INFO) << __FUNCTION__;
+    RTC_LOG(LS_INFO) << __func__;
 }
 
 void VideoCapturerInterfaceImpl::setState(VideoState state) {

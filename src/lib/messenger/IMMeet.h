@@ -45,7 +45,8 @@ public:
      * @return
      */
     const std::string& create(const std::string& name,
-                             const lib::ortc::DeviceConfig& conf);
+                             const lib::ortc::DeviceConfig& conf,
+                             lib::ortc::CtrlState state);
 
     /**
      * 解散会议
@@ -219,8 +220,11 @@ private:
 
     std::vector<MessengerMeetHandler*> handlers;
     IMVCard vCard;
+
+    std::string name;
     std::string resource;
     lib::ortc::DeviceConfig conf;
+    lib::ortc::CtrlState state;
 
     // signals:
     // ice

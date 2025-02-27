@@ -23,14 +23,14 @@ VideoSink::VideoSink(const std::vector<OkRTCHandler*>& handlers,  //
                      std::string peerId,                          //
                      std::string resource_)
         : handlers(handlers), _peer_id(std::move(peerId)), resource(std::move(resource_)) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << resource;
+    RTC_LOG(LS_INFO) << __func__ << " peerId:" << _peer_id << " mid:" << resource;
 }
 VideoSink::~VideoSink() {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " peerId:" << _peer_id << " mid:" << resource;
+    RTC_LOG(LS_INFO) << __func__ << " peerId:" << _peer_id << " mid:" << resource;
 }
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
     if(count++ % 100 == 0){
-        RTC_LOG(LS_INFO) << __FUNCTION__ << " peer:" << _peer_id << " mid:" << resource
+        RTC_LOG(LS_INFO) << __func__ << " peer:" << _peer_id << " mid:" << resource
                          << " received frame count:" << count;
     }
 

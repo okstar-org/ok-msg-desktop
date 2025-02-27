@@ -18,7 +18,7 @@
 #include "SharedPaintManager.h"
 #include "TaskPacketBuilder.h"
 
-//#define DEBUG_PRINT_TASK()    qDebug() << __FUNCTION__ << "history item cnt : " << cmdMngr_->historyItemCount();
+//#define DEBUG_PRINT_TASK()    qDebug() << __func__ << "history item cnt : " << cmdMngr_->historyItemCount();
 
 namespace module::classroom {
 
