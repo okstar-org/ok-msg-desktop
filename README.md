@@ -28,7 +28,7 @@ OkMSG的诞生主要解决企业信息化过程中面对的问题：
 
 # Support platform（支持平台）
 
-| Meet           | Latest Build Status                                                                                                                                                                                        |
+| OS           | Latest Build Status                                                                                                                                                                                        |
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🪟 Windows-x64 | [![Build on Windows](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/win.yml/badge.svg)](https://github.com/CefView/QCefView/actions/workflows/build-windows-x86_64.yml)                    |
 | 🐧 Linux-x64   | [![Build on Ubuntu](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/okstar-org/ok-msg-desktop/actions/workflows/ubuntu.yml/badge.svg) |
