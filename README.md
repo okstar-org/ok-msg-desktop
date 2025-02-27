@@ -184,7 +184,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 ### International users 
 Please contact me in the following two ways.
 - Telegram：`gaojie314` 
-- X.com: `TheOkStar`!
+- X.com: `TheOkStar`
 
 # Blacklist（黑名单）
 公司|姓 名 | 手机号 |微信号| 拉黑时间 |期限  | 拉黑理由
