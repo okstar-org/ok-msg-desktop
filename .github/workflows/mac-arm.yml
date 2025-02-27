@@ -133,18 +133,18 @@ jobs:
         run: |
           ${{env.QT_PATH }}/bin/macdeployqt   ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop.app
     
-      - name: create dmg
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        run: |
-          create-dmg  --help
-          create-dmg --identity="Apple Development: chengengcan@gmail.com (DBN79CF4VB)" ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop.app  ${{ steps.strings.outputs.build-output-dir }}/bin/
-        env:
-          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+      # - name: create dmg
+      #   if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      #   run: |
+      #     create-dmg  --help
+      #     create-dmg --identity="Apple Development: chengengcan@gmail.com (DBN79CF4VB)" ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop.app  ${{ steps.strings.outputs.build-output-dir }}/bin/
+      #   env:
+      #     CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
      
-      - name: Upload to release
-        uses: softprops/action-gh-release@v1
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop macOS-arm64.dmg
+      # - name: Upload to release
+      #   uses: softprops/action-gh-release@v1
+      #   if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     files: |
+      #       ${{ steps.strings.outputs.build-output-dir }}/bin/ok-msg-desktop macOS-arm64.dmg
