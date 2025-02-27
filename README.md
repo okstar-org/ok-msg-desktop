@@ -185,3 +185,8 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
 Please contact me in the following two ways.
 - Telegram：`gaojie314` 
 - X.com: `TheOkStar`!
+
+# Blaklist（黑名单）
+姓 名 | 手机号 |微信号| 拉黑时间 |期限  | 拉黑理由
+-----|-------|-----|---------|-----|--------
+高*虎|18612**7340|gxh***gxh|2025-02-23|永久| 欺骗、白嫖
