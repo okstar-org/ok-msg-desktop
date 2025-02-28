@@ -45,9 +45,9 @@ QVector<QPair<QString, QString> > avfoundation::getDeviceList()
     return result;
 }
 
-QVector<VideoMode> avfoundation::getDeviceModes(QString devName)
+QVector<lib::video::VideoMode> avfoundation::getDeviceModes(QString devName)
 {
-    QVector<VideoMode> result;
+    QVector<lib::video::VideoMode> result;
 
     if (devName.startsWith(CAPTURE_SCREEN)) {
         return result;
@@ -67,7 +67,7 @@ QVector<VideoMode> avfoundation::getDeviceModes(QString devName)
             dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
 
             for (AVFrameRateRange* range in format.videoSupportedFrameRateRanges) {
-                VideoMode mode;
+                lib::video::VideoMode mode;
                 mode.width = dimensions.width;
                 mode.height = dimensions.height;
                 mode.FPS = range.maxFrameRate;
