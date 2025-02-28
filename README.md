@@ -193,7 +193,7 @@ Snap: <a href="https://snapcraft.io/ok-msg"><img decoding="async" class="alignce
     - Non-commercial redistribution allowed
     - It is allowed to use the updates of the next 3 major versions. 
     
-- Ultimate users price is $1,5000
+- Ultimate users price is $15,000
     - Permit software modification and extension
     - For personal or enterpise 
     - Commercial redistribution allowed
