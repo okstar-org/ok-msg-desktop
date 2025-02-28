@@ -529,16 +529,18 @@ bool CameraDevice::setVideoMode(const VideoMode &mode_)
 
     mode = mode_;
 
-    //设置视频大小
-    auto videoSize = std::format("{}x{}", mode.width, mode.height);
+    // 设置视频大小
+    std::stringstream ss;
+    ss << mode.width << "x" << mode.height;
+    std::string videoSize = ss.str();
     // qDebug() << "videoSize: " << QString::fromStdString(videoSize);
     if(av_dict_set(&options, "video_size", videoSize.c_str(), 0)){
         qWarning() << "av_dict_set error for video_size!";
         return false;
     }
 
-            //采样率
-    auto framerate = std::format("{}", mode.FPS);
+    // 采样率
+    auto framerate = std::to_string(mode.FPS);
     if(av_dict_set(&options, "framerate", framerate.c_str(), 0)            ){
         qWarning() << "av_dict_set error for framerate!";
         return false;
