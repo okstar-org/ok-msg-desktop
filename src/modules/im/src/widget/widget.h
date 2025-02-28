@@ -265,17 +265,17 @@ private:
     DesktopNotify notifier;
 #endif
 
-#ifdef Q_OS_MAC
-    QAction* fileMenu;
-    QAction* editMenu;
-    QAction* contactMenu;
-    QMenu* changeStatusMenu;
-    QAction* editProfileAction;
-    QAction* logoutAction;
-    QAction* addContactAction;
-    QAction* nextConversationAction;
-    QAction* previousConversationAction;
-#endif
+// #ifdef Q_OS_MAC
+//     QAction* fileMenu;
+//     QAction* editMenu;
+//     QAction* contactMenu;
+//     QMenu* changeStatusMenu;
+//     QAction* editProfileAction;
+//     QAction* logoutAction;
+//     QAction* addContactAction;
+//     QAction* nextConversationAction;
+//     QAction* previousConversationAction;
+// #endif
 
     std::shared_ptr<::base::DelayedCallTimer> delayCaller;
 };

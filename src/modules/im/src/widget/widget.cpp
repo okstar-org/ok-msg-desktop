@@ -27,11 +27,11 @@
 #include <QTabWidget>
 #include <QWindow>
 
-#ifdef Q_OS_MAC
-#include <QMenuBar>
-#include <QSignalMapper>
-#include <QWindow>
-#endif
+// #ifdef Q_OS_MAC
+// #include <QMenuBar>
+// #include <QSignalMapper>
+// #include <QWindow>
+// #endif
 
 #include "Bus.h"
 #include "ChatWidget.h"
@@ -274,9 +274,9 @@ bool Widget::eventFilter(QObject* obj, QEvent* event) {
             if (state.testFlag(Qt::WindowMinimized) && obj) {
                 wasMaximized = ce->oldState().testFlag(Qt::WindowMaximized);
             }
-#ifdef Q_OS_MAC
-            emit windowStateChanged(windowState());
-#endif
+// #ifdef Q_OS_MAC
+//             emit windowStateChanged(windowState());
+// #endif
             break;
         default:
             break;
@@ -897,12 +897,11 @@ bool Widget::event(QEvent* e) {
                 resetIcon();
             }
 
-#ifdef Q_OS_MAC
-            emit windowStateChanged(windowState());
-
-        case QEvent::WindowStateChange:
-            Nexus::getInstance()->updateWindowsStates();
-#endif
+// #ifdef Q_OS_MAC
+//             emit windowStateChanged(windowState());
+//         case QEvent::WindowStateChange:
+//             Nexus::getInstance()->updateWindowsStates();
+// #endif
             break;
         default:
             break;
