@@ -16,7 +16,7 @@
 #include "lib/ui/widget/tools/RoundedPixmapLabel.h"
 #include "lib/ui/widget/tools/PopupMenuComboBox.h"
 #include "AudioVolumnSlider.h"
-
+#include "lib/video/cameradevice.h"
 #include <QMenu>
 #include <QPushButton>
 #include <QSlider>
@@ -149,9 +149,14 @@ void OMediaConfigWidget::initDeviceInfo() {
         audioMenu->addAction(act);
         aGroup->addAction(act);
     }
+    if (!audioMenu->isEmpty()) {
+        auto f = audioMenu->actions().first();
+        f->setChecked(true);
+        selectedAudio = f->text();
+    }
+
 
     videoMenu->clear();
-    //    item_set.clear();
     vDeviceList = lib::video::CameraDevice::getDeviceList();
     for (auto& a : vDeviceList) {
         auto act = new QAction(a.name, videoMenu);
@@ -166,11 +171,7 @@ void OMediaConfigWidget::initDeviceInfo() {
         vGroup->addAction(act);
     }
 
-    if (!audioMenu->isEmpty()) {
-        auto f = audioMenu->actions().first();
-        f->setChecked(true);
-        selectedAudio = f->text();
-    }
+
     if (!videoMenu->isEmpty()) {
         auto f = videoMenu->actions().first();
         f->setChecked(true);

@@ -15,11 +15,11 @@
 
 #include <QWidget>
 
-#include "lib/video/cameradevice.h"
 #include "lib/video/camerasource.h"
 #include "lib/video/videoframe.h"
 
 namespace lib::ui {
+
 class OVideoOutputWidget : public QWidget {
     Q_OBJECT
 public:
