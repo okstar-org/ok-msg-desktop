@@ -56,25 +56,29 @@ Widget::Widget(QWidget* parent)
 
     startMeetWidget = new StartMeetingWidget(this);
     ui->tabWidget->addTab(startMeetWidget, tr("Start Meeting"));
-
-    joinMeetWidget = new JoinMeetingWidget(this);
-    ui->tabWidget->addTab(joinMeetWidget, tr("Join Meeting"));
-
-    BookMeetingWidget* bookMeet = new BookMeetingWidget(this);
-    ui->tabWidget->addTab(bookMeet, tr("Book Meeting"));
-
-    MeetingSettingWidget* setting = new MeetingSettingWidget(this);
-    ui->tabWidget->addTab(setting, tr("Setting"));
-
-    initTranslate();
-    reloadTheme();
-
     connect(startMeetWidget, &StartMeetingWidget::requstStartMeeting,   //
             this, &Widget::createMeeting);
     connect(startMeetWidget, &StartMeetingWidget::requstDisbandMeeting, //
             this, &Widget::destroyMeeting);
     connect(startMeetWidget, &StartMeetingWidget::requstShareMeeting, this, &Widget::shareMeeting);
-    connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
+
+    // 预约会议
+    // BookMeetingWidget* bookMeet = new BookMeetingWidget(this);
+    // ui->tabWidget->addTab(bookMeet, tr("Book Meeting"));
+
+    // 加入会议
+    // joinMeetWidget = new JoinMeetingWidget(this);
+    // ui->tabWidget->addTab(joinMeetWidget, tr("Join Meeting"));
+    // connect(joinMeetWidget, &JoinMeetingWidget::requstJoinMeeting, this, &Widget::joinMeeting);
+
+    // 设置
+    // MeetingSettingWidget* setting = new MeetingSettingWidget(this);
+    // ui->tabWidget->addTab(setting, tr("Setting"));
+
+
+
+    initTranslate();
+    reloadTheme();
 }
 
 Widget::~Widget() {
@@ -89,7 +93,8 @@ void Widget::reloadTheme() {
 
     auto mStyle = lib::settings::Style::getStylesheet("MeetingBase.css");
     startMeetWidget->setStyleSheet(mStyle);
-    joinMeetWidget->setStyleSheet(mStyle);
+
+    // joinMeetWidget->setStyleSheet(mStyle);
 }
 
 void Widget::doStart() {}
@@ -229,9 +234,10 @@ void Widget::activate() {
     QWidget* curr = ui->tabWidget->currentWidget();
     if (curr == startMeetWidget) {
         startMeetWidget->focusInput();
-    } else if (curr == joinMeetWidget) {
-        joinMeetWidget->focusInput();
     }
+    // if (curr == joinMeetWidget) {
+    //  joinMeetWidget->focusInput();
+    // }
 }
 
 /**

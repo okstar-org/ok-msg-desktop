@@ -101,7 +101,7 @@ private:
 
     Ui::WorkPlatform* ui;
     StartMeetingWidget* startMeetWidget = nullptr;
-    JoinMeetingWidget* joinMeetWidget = nullptr;
+    // JoinMeetingWidget* joinMeetWidget = nullptr;
     QPointer<MeetingVideoFrame> view;
 
     /**
