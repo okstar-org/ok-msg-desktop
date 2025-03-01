@@ -16,10 +16,10 @@ that focuses on data security and protection.
 - 功能导图：https://kdocs.cn/l/co5VeNMQcDkX
 
 # Usage scenario（使用场景）
-- There are requirements for data security and privacy compliance: For industries such as finance, government affairs, healthcare, and military, they are subject to regulations such as the Cybersecurity Law, the Data Security Law, and the Personal Information Protection Law. It is required that data be stored locally to avoid the leakage of sensitive information.
+- There are data security and privacy compliance requirements: for fields such as finance, government affairs, healthcare, and military industry that are subject to regulatory constraints, data must be stored locally to avoid sensitive information leakage.
 - 有数据安全与隐私合规要求：面向金融、政务、医疗、军工等领域受《网络安全法》《数据安全法》《个人信息保护法》等法规约束，要求数据本地化存储，避免敏感信息外泄的。
 
-- There are requirements for customization of business scenarios: Enterprises need IM (Instant Messaging) tools to be deeply integrated with internal systems (such as ERP, OA, and CRM). IM tools that support private deployment are more likely to be docked with the internal APIs and databases of enterprises.
+- There are requirements for customization of business scenarios: Enterprises need IM (Instant Messaging) tools to be deeply integrated with internal systems (such as *ERP*, *OA*, and *CRM*). IM tools that support private deployment are more likely to be docked with the internal APIs and databases of enterprises.
 - 有业务场景定制化的要求：企业需要IM工具与内部系统（如ERP、OA、CRM）深度集成，支持私有化部署的IM更易对接企业内部API及数据库的。
 
 - There are requirements for special functions: For example, functions like audit log tracing, hierarchical permission management, and encrypted file transmission, which cannot be fully covered by public cloud IM. 
