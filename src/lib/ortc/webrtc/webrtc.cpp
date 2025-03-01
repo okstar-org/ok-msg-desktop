@@ -1005,7 +1005,6 @@ void WebRTC::addSource(const std::string& peerId,
 bool WebRTC::CreateOffer(const std::string& peerId, const std::string& sId, bool video) {
     auto conductor = createConductor(peerId, sId, video);
     conductor->CreateOffer();
-
     return true;
 }
 

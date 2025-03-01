@@ -279,14 +279,19 @@ void Conductor::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> str
 
     for (auto& track : stream->GetVideoTracks()) {
         auto trackId = track->id();
+
+        auto* src =  track->GetSource();
+        // RTC_LOG(LS_INFO) << " source: " << src->
+
+
         auto _videoSink = new VideoSink(webRtc->getHandlers(), peerId, stream->id());
         RTC_LOG(LS_INFO) << __func__ << " Created video track id: " << trackId
                          << " for stream:" << stream->id();
 
         const std::string sinkKey = stream->id() + "_" + trackId;
+        RTC_LOG(LS_INFO) << __func__ << " Insert video sink key is: " << sinkKey << " pointer is:"<<_videoSink;
         _videoSinks.insert(std::make_pair(sinkKey, _videoSink));
 
-        RTC_LOG(LS_INFO) << __func__ << " Insert video sink key is: " << sinkKey;
         track->AddOrUpdateSink(_videoSink, rtc::VideoSinkWants());
     }
 
