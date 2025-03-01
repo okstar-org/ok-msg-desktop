@@ -143,6 +143,10 @@ struct Source {
     std::string cname;
     // 格式： "d11a153b-audio-0-1 3f32f7da-2665-4321-8335-868bf394797c-1"
     std::string msid;
+
+    const std::string& getCname() const {
+        return cname.empty() ? name : cname;
+    }
 };
 typedef std::vector<Source> Sources;
 

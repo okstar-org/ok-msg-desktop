@@ -15,12 +15,8 @@
 #include <QMutexLocker>
 #include <QTimer>
 #include <chrono>
-#include "src/core/core.h"
-#include "src/lib/session/profile.h"
-#include "src/model/friend.h"
 #include "src/model/status.h"
-#include "src/nexus.h"
-#include "src/persistence/settings.h"
+
 namespace module::im {
 
 OfflineMsgEngine::OfflineMsgEngine(const FriendId* frnd, ICoreFriendMessageSender* messageSender)
@@ -31,9 +27,12 @@ OfflineMsgEngine::OfflineMsgEngine(const FriendId* frnd, ICoreFriendMessageSende
  *
  */
 void OfflineMsgEngine::onReceiptReceived(MsgId receipt) {
-    qDebug() << __func__ << receipt;
+    // qDebug() << __func__ << receipt;
 
     QMutexLocker ml(&mutex);
+    if(receipt.isEmpty()){
+        return;
+    }
     if (receivedReceipts.contains(receipt)) {
         qWarning() << "Received duplicate receipt" << receipt << "from friend" << f->getId();
         return;

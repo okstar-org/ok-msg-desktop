@@ -70,22 +70,13 @@ void setSsrc2(const Sources& sources, const SsrcGroup& g,
         cricket::StreamParams streamParams;
         for (auto& src : sources) {
             streamParams.ssrcs.push_back(std::stoul(src.ssrc));
-            //            for (auto& p : src.parameters) {
-            //                if (p.name == "cname") {
-            //                    streamParams.cname = p.value;
-            //                } else if (p.name == "label") {
-            //                    streamParams.id = p.value;
-            //                } else if (p.name == "mslabel") {
-            //                    streamParams.set_stream_ids({p.value});
-            //                }
-            //            };
-            streamParams.cname = src.cname;
+            streamParams.cname = src.getCname();
             streamParams.set_stream_ids({src.msid});
         }
         if (!g.ssrcs.empty()) {
             std::vector<uint32_t> ssrcs;
             std::transform(g.ssrcs.begin(), g.ssrcs.end(),  //
-                           std::back_inserter(ssrcs),
+                           std::back_inserter(ssrcs),       //
                            [](auto& s) -> uint32_t { return std::stoul(s); });
             cricket::SsrcGroup ssrcGroup(g.semantics, ssrcs);
             // ssrc-groups

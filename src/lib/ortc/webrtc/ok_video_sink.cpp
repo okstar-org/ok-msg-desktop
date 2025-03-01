@@ -29,7 +29,7 @@ VideoSink::~VideoSink() {
     RTC_LOG(LS_INFO) << __func__ << " peerId:" << _peer_id << " mid:" << resource;
 }
 void VideoSink::OnFrame(const webrtc::VideoFrame& frame) {
-    if(count++ % 100 == 0){
+    if(++count % 100 == 0){
         RTC_LOG(LS_INFO) << __func__ << " peer:" << _peer_id << " mid:" << resource
                          << " received frame count:" << count;
     }
