@@ -14,7 +14,7 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QScreen>
-#include <format>
+#include <sstream>
 #include <thread>
 
 
