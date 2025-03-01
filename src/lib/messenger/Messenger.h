@@ -494,6 +494,8 @@ public:
 
     virtual void onEnd() = 0;
 
+    virtual void onFailure(const std::string& msg) = 0;
+
     // void iceGatheringStateChanged(IMPeerId to, const std::string sId, ortc::IceGatheringState) =
     // 0; void iceConnectionStateChanged(IMPeerId to, const std::string sId,
     // ortc::IceConnectionState) = 0;

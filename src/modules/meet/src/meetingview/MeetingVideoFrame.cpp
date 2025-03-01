@@ -11,16 +11,7 @@
  */
 
 #include "MeetingVideoFrame.h"
-#include "../MeetingParticipant.h"
-#include "../MeetingVideoRender.h"
-#include "MeetingVideosLayout.h"
-#include "VideoLayoutPicker.h"
-#include "application.h"
-#include "lib/messenger/Messenger.h"
-#include "lib/storage/settings/style.h"
-#include "lib/ui/widget/tools/PopupMenuComboBox.h"
-#include "modules/im/src/nexus.h"
-#include "lib/audio/iaudiosource.h"
+
 
 #include <QAction>
 #include <QApplication>
@@ -33,6 +24,19 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QWindowStateChangeEvent>
+
+#include "../MeetingParticipant.h"
+#include "../MeetingVideoRender.h"
+#include "MeetingVideosLayout.h"
+#include "VideoLayoutPicker.h"
+#include "application.h"
+#include "lib/messenger/Messenger.h"
+#include "lib/storage/settings/style.h"
+#include "lib/ui/gui.h"
+#include "lib/ui/widget/tools/PopupMenuComboBox.h"
+#include "lib/audio/iaudiosink.h"
+#include "lib/audio/iaudiosource.h"
+
 
 namespace module::meet {
 
@@ -528,6 +532,13 @@ void MeetingVideoFrame::onParticipantMessage(const std::string& participant,
 void MeetingVideoFrame::onEnd() {
     qDebug() << __func__;
     emit meetDestroyed();
+}
+
+void MeetingVideoFrame::onFailure(const std::string &msg)
+{
+    QTimer::singleShot(0, [&msg](){
+        lib::ui::GUI::showError(tr("Error"), qstring(msg));
+    });
 }
 
 }  // namespace module::meet

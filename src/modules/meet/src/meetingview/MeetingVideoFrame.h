@@ -86,7 +86,10 @@ protected:
     void onParticipantVideoFrame(const std::string& participant,
                                  const lib::ortc::RendererImage& image) override;
     void onParticipantMessage(const std::string& participant, const std::string& msg) override;
+
     void onEnd() override;
+
+    void onFailure(const std::string& msg) override;
 
 private:
     void creatTopToolBar();

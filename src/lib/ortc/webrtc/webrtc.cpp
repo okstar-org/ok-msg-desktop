@@ -961,8 +961,9 @@ void WebRTC::setSpeakerVolume(uint32_t vol) {
 
 void WebRTC::addSource(const std::string& peerId,
                        const std::map<std::string, ortc::OMeetSSRCBundle>& map) {
-    auto c = getConductor(peerId);
 
+    RTC_LOG(LS_INFO) << __func__;
+    auto c = getConductor(peerId);
     auto desc = c->getRemoteDescription();
     if (!desc) {
         RTC_LOG(LS_WARNING) << "No remote description!";

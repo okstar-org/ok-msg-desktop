@@ -74,13 +74,12 @@ IMMeet::IMMeet(IM* im) : IMJingle(im), meetManager(nullptr), meet(nullptr) {
     im->requestVCards();
 
     // OkMSG.root-host.[meet-241219-51-g57a9b7d0].OTE5Y2 --> OTE5Y2
-    auto split = extractLastPartView(im->self().resource());
-    resource = split[split.size() - 1];
+    qDebug() << "IM resource is:" << im->self().resource().c_str();
+    resource = extractLastPartView(im->self().resource());
+    qDebug() << "Usage resource:" << resource.c_str();
 
     // qRegisterMetaType
     qRegisterMetaType<ortc::OJingleContentMap>("const ortc::OJingleContentMap&");
-
-
 }
 
 IMMeet::~IMMeet() {
@@ -404,16 +403,32 @@ bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
 
 bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     SESSION_CHECK(currentSid);
-    qDebug() << __func__;
-    for (const auto p : jingle->plugins()) {
+    qDebug() << __func__ << "peerId:" << peerId.toString().c_str();
+    for (const auto& p : jingle->plugins()) {
+
+        if(p->pluginType() == gloox::Jingle::PluginContent){
+            auto *c = dynamic_cast<const gloox::Jingle::Content*>(p);
+            if(c){
+                auto& n = c->name();
+                auto *rtp = dynamic_cast<const gloox::Jingle::RTP*>(c->findPlugin(gloox::Jingle::PluginRTP));
+                rtp->sources();
+
+                // @see https://kdocs.cn/l/cfjVHKkZ8ELW?linkname=XXHH8EZMK4
+                // auto* x= c->findPlugin(gloox::Jingle::PluginContent);
+                // x->tag()
+            }
+        }
+
         if (p->pluginType() == gloox::Jingle::PluginJsonMessage) {
-            auto jm = static_cast<const gloox::Jingle::JsonMessage*>(p);
+            auto* jm = dynamic_cast<const gloox::Jingle::JsonMessage*>(p);
             if (jm) {
                 qDebug() << "json-message:" << jm->json().c_str();
+
+                //k: Participant id
                 std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
 
-                auto rtc = ortc::OkRTCManager::getInstance()->getRtc();
+                auto* rtc = ortc::OkRTCManager::getInstance()->getRtc();
                 if (rtc) {
                     rtc->addSource((peerId.toString()), map);
                 }
