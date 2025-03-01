@@ -173,7 +173,7 @@ void VideoCameraCapturer::destroy() {
 }
 
 void VideoCameraCapturer::OnFrame(const webrtc::VideoFrame& frame) {
-    std::cout << __func__ << std::endl;
+    // RTC_LOG(LS_INFO) << __func__;
 
     if (_state != VideoState::Active) {
         return;

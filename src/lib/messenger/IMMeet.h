@@ -47,7 +47,7 @@ public:
     const std::string& create(const std::string& name,
                              const lib::ortc::DeviceConfig& conf,
                              lib::ortc::CtrlState state);
-
+    void setDeviceConfig(const lib::ortc::DeviceConfig& conf);
     /**
      * 解散会议
      */

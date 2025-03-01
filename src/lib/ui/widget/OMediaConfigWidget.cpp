@@ -96,16 +96,16 @@ OMediaConfigWidget::OMediaConfigWidget(QWidget* parent) : QWidget{parent} {
 
     // 初始化设备控件
     audioMenu = new QMenu(this);
+    micSpeakSetting->setMenu(audioMenu);
+
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
-    micSpeakSetting->setMenu(audioMenu);
     connect(aGroup, &QActionGroup::triggered, this, &OMediaConfigWidget::audioSelected);
 
     videoMenu = new QMenu(this);
+    cameraSetting->setMenu(videoMenu);
     vGroup = new QActionGroup(this);
     vGroup->setExclusive(true);
-
-    cameraSetting->setMenu(videoMenu);
     connect(vGroup, &QActionGroup::triggered, this, &OMediaConfigWidget::videoSelected);
 
     ctrlState = {false, false, true};
@@ -270,7 +270,6 @@ void OMediaConfigWidget::doCloseVideo() {
     qDebug() << __func__;
     videoOutLayout->setCurrentWidget(avatarLabel);
     cameraOutput->stopRender();
-    selectedVideo.clear();
 }
 
 void OMediaConfigWidget::closeVideo()

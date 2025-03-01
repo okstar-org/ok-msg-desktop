@@ -129,6 +129,13 @@ const std::string& IMMeet::create(const std::string& name_,
     return meetId;
 }
 
+void IMMeet::setDeviceConfig(const ortc::DeviceConfig &conf)
+{
+    auto* rtcManager = ortc::OkRTCManager::getInstance();
+    auto* rtc = rtcManager->getRtc();
+    rtc->setVideoDevice(conf.videoType, conf.videoName);
+}
+
 void IMMeet::disband() {
     qDebug() << __func__;
     leave();

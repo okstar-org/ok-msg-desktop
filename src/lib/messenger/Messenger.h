@@ -531,9 +531,16 @@ public:
     void sendMessage(const std::string& msg);
 
     /**
-     是音频、视频、扬声器
+     * @brief 设置设备配置
+     * @param conf
+     */
+    void setDeviceConfig(const lib::ortc::DeviceConfig& conf);
+    /**
+     * 是音频、视频、扬声器
      */
     void setCtrlState(ortc::CtrlState state);
+
+    void switchVideoDevice(const std::string& deviceId);
 
     void addHandler(MessengerMeetHandler* hdr);
     void removeHandler(MessengerMeetHandler* hdr);

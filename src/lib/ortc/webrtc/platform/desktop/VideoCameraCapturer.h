@@ -15,15 +15,11 @@
 
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
-#include "api/video/video_source_interface.h"
-#include "media/base/video_adapter.h"
 #include "modules/video_capture/video_capture.h"
 
 #include "../../VideoCaptureInterface.h"
 
-#include <stddef.h>
 #include <memory>
-#include <vector>
 
 namespace lib::ortc {
 
@@ -31,7 +27,7 @@ class VideoCameraCapturer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 public:
     explicit VideoCameraCapturer(rtc::Thread* signalingThread, rtc::Thread* workerThread,
                                  std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    ~VideoCameraCapturer();
+    ~VideoCameraCapturer() override;
 
     void setState(VideoState state);
     void setDeviceId(std::string deviceId);

@@ -450,8 +450,18 @@ void MessengerMeet::sendMessage(const std::string& msg) {
     meet->sendMessage(msg);
 }
 
+void MessengerMeet::setDeviceConfig(const ortc::DeviceConfig &conf)
+{
+    meet->setDeviceConfig(conf);
+}
+
 void MessengerMeet::setCtrlState(ortc::CtrlState state) {
     meet->setEnable(state);
+}
+
+void MessengerMeet::switchVideoDevice(const std::string &deviceId)
+{
+    meet->switchVideoDevice(deviceId);
 }
 
 void MessengerMeet::start(const IMPeerId& peerId, const ortc::OJingleContentMap& map) {

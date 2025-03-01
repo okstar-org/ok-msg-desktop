@@ -47,6 +47,7 @@ MeetingVideoFrame::MeetingVideoFrame(const QString& name,
         , callDurationTimer(nullptr)
         , timeElapsed(nullptr)
         , ctrlState(ctrlState)
+        , conf(conf)
         , aDeviceList(aDeviceList)
         , vDeviceList(vDeviceList)
 {
@@ -156,6 +157,7 @@ void MeetingVideoFrame::creatBottomBar(const lib::ortc::DeviceConfig& conf) {
 
     aGroup = new QActionGroup(this);
     aGroup->setExclusive(true);
+    connect(aGroup, &QActionGroup::triggered, this, &MeetingVideoFrame::audioSelected);
 
     audioMenu = new QMenu(this);
     audioSettingButton->setMenu(audioMenu);
@@ -187,10 +189,12 @@ void MeetingVideoFrame::creatBottomBar(const lib::ortc::DeviceConfig& conf) {
     });
 
     videoMenu = new QMenu(this);
-    vGroup = new QActionGroup(this);
-    vGroup->setExclusive(true);
-
     videoSettingButton->setMenu(videoMenu);
+
+    vGroup = new QActionGroup(this);
+    vGroup->setExclusive(true);    
+    connect(vGroup, &QActionGroup::triggered, this, &MeetingVideoFrame::videoSelected);
+
     // connect(vGroup, &QActionGroup::triggered, this, &OMediaConfigWidget::videoSelected);
 
     for (auto& a : vDeviceList) {
@@ -305,7 +309,6 @@ void MeetingVideoFrame::retranslateUi() {
         fullScreenAction->setToolTip(tr("Show fullscreen"));
     }
     leaveButton->setToolTip(tr("Leave meeting"));
-
     recoardButton->setToolTip(tr("Record"));
 }
 
@@ -457,6 +460,52 @@ void MeetingVideoFrame::updateDuration() {
     }
     // 更新标签文本
     duraionLabel->setText(QTime::fromMSecsSinceStartOfDay(timeElapsed->elapsed()).toString("hh:mm:ss"));
+}
+
+void MeetingVideoFrame::audioSelected(QAction *action)
+{
+    std::lock_guard<std::mutex> locker(prt_mutex);
+
+
+    if (action->isChecked()) {
+
+        if(selectedAudio == action->text()){
+            return;
+        }
+
+        selectedAudio = action->text();
+        conf.audioName = selectedAudio.toStdString();
+    }
+
+    meet->setDeviceConfig(conf);
+    meet->setCtrlState(ctrlState);
+}
+
+void MeetingVideoFrame::videoSelected(QAction *action)
+{
+    std::lock_guard<std::mutex> locker(prt_mutex);
+    if (action->isChecked()) {
+        if(selectedVideo == action->text()){
+            return;
+        }
+        selectedVideo = action->text();
+        conf.videoName = selectedVideo.toStdString();
+        conf.videoType = selectedVideo.contains("Desktop") ?
+                    lib::ortc::VideoType::Desktop :
+                    lib::ortc::VideoType::Camera;
+    }
+
+    meet->setDeviceConfig(conf);
+
+    if(ctrlState.enableCam){
+        //switch to selected device
+        ctrlState.enableCam = false;
+        meet->setCtrlState(ctrlState);
+        ctrlState.enableCam = true;
+        meet->setCtrlState(ctrlState);
+    }else{
+        meet->setCtrlState(ctrlState);
+    }
 }
 
 void MeetingVideoFrame::onParticipantVideoFrame(const std::string& participant,

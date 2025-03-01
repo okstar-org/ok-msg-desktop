@@ -937,22 +937,22 @@ void WebRTC::setEnable(CtrlState state) {
         RTC_LOG(LS_INFO) << "Creating video capture:" << vDeviceName;
         worker_thread->BlockingCall([&]() {
             videoCapture = getVideoCapture(vDeviceName, vDeviceType == VideoType::Desktop);
-        });
-
-        if (!videoSink) {
+        // if (!videoSink) {
             videoSink = std::make_shared<VideoSink>(_handlers, "", "");
-        }
-
-        videoCapture->setOutput(videoSink);
+        // }
+            videoCapture->setOutput(videoSink);
+        });
 
     }else{
         //disbale video
-        if(videoSink){
-            videoSink.reset();
-        }
-        if(videoCapture){
-            videoCapture.reset();
-        }
+        worker_thread->BlockingCall([&]() {
+            if(videoSink){
+                videoSink.reset();
+            }
+            if(videoCapture){
+                videoCapture.reset();
+            }
+        });
     }
 
     for (auto it : _pcMap) {
@@ -1068,9 +1068,11 @@ void WebRTC::destroyVideoCapture() {
 }
 
 void WebRTC::switchVideoDevice(const std::string& deviceId) {
-    if (videoCapture) {
-        videoCapture->switchToDevice(deviceId, false);
-    }
+    worker_thread->BlockingCall([&](){
+        if (videoCapture) {
+            videoCapture->switchToDevice(deviceId, false);
+        }
+    });
 }
 
 void WebRTC::switchVideoDevice(int selected) {

@@ -17,6 +17,7 @@
 #include <QTime>
 #include <QWidget>
 #include <mutex>
+#include "base/compatiblerecursivemutex.h"
 #include "base/jid.h"
 #include "lib/messenger/Messenger.h"
 #include "lib/video/videomode.h"
@@ -139,6 +140,7 @@ private:
 
     // 所有会议人员
     std::mutex prt_mutex;
+    CompatibleRecursiveMutex mutex;
     QMap<QString, MeetingParticipant*> participantMap;
 
     // 会议唯一名称
@@ -146,11 +148,12 @@ private:
 
     // 控制状态
     lib::ortc::CtrlState ctrlState;
+    lib::ortc::DeviceConfig conf;
 
     // audio
     QMenu* audioMenu = nullptr;
     QActionGroup* aGroup = nullptr;
-    // QString selectedAudio;
+    QString selectedAudio;
     lib::audio::IAudioControl* audioControl;
     std::unique_ptr<lib::audio::IAudioSource> audioSource;
     std::unique_ptr<lib::audio::IAudioSink> audioSink;
@@ -159,15 +162,10 @@ private:
     // video
     QMenu* videoMenu = nullptr;
     QActionGroup* vGroup = nullptr;
-    // QString selectedVideo;
+    QString selectedVideo;
     lib::video::VideoType selectedVideoType;
     QVector<lib::video::VideoDevice> vDeviceList;
 
-public slots:
-    void doLeaveMeet();
-
-private slots:
-    void updateDuration();
 
 signals:
     void meetCreated(const QString& name);
@@ -175,6 +173,14 @@ signals:
     void meetDestroyed();
     void participantJoined(const QString& name, const lib::messenger::Participant& part);
     void participantLeft(const QString& name, const QString& participant);
+
+public slots:
+    void doLeaveMeet();
+    void updateDuration();
+
+    void audioSelected(QAction* action);
+    void videoSelected(QAction* action);
+
 };
 
 }  // namespace module::meet
