@@ -435,7 +435,7 @@ void Conductor::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
 void Conductor::OnFailure(webrtc::RTCError error) {
     RTC_LOG(LS_INFO) <<" " << __func__ << " error:" << error.message();
 
-    for (auto h : webRtc->getHandlers()) {
+    for (auto* h : webRtc->getHandlers()) {
         h->onFailure(sId, peerId, error.message());
     }
 }

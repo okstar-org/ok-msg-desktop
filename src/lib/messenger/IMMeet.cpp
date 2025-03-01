@@ -404,18 +404,53 @@ bool IMMeet::doDescriptionInfo(const gloox::Jingle::Session::Jingle*, const IMPe
 bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMPeerId& peerId) {
     SESSION_CHECK(currentSid);
     qDebug() << __func__ << "peerId:" << peerId.toString().c_str();
-    for (const auto& p : jingle->plugins()) {
 
+
+    // k: Participant id
+    std::map<std::string, ortc::OMeetSSRCBundle> map;
+
+    for (const auto& p : jingle->plugins()) {
         if(p->pluginType() == gloox::Jingle::PluginContent){
             auto *c = dynamic_cast<const gloox::Jingle::Content*>(p);
             if(c){
-                auto& n = c->name();
-                auto *rtp = dynamic_cast<const gloox::Jingle::RTP*>(c->findPlugin(gloox::Jingle::PluginRTP));
-                rtp->sources();
 
-                // @see https://kdocs.cn/l/cfjVHKkZ8ELW?linkname=XXHH8EZMK4
-                // auto* x= c->findPlugin(gloox::Jingle::PluginContent);
-                // x->tag()
+                auto *rtp = dynamic_cast<const gloox::Jingle::RTP*>(c->findPlugin(gloox::Jingle::PluginRTP));
+                if(!rtp){
+                    continue;
+                }
+
+                auto& srcs =  rtp->sources();
+                if(srcs.empty()){
+                    continue;
+                }
+                auto mtype = rtp->media();
+                auto& src = srcs.at(0);
+                ortc::Source s = {
+                        .ssrc = src.ssrc,
+                        .name = src.name,
+                        .cname = src.cname,
+                        .msid = src.msid
+                };
+                auto k = src.owner;
+                auto find = map.find(k);
+                if(find == map.end()){
+                    ortc::OMeetSSRCBundle bundle;
+                    if(mtype == gloox::Jingle::Media::audio){
+                        bundle.audioSources.push_back(s);
+                    }else if(mtype == gloox::Jingle::Media::video){
+                        s.videoType = s.videoType;
+                        bundle.videoSources.push_back(s);
+                    }
+                    map.insert(std::pair(k, bundle));
+                }else{
+                    auto& bundle = find->second;
+                    if(mtype == gloox::Jingle::Media::audio){
+                        bundle.audioSources.push_back(s);
+                    }else if(mtype == gloox::Jingle::Media::video){
+                        s.videoType = s.videoType;
+                        bundle.videoSources.push_back(s);
+                    }
+                }
             }
         }
 
@@ -423,17 +458,19 @@ bool IMMeet::doSourceAdd(const gloox::Jingle::Session::Jingle* jingle, const IMP
             auto* jm = dynamic_cast<const gloox::Jingle::JsonMessage*>(p);
             if (jm) {
                 qDebug() << "json-message:" << jm->json().c_str();
-
-                //k: Participant id
-                std::map<std::string, ortc::OMeetSSRCBundle> map;
                 ParseOMeetSSRCBundle(jm->json(), map);
-
-                auto* rtc = ortc::OkRTCManager::getInstance()->getRtc();
-                if (rtc) {
-                    rtc->addSource((peerId.toString()), map);
-                }
             }
         }
+    }
+
+    if(map.empty())
+    {
+        return false;
+    }
+
+    auto* rtc = ortc::OkRTCManager::getInstance()->getRtc();
+    if (rtc) {
+        rtc->addSource((peerId.toString()), map);
     }
 
     return true;
@@ -525,7 +562,11 @@ void IMMeet::onLocalDescriptionSet(const std::string& sId, const std::string& pe
 }
 
 void IMMeet::onFailure(const std::string& sId, const std::string& peerId,
-                       const std::string& error) {}
+                       const std::string& error) {
+    for (auto* h : handlers) {
+        h->onFailure(error);
+    }
+}
 
 void IMMeet::onIceGatheringChange(const std::string& sId, const std::string& peerId,
                                   ortc::IceGatheringState state) {

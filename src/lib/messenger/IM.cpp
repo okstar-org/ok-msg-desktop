@@ -229,8 +229,6 @@ std::unique_ptr<gloox::Client> IM::makeClient() {
     _sessionManager->registerPlugin(new gloox::Jingle::ICEUDP());
     _sessionManager->registerPlugin(new gloox::Jingle::Group());
     _sessionManager->registerPlugin(new gloox::Jingle::RTP());
-
-    _sessionManager->registerPlugin(new gloox::Jingle::Content());
     _sessionManager->registerPlugin(new gloox::Jingle::FileTransfer());
     _sessionManager->registerPlugin(new gloox::Jingle::IBB());
 
