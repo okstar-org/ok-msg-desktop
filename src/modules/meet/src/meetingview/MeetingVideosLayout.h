@@ -64,6 +64,7 @@ public:
     void addParticipant(MeetingParticipant* participant);
     void removeParticipant(MeetingParticipant* participant);
     void clearParticipant();
+    void selectParticipant(MeetingParticipant* participant);
 
 private:
     void doLayout();
@@ -84,6 +85,7 @@ private:
 
     QList<MeetingParticipant*> allParticipant;
     QList<MeetingVideoOutput*> cellVideos;
+    MeetingParticipant* currentParticipant = nullptr;
     LayoutType _type = LayoutType::Grid;
 
     int pageIndex = 0;

@@ -214,6 +214,9 @@ void MeetingVideosLayout::removeParticipant(MeetingParticipant* participant) {
         rebindVideos();
     }
     updateButtonState();
+    if (currentParticipant == participant){
+        selectParticipant(nullptr);
+    }
 }
 
 void MeetingVideosLayout::clearParticipant() {
@@ -222,6 +225,22 @@ void MeetingVideosLayout::clearParticipant() {
         output->bindParticipant(nullptr);
     }
     allParticipant.clear();
+    selectParticipant(nullptr);
+}
+
+void MeetingVideosLayout::selectParticipant(MeetingParticipant* participant) {
+
+    if (currentParticipant == participant)
+        return;
+
+    currentParticipant = participant;
+    if (!allParticipant.contains(participant))
+        currentParticipant = nullptr;
+
+    for (MeetingVideoOutput * video : cellVideos)
+    {
+        video->setSelected(currentParticipant == video->getParticipant());
+    }
 }
 
 void MeetingVideosLayout::doLayout() {
