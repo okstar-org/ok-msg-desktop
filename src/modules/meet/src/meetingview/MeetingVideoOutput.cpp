@@ -18,12 +18,15 @@
 #include <QPainter>
 #include <QStyleOption>
 
+const int video_out_frame = 5;
+
 namespace module::meet {
 
 MeetingVideoOutput::MeetingVideoOutput(QWidget* parent) : QWidget(parent) {
     setAttribute(Qt::WA_StyledBackground);
 
     videoRender = new MeetingVideoWidgetRender(this);
+    setContentsMargins(video_out_frame, video_out_frame, video_out_frame, video_out_frame);
 }
 
 MeetingVideoOutput::~MeetingVideoOutput() {
@@ -50,6 +53,15 @@ void MeetingVideoOutput::bindParticipant(MeetingParticipant* participant) {
     update();
 }
 
+void MeetingVideoOutput::setSelected(bool selected) {
+
+    if (_selected != selected)
+    {
+        _selected = selected;
+        update();
+    }
+}
+
 void MeetingVideoOutput::showVideo() {
     if (avatarLabel) {
         avatarLabel->deleteLater();
@@ -72,7 +84,7 @@ bool MeetingVideoOutput::hasVideoOutput() {
 }
 
 QRectF MeetingVideoOutput::calcAvatarRect() {
-    auto rect = this->rect();
+    auto rect = this->contentsRect();
     int d = std::min(rect.width(), rect.height()) * 0.5;
     d = std::min(d, 150);
     QRectF circle(0, 0, d, d);
@@ -89,7 +101,6 @@ void MeetingVideoOutput::resizeEvent(QResizeEvent* event) {
 
 void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
     QStyleOption opt;
     opt.init(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
@@ -98,17 +109,32 @@ void MeetingVideoOutput::paintEvent(QPaintEvent* e) {
         return;
     }
 
+    QRect content_rect = this->contentsRect();
+    {
+        painter.save();
+        painter.setBrush(Qt::NoBrush);
+        QColor frame_color = _selected ? QColor(0x4A77FF) : QColor(0xCFCFCF);
+        painter.setPen(QPen(frame_color, video_out_frame, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+        const int half = video_out_frame / 2;
+        QRect frameRect = this->rect().adjusted(half, half, -half - 1, -half - 1);
+        painter.drawRect(frameRect);
+        painter.restore();
+    }
+
+    painter.setRenderHint(QPainter::Antialiasing);
     if (hasVideoOutput()) {
         videoRender->begin();
 
         const QImage& img = videoRender->image();
         if (!img.isNull())
         {
-            QImage temp = img.scaled(this->size() * this->devicePixelRatioF(), Qt::KeepAspectRatio,
+            QImage temp = img.scaled(content_rect.size() * this->devicePixelRatioF(),
+                                     Qt::KeepAspectRatio,
                                      Qt::SmoothTransformation);
             temp.setDevicePixelRatio(this->devicePixelRatioF());
             QSize s = temp.size() / this->devicePixelRatioF();
-            QRect paintRect = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, this->rect());
+            QRect paintRect =
+                    QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, content_rect);
             painter.drawImage(paintRect.topLeft(), temp);
         }
         videoRender->end();
