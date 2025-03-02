@@ -820,7 +820,8 @@ void WebRTC::linkVideoDevice(Conductor* c) {
 
     auto f = getFactory();
     if (f && videoCapture) {
-        videoTrack = f->CreateVideoTrack(videoCapture->source(), trackId);
+        if(!videoTrack)
+            videoTrack = f->CreateVideoTrack(videoCapture->source(), trackId);
         c->addLocalVideoTrack(videoTrack, streamId, trackId);
     }
 }
@@ -928,10 +929,13 @@ void WebRTC::setEnable(CtrlState state) {
         RTC_LOG(LS_INFO) << "Creating video capture:" << vDeviceName;
         worker_thread->BlockingCall([&]() {
             videoCapture = getVideoCapture(vDeviceName, vDeviceType == VideoType::Desktop);
-        // if (!videoSink) {
             videoSink = std::make_shared<VideoSink>(_handlers, "", "");
-        // }
             videoCapture->setOutput(videoSink);
+
+            for(auto& it: _pcMap){
+                auto* c = it.second;
+                linkVideoDevice(c);
+            }
         });
 
     }else{
@@ -942,6 +946,10 @@ void WebRTC::setEnable(CtrlState state) {
             }
             if(videoCapture){
                 videoCapture.reset();
+            }
+            for(auto& it: _pcMap){
+                auto* c = it.second;
+                c->removeLocalVideoTrack();
             }
         });
     }

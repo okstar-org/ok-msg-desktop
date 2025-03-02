@@ -414,7 +414,7 @@ void ContactListWidget::setRecvGroupMessage(const GroupMessage& msg) {
 void ContactListWidget::setFriendStatus(const ContactId& friendPk, Status status) {
     auto fw = getFriend(friendPk);
     if (!fw) {
-        qWarning() << "friend" << friendPk.toString() << "widget is no existing.";
+        // qWarning() << "friend" << friendPk.toString() << "widget is no existing.";
         return;
     }
     fw->setStatus(status, false);
