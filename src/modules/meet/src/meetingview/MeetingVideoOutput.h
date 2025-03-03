@@ -32,6 +32,10 @@ public:
 
     // 绑定与会者
     void bindParticipant(MeetingParticipant* participant);
+    MeetingParticipant* getParticipant() const {
+        return participant;
+    }
+    void setSelected(bool selected);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -46,6 +50,7 @@ private:
 
     MeetingVideoWidgetRender* videoRender = nullptr;
     MeetingParticipant* participant = nullptr;
+    bool _selected = false;
     lib::ui::RoundedPixmapLabel* avatarLabel = nullptr;
 };
 }  // namespace module::meet
