@@ -35,7 +35,7 @@
 
 namespace module::classroom {
 
-Widget::Widget(QWidget* parent) : lib::ui::OPage(parent), view{nullptr}
+Widget::Widget(QWidget* parent) : lib::ui::OFrame(parent), view{nullptr}
         , state{RoomState::None}
 {
     OK_RESOURCE_INIT(Classroom);

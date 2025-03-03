@@ -15,13 +15,13 @@
 //
 #pragma once
 
-#include "lib/ui/widget/OPage.h"
+#include "lib/ui/widget/OFrame.h"
 
 class QTabWidget;
 
 namespace module::doc {
 
-class Widget : public lib::ui::OPage {
+class Widget : public lib::ui::OFrame {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);

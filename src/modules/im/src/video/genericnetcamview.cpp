@@ -54,7 +54,7 @@ GenericNetCamView::GenericNetCamView(QWidget* parent) : QWidget(parent) {
 
     setShowMessages(false);
 
-    setStyleSheet("NetCamView { background-color: #c1c1c1; }");
+    setStyleSheet("module--im--NetCamView { background-color: #c1c1c1; }");
     buttonPanel = new QFrame(this);
     buttonPanel->setStyleSheet(lib::settings::Style::getStylesheet(BTN_STYLE_SHEET_PATH));
     buttonPanel->setGeometry(0, 0, BTN_PANEL_WIDTH, BTN_PANEL_HEIGHT);

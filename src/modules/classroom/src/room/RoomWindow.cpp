@@ -31,7 +31,9 @@ RoomWindow::RoomWindow(const QString& roomName,
     setAttribute(Qt::WA_QuitOnClose, true);
     setAttribute(Qt::WA_DeleteOnClose, true);
 
+
     auto layout = new QGridLayout(this);
+    layout->setContentsMargins(0,0,0,0);
 
     auto video = new OVideoViewport(this);
     layout->addWidget(video);

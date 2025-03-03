@@ -17,18 +17,13 @@
 
 #include "Base.h"
 #include "OPainterColorPanel.h"
-#include "OPainterToolBox.h"
 #include "base/timer.h"
-#include "lib/ui/widget/OWidget.h"
-#include "lib/ui/widget/MoveableBar.h"
+#include "lib/ui/widget/OFrame.h"
 
-namespace Ui {
-class OPainterToolBox;
-}
 
 namespace module::classroom {
 
-class OPainterToolBox : public lib::ui::OWidget {
+class OPainterToolBox : public lib::ui::OFrame {
     Q_OBJECT
 public:
     explicit OPainterToolBox(QWidget* parent = nullptr);
@@ -38,15 +33,19 @@ protected:
     void leaveEvent(QEvent* event) override;
     void enterEvent(QEvent* event) override;
     void mouseMoveEvent(QMouseEvent* e) override;
+    void reloadTheme() override;
 
 private:
-    Ui::OPainterToolBox* ui;
-
     std::unique_ptr<base::DelayedCallTimer> _delayCaller;
-
     std::unique_ptr<OPainterColorPanel> m_textColorPanel;
     std::unique_ptr<OPainterColorPanel> m_penColorPanel;
 
+    QToolButton* toolbox_pen = nullptr;
+    QToolButton* toolbox_text= nullptr;
+    QToolButton* toolbox_delete= nullptr;
+    QToolButton* toolbox_move= nullptr;
+    QToolButton* toolbox_cutter= nullptr;
+    QToolButton* toolbox_cloud = nullptr;
 signals:
 
     void toolChange(ToolboxType);

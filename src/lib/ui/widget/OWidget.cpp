@@ -20,6 +20,8 @@
 namespace lib::ui {
 
 OWidget::OWidget(QWidget* parent) : QWidget(parent) {
+     setAutoFillBackground(true);
+
     //   QPalette palette = this->palette();
 
     //   QBrush brush;
@@ -43,7 +45,7 @@ OWidget::~OWidget() {
 
 }
 
-void OWidget::paintEvent(QPaintEvent* event) {}
+// void OWidget::paintEvent(QPaintEvent* event) {}
 
 
 }  // namespace UI

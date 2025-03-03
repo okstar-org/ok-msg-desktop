@@ -60,24 +60,24 @@ PainterView::PainterView(QWidget* parent) : QWidget(parent) {
     mdiArea = new PainterMdiArea(painterManager_->scene(), this);
 
     layout->addWidget(mdiArea);
-
-    // 工具箱
-    _oToolbox = std::make_unique<OPainterToolBox>(this);
-    // _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
-
     setLayout(layout);
 
+    // 工具箱
+    _oToolbox = new OPainterToolBox(this);
+    _oToolbox->move(width()-320, 20);
+
     // 连接工具箱和画板之间的信号
-    connect(_oToolbox.get(), &OPainterToolBox::toolChange,  //
+    connect(_oToolbox, &OPainterToolBox::toolChange,  //
             this, &PainterView::onToolBoxChanged);
 
     // text tool
-    connect(_oToolbox.get(), &OPainterToolBox::textColorChange, this, &PainterView::setTextColor);
-    connect(_oToolbox.get(), &OPainterToolBox::textWeightChange, this, &PainterView::setTextWeight);
+    connect(_oToolbox, &OPainterToolBox::textColorChange, this, &PainterView::setTextColor);
+    connect(_oToolbox, &OPainterToolBox::textWeightChange, this, &PainterView::setTextWeight);
 
     // pen tool
-    connect(_oToolbox.get(), &OPainterToolBox::penColorChange, this, &PainterView::setPenColor);
-    connect(_oToolbox.get(), &OPainterToolBox::penWeightChange, this, &PainterView::setPenWeight);
+    connect(_oToolbox, &OPainterToolBox::penColorChange, this, &PainterView::setPenColor);
+    connect(_oToolbox, &OPainterToolBox::penWeightChange, this, &PainterView::setPenWeight);
+
 
     // 控制按钮
     _oController = std::make_unique<WhiteboardController>(this);
@@ -98,12 +98,13 @@ PainterView* PainterView::Get(QWidget* parent) {
 
 void PainterView::showEvent(QShowEvent* event) {
     Q_UNUSED(event);
+
 }
 
 void PainterView::resizeEvent(QResizeEvent* e) {
     painterManager_->setSize(e->size());
     mdiArea->setFixedSize(e->size());
-    // _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
+    _oToolbox->move(this->width() - _oToolbox->width() - 20, 20);
     _oController->move(width() - 320, 20);
 }
 

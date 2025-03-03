@@ -22,7 +22,7 @@
 #include "Defines.h"
 #include "base/resources.h"
 #include "lib/ortc/ok_rtc.h"
-#include "lib/ui/widget/OPage.h"
+#include "lib/ui/widget/OFrame.h"
 #include "room/RoomWindow.h"
 
 #include <QPointer>
@@ -42,7 +42,7 @@ class Core;
 /**
  * 在线课堂主界面
  */
-class Widget : public lib::ui::OPage {
+class Widget : public lib::ui::OFrame {
     Q_OBJECT
 public:
     explicit Widget(QWidget* parent = nullptr);

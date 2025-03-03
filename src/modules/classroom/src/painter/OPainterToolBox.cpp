@@ -10,11 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 #include "OPainterToolBox.h"
-#include "ui_OPainterToolBox.h"
 
-#include "base/logs.h"
-#include "base/widgets.h"
-
+#include <QApplication>
+#include <QVBoxLayout>
+#include <QAction>
+#include "lib/storage/settings/style.h"
+#include "lib/ui/widget/MoveableBar.h"
 
 static QPoint GetCurPos() {
     auto curPos = QCursor().pos();
@@ -25,29 +26,72 @@ static QPoint GetCurPos() {
 namespace module::classroom {
 
 OPainterToolBox::OPainterToolBox(QWidget* parent)
-        : lib::ui::OWidget(parent)
-        , ui(new Ui::OPainterToolBox)
+        : lib::ui::OFrame(parent)
         , _delayCaller(std::make_unique<base::DelayedCallTimer>()) {
-    ui->setupUi(this);
-
-    //
-    //  connect(ui->color_panel_text, &OPainterColorPanel::colorChange, this,
-    //          &OPainterToolBox::onTextColorChange);
-    //
-    //  connect(ui->color_panel_text, &OPainterColorPanel::weightChange, this,
-    //          &OPainterToolBox::onTextWeightChange);
-
-    //  ui->toolbox_pen->installEventFilter(this);
-    //  ui->toolbox_text->installEventFilter(this);
 
     setMouseTracking(true);
+    setObjectName("OPainterToolBox");
+    setContentsMargins(0,0,0,0);
 
-    // 设置样式
-    //  QString qss = base::Files::readStringAll(":/res/qss/toolbox.qss");
-    //  setStyleSheet(qss);
+    setFixedSize(QSize(40, 220));
 
-    //  ui->tool_panel
-    //    base::Widgets::SetShadowEffect(ui->tool_panel, {0, 0}, QColor(qsl("#535353")), 20);
+    //工具栏宽尺寸40*220
+    //
+
+    auto* vBox = new QVBoxLayout(this);
+    vBox->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
+    vBox->setSpacing(5);
+
+    vBox->addWidget(new lib::ui::MoveableBar(this));
+
+    toolbox_pen = new QToolButton(this);
+    toolbox_pen->setIcon(QIcon(":/res/icon/toolbox/toolbox_pen.png"));
+    connect(toolbox_pen, &QToolButton::clicked, this,
+            [&](){
+                emit toolChange(ToolboxType::P_PEN);
+            });
+
+    vBox->addWidget(toolbox_pen, Qt::AlignHCenter);
+
+    toolbox_text = new QToolButton(this);
+    toolbox_text->setIcon(QIcon(":/res/icon/toolbox/toolbox_text.png"));
+    connect(toolbox_text, &QToolButton::clicked, this,
+            [&](){
+                emit toolChange(ToolboxType::P_TEXT);
+            });
+    vBox->addWidget(toolbox_text, Qt::AlignHCenter);
+
+     //toolbox_move.png
+    toolbox_move = new QToolButton(this);
+    toolbox_move->setIcon(QIcon(":/res/icon/toolbox/toolbox_move.png"));
+    connect(toolbox_move, &QToolButton::clicked, this,
+            &OPainterToolBox::on_toolbox_move_clicked);
+    vBox->addWidget(toolbox_move, Qt::AlignHCenter);
+
+
+    toolbox_delete = new QToolButton(this);
+    toolbox_delete->setIcon(QIcon(":/res/icon/toolbox/toolbox_delete.png"));
+    connect(toolbox_delete, &QToolButton::clicked, this,
+            [&](){
+                emit toolChange(ToolboxType::P_REMOVE);
+            });
+    vBox->addWidget(toolbox_delete);
+
+    toolbox_cutter = new QToolButton(this);
+    toolbox_cutter->setIcon(QIcon(":/res/icon/toolbox/toolbox_cutter.png"));
+    connect(toolbox_cutter, &QToolButton::clicked, this,
+            [&](){
+                emit toolChange(ToolboxType::P_CUTTER);
+            });
+    vBox->addWidget(toolbox_cutter);
+
+    toolbox_cloud = new QToolButton(this);
+    toolbox_cloud->setIcon(QIcon(":/res/icon/toolbox/toolbox_cloud.png"));
+    connect(toolbox_cutter, &QToolButton::clicked, this,
+            [&](){
+                emit toolChange(ToolboxType::P_CLOUD);
+            });
+    vBox->addWidget(toolbox_cloud);
 
     m_textColorPanel = std::make_unique<OPainterColorPanel>(this);
     connect(m_textColorPanel.get(), &OPainterColorPanel::colorChange, this,
@@ -61,22 +105,24 @@ OPainterToolBox::OPainterToolBox(QWidget* parent)
     connect(m_penColorPanel.get(), &OPainterColorPanel::weightChange, this,
             &OPainterToolBox::onPenWeightChange);
 
-    ui->layout->insertWidget(0, new lib::ui::MoveableBar(this));
-    //module--classroom--OPainterToolBox{
-    setStyleSheet("#OPainterToolBox{background-color: #535353; border-radius: 8px;}");
+
+    setLayout(vBox);
+
+    QString qss = lib::settings::Style::getStylesheet("toolbox.css");
+    setStyleSheet(qss);
 }
 
 OPainterToolBox::~OPainterToolBox() {
-    delete ui;
+    // delete ui;
 }
 
 void OPainterToolBox::on_toolbox_move_clicked(bool checked) {
     if (!checked) return;
-    ui->toolbox_move->setChecked(checked);
-    ui->toolbox_text->setChecked(false);
-    ui->toolbox_pen->setChecked(false);
-    ui->toolbox_delete->setChecked(false);
-    ui->toolbox_cutter->setCheckable(false);
+    toolbox_move->setChecked(checked);
+    toolbox_text->setChecked(false);
+    toolbox_pen->setChecked(false);
+    toolbox_delete->setChecked(false);
+    toolbox_cutter->setCheckable(false);
     emit toolChange(ToolboxType::P_MOVE);
 }
 
@@ -86,38 +132,38 @@ void OPainterToolBox::on_toolbox_text_clicked(bool checked) {
     m_textColorPanel->show();
     m_penColorPanel->hide(true);
 
-    ui->toolbox_text->setChecked(true);
-    ui->toolbox_move->setChecked(false);
-    ui->toolbox_pen->setChecked(false);
-    ui->toolbox_delete->setChecked(false);
-    ui->toolbox_cutter->setCheckable(false);
+    toolbox_text->setChecked(true);
+    toolbox_move->setChecked(false);
+    toolbox_pen->setChecked(false);
+    toolbox_delete->setChecked(false);
+    toolbox_cutter->setCheckable(false);
 
     emit toolChange(ToolboxType::P_TEXT);
 }
 
 void OPainterToolBox::on_toolbox_pen_clicked(bool checked) {
-    qDebug() << "on_toolbox_pen_clicked" << checked;
+    qDebug() << __func__ << checked;
 
     m_penColorPanel->move(GetCurPos());
     m_penColorPanel->show();
     m_textColorPanel->hide(true);
 
-    ui->toolbox_pen->setChecked(true);
-    ui->toolbox_move->setChecked(false);
-    ui->toolbox_text->setChecked(false);
-    ui->toolbox_delete->setChecked(false);
-    ui->toolbox_cutter->setCheckable(false);
+    toolbox_pen->setChecked(true);
+    toolbox_move->setChecked(false);
+    toolbox_text->setChecked(false);
+    toolbox_delete->setChecked(false);
+    toolbox_cutter->setCheckable(false);
     emit toolChange(ToolboxType::P_PEN);
 }
 
 void OPainterToolBox::on_toolbox_delete_clicked(bool checked) {
     if (!checked) return;
 
-    ui->toolbox_delete->setChecked(checked);
-    ui->toolbox_pen->setChecked(false);
-    ui->toolbox_move->setChecked(false);
-    ui->toolbox_text->setChecked(false);
-    ui->toolbox_cutter->setCheckable(false);
+    toolbox_delete->setChecked(checked);
+    toolbox_pen->setChecked(false);
+    toolbox_move->setChecked(false);
+    toolbox_text->setChecked(false);
+    toolbox_cutter->setCheckable(false);
     emit toolChange(ToolboxType::P_REMOVE);
 }
 
@@ -188,5 +234,10 @@ void OPainterToolBox::mouseMoveEvent(QMouseEvent* e) {
         }
         this->setAttribute(Qt::WA_TransparentForMouseEvents, false);
     }
+}
+
+void OPainterToolBox::reloadTheme()
+{
+
 }
 }  // namespace module::classroom

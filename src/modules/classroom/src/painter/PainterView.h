@@ -63,7 +63,7 @@ private:
     std::unique_ptr<CSharedPaintManager> painterManager_;
 
     // 工具箱
-    std::unique_ptr<OPainterToolBox> _oToolbox;
+     OPainterToolBox* _oToolbox;
 
     // 控制面板
     std::unique_ptr<WhiteboardController> _oController;

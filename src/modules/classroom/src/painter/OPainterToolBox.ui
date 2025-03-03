@@ -10,14 +10,14 @@
     <x>0</x>
     <y>0</y>
     <width>48</width>
-    <height>363</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">border: 1px solid red</string>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <property name="spacing">
@@ -35,7 +35,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <item alignment="Qt::AlignHCenter|Qt::AlignTop">
     <widget class="QWidget" name="tool_widget" native="true">
      <property name="enabled">
       <bool>true</bool>
@@ -124,23 +124,6 @@ QToolButton {
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label">
-        <property name="styleSheet">
-         <string notr="true">
-
-                                        background-color: transparent;
-                                        background-image:url(:/res/icon/toolbox/toolbox_pull.png);
-                                        background-repeat: no-repeat;
-                                        background-position: center;
-                                        border-radius: 4px;
-                                    </string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QToolButton" name="toolbox_move">
         <property name="minimumSize">
@@ -294,35 +277,6 @@ QToolButton {
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>10</height>
-         </size>
-        </property>
-        <property name="lineWidth">
-         <number>1</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

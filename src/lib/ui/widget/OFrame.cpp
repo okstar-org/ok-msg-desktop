@@ -10,11 +10,12 @@
  * See the Mulan PubL v2 for more details.
  */
 
-#include "OPage.h"
+#include "OFrame.h"
 
 #include <QFrame>
 
 namespace lib::ui {
-OPage::OPage(QWidget* parent, Qt::WindowFlags f) : QFrame(parent, f) {}
+
+OFrame::OFrame(QWidget* parent, Qt::WindowFlags f) : QFrame(parent, f) {}
 
 }  // namespace lib::ui

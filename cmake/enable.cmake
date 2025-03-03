@@ -38,14 +38,14 @@ if(ENABLE_Meet)
 endif()
 
 # Enable document module（ON/OFF）
-set(ENABLE_Document OFF)
+set(ENABLE_Document ON)
 message(STATUS "Enable document: ${ENABLE_Document}")
 if(ENABLE_Document)
 	add_definitions(-DENABLE_Document)
 endif()
 
 # Enable classroom module（ON/OFF）
-set(ENABLE_Classroom OFF)
+set(ENABLE_Classroom ON)
 message(STATUS "Enable classroom: ${ENABLE_Classroom}")
 if(ENABLE_Classroom)
 	add_definitions(-DENABLE_Classroom)

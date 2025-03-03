@@ -27,6 +27,7 @@ OVideoViewport::OVideoViewport(QWidget* parent) : QWidget(parent) {
     setPalette(palette);
 
     _hLayout = new QHBoxLayout(this);
+    // _hLayout->setContentsMargins(0,0,0,0);
     _hLayout->addSpacing(5);
     // 教师
 
@@ -59,6 +60,8 @@ OVideoViewport::OVideoViewport(QWidget* parent) : QWidget(parent) {
     connect(_timer.get(), SIGNAL(timeout()), this, SLOT(timerUp()));
 
     connect(this, &OVideoViewport::recvUserInfo, &OVideoViewport::onRecvUserInfo);
+    // setStyleSheet("module--classroom--OVideoViewport{background-color: 0x535353; border:1px solid red}");
+
     //  auto userManager = networkManager_->userManager();
 
     // connect(userManager, &lib::IM::UserManager::left, this,

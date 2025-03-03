@@ -11,9 +11,6 @@
  */
 #include "WhiteboardWidget.h"
 
-#include <future>
-#include <memory>
-
 #include <base/logs.h>
 #include <base/utils.h>
 #include <QImage>
@@ -30,6 +27,7 @@ WhiteboardWidget::WhiteboardWidget(QWidget* parent) : QWidget(parent) {
     qDebug() << __func__;
 
     auto layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0,0,0,0);
     _painter = new PainterView(this);
 
     layout->addWidget(_painter);

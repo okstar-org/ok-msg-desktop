@@ -12,7 +12,7 @@
 
 <RCC>
     <qresource prefix="/res">
-
+        <file>icon/move.svg</file>
         <file>icon/toolbox/toolbox_pen.png</file>
         <file>icon/toolbox/toolbox_cloud.png</file>
         <file>icon/toolbox/toolbox_cutter.png</file>

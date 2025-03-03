@@ -16,11 +16,12 @@
 
 namespace lib::ui {
 
-class OPage : public QFrame {
+class OFrame : public QFrame {
 public:
-    explicit OPage(QWidget* parent = nullptr,
-                   Qt::WindowFlags f = Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
-    ~OPage() override {}
+    explicit OFrame(QWidget* parent = nullptr,
+                   Qt::WindowFlags f = Qt::FramelessWindowHint
+                                    | Qt::WindowSystemMenuHint);
+    ~OFrame() override {}
 
     virtual void reloadTheme() = 0;
 };

@@ -25,7 +25,7 @@ public:
     ~OWidget() override;
 
 protected:
-    virtual void paintEvent(QPaintEvent* event) override;
+    // virtual void paintEvent(QPaintEvent* event) override;
 
 };
 }  // namespace UI

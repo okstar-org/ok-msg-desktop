@@ -28,7 +28,7 @@
 
 namespace module::config {
 
-ConfigWindow::ConfigWindow(QWidget* parent) : lib::ui::OPage(parent), ui(new Ui::ConfigWindow) {
+ConfigWindow::ConfigWindow(QWidget* parent) : lib::ui::OFrame(parent), ui(new Ui::ConfigWindow) {
     ui->setupUi(this);
 
     ui->tabWidget->setObjectName("mainTab");

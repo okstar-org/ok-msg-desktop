@@ -40,7 +40,7 @@
 namespace module::meet {
 
 Widget::Widget(QWidget* parent)
-        : lib::ui::OPage(parent)
+        : lib::ui::OFrame(parent)
         , ui(new Ui::WorkPlatform)
         , view{nullptr}
         , state{MeetingState::NoMeeting} {

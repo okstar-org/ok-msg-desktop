@@ -11,7 +11,9 @@
  */
 #pragma once
 
+#include <QLabel>
 #include <QObject>
+#include <QToolButton>
 #include <QWidget>
 
 namespace lib::ui {
@@ -36,10 +38,11 @@ protected:
     bool _moveable;
 
     QWidget* m_target;
-
-    virtual void mousePressEvent(QMouseEvent*) override;
-    virtual void mouseMoveEvent(QMouseEvent*) override;
-    virtual void mouseReleaseEvent(QMouseEvent*) override;
+    QLabel *bar;
+    void mousePressEvent(QMouseEvent*) override;
+    void mouseMoveEvent(QMouseEvent*) override;
+    void mouseReleaseEvent(QMouseEvent*) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     bool m_isPressed = false;

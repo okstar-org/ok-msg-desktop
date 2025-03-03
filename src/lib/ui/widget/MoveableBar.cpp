@@ -15,16 +15,27 @@
 #include <QMouseEvent>
 #include <QWidget>
 #include <QBoxLayout>
+#include <QToolButton>
 
 namespace lib::ui {
 
 MoveableBar::MoveableBar(QWidget* parent) : QWidget(parent), _moveable(true), m_target(nullptr) {
-    auto layout =  new QGridLayout(this);
-    layout->addWidget(new QLabel("Move"));
+    setFixedSize(QSize(30, 30));
+    setAttribute(Qt::WA_StyledBackground, true);
+
+    auto layout = new QGridLayout(this);
+    bar = new QLabel(this);
+
+    QPixmap pixmap(":/res/icon/move.svg");
+    QPixmap scaledPixmap = pixmap.scaled(size(), Qt::KeepAspectRatio);
+    bar->setPixmap(scaledPixmap);
+    bar->setObjectName("bar");
+    layout->addWidget(bar);
     setLayout(layout);
+    // setStyleSheet("QLabel#bar{ background-image: url(:/res/icon/move.svg); }");
 }
 
-MoveableBar::~MoveableBar() {}
+MoveableBar::~MoveableBar() = default;
 
 void MoveableBar::mousePressEvent(QMouseEvent* event) {
     if (_moveable) {
@@ -42,7 +53,6 @@ void MoveableBar::mouseMoveEvent(QMouseEvent* event) {
             return;
         }
 
-
         QPoint movePoint = event->globalPos() - m_startMovePos;
         QPoint widgetPos = p->pos() + movePoint;
         m_startMovePos = event->globalPos();
@@ -55,6 +65,11 @@ void MoveableBar::mouseMoveEvent(QMouseEvent* event) {
 void MoveableBar::mouseReleaseEvent(QMouseEvent* event) {
     m_isPressed = false;
     return QWidget::mouseReleaseEvent(event);
+}
+
+bool MoveableBar::eventFilter(QObject *obj, QEvent *event)
+{
+    return true;
 }
 
 void MoveableBar::setTarget(QWidget* target) {

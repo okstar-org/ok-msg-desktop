@@ -18,7 +18,7 @@
 #include <QWidget>
 #include <memory>
 
-#include "lib/ui/widget/OPage.h"
+#include "lib/ui/widget/OFrame.h"
 
 namespace Ui {
 class ConfigWindow;
@@ -29,7 +29,7 @@ namespace module::config {
 /**
  * 配置窗口
  */
-class ConfigWindow : public lib::ui::OPage {
+class ConfigWindow : public lib::ui::OFrame {
     Q_OBJECT
 public:
     explicit ConfigWindow(QWidget* parent = nullptr);

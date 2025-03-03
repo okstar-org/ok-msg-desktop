@@ -69,7 +69,7 @@ QScrollBar::handle:vertical {
 
 QPushButton#loginBtn {
     color: white;
-    background-color: #203864;
+		background-color: #203864;
     font-size: 16px;
     font-weight: bold;
     border-radius: 2px;

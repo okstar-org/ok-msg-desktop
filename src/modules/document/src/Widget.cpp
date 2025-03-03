@@ -24,7 +24,7 @@
 
 namespace module::doc {
 
-Widget::Widget(QWidget* parent) : lib::ui::OPage(parent) {
+Widget::Widget(QWidget* parent) : lib::ui::OFrame(parent) {
     setContentsMargins(0, 0, 0, 0);
     // setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
